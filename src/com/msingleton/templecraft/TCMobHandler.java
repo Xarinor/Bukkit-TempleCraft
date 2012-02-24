@@ -9,35 +9,44 @@ import org.bukkit.entity.LivingEntity;
 
 import com.msingleton.templecraft.games.Game;
 
-public class TCMobHandler {
+public class TCMobHandler 
+{
 	
-	public static void SpawnMobs(Game game, Location loc, CreatureType mob) {
+	public static void SpawnMobs(Game game, Location loc, CreatureType mob) 
+	{
 		//for (int i = 0; i < playerSet.size(); i++)
-	    //{
-			try{
+		//{
+			try
+			{
 				LivingEntity e = game.world.spawnCreature(loc,mob);
 			
 				if(e == null)
 					return;
-		        
-		        Random r = new Random();
-		        if(TempleCraft.method != null && (TempleManager.mobGoldMin + TempleManager.mobGoldRan) != 0 && r.nextInt(3) == 0){
-		        	game.mobGoldMap.put(e.getEntityId(), r.nextInt(TempleManager.mobGoldRan)+TempleManager.mobGoldMin);
-		        }
-		        
-		        if(!(e instanceof Creature))
-		        	return;
-		        
-		        // Grab a random target.
-		        Creature c = (Creature) e;
-		        c.setTarget(TCUtils.getClosestPlayer(game, e));
-			}catch(Exception exception){
+				
+				Random r = new Random();
+				if(TempleCraft.economy != null && (TempleManager.mobGoldMin + TempleManager.mobGoldRan) != 0 && r.nextInt(3) == 0)
+				{
+					game.mobGoldMap.put(e.getEntityId(), r.nextInt(TempleManager.mobGoldRan)+TempleManager.mobGoldMin);
+				}
+				
+				if(!(e instanceof Creature))
+				{
+					return;
+				}
+				
+				// Grab a random target.
+				Creature c = (Creature) e;
+				c.setTarget(TCUtils.getClosestPlayer(game, e));
+			}
+			catch(Exception e)
+			{
 				System.out.println("[TempleCraft] Could not spawn "+mob.getName());
 			};
-	    //}
+		//}
 	}
 	
-	public static CreatureType getRandomCreature() {
+	public static CreatureType getRandomCreature()
+	{
 		int dZombies, dSkeletons, dSpiders, dCreepers, dWolves, dCaveSpiders;
 		dZombies = 5;
 		dSkeletons = dZombies + 5;
@@ -49,13 +58,13 @@ public class TCMobHandler {
 		CreatureType mob;
 		
 		int ran = new Random().nextInt(dCaveSpiders);
-		if      (ran < dZombies)     mob = CreatureType.ZOMBIE;
-	    else if (ran < dSkeletons)   mob = CreatureType.SKELETON;
-	    else if (ran < dSpiders)     mob = CreatureType.SPIDER;
-	    else if (ran < dCreepers)    mob = CreatureType.CREEPER;
-	    else if (ran < dWolves)      mob = CreatureType.WOLF;
-	    else if (ran < dCaveSpiders) mob = CreatureType.CAVE_SPIDER;
-	    else return null;
+		if	  (ran < dZombies)	 mob = CreatureType.ZOMBIE;
+		else if (ran < dSkeletons)   mob = CreatureType.SKELETON;
+		else if (ran < dSpiders)	 mob = CreatureType.SPIDER;
+		else if (ran < dCreepers)	mob = CreatureType.CREEPER;
+		else if (ran < dWolves)	  mob = CreatureType.WOLF;
+		else if (ran < dCaveSpiders) mob = CreatureType.CAVE_SPIDER;
+		else return null;
 		
 		return mob;
 	}

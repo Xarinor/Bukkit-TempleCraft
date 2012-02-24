@@ -10,80 +10,95 @@ import org.bukkit.World;
  */
 @SuppressWarnings("serial")
 public class EntityPosition implements Serializable{
-    private double x;
-    private double y;
-    private double z;
-    private String world;
-    private float yaw;
-    private float pitch;
+	private double x;
+	private double y;
+	private double z;
+	private String world;
+	private float yaw;
+	private float pitch;
 
-    public EntityPosition(double x, double y, double z, String world, float yaw, float pitch) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.world = world;
-        this.yaw = yaw;
-        this.pitch = pitch;
-    }
-    
-    public EntityPosition(Location location) {
-        this.x = location.getX();
-        this.y = location.getY();
-        this.z = location.getZ();
-        this.world = location.getWorld().getName();
-        this.yaw = location.getYaw();
-        this.pitch = location.getPitch();
-    }
-    
-    public Location getLocation(World world) {
-        return new Location(world, x, y, z, yaw, pitch);
-    }
+	public EntityPosition(double x, double y, double z, String world, float yaw, float pitch)
+	{
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.world = world;
+		this.yaw = yaw;
+		this.pitch = pitch;
+	}
 
-    public float getPitch() {
-        return pitch;
-    }
+	public EntityPosition(Location location)
+	{
+		this.x = location.getX();
+		this.y = location.getY();
+		this.z = location.getZ();
+		this.world = location.getWorld().getName();
+		this.yaw = location.getYaw();
+		this.pitch = location.getPitch();
+	}
 
-    public void setPitch(float pitch) {
-        this.pitch = pitch;
-    }
+	public Location getLocation(World world)
+	{
+		return new Location(world, x, y, z, yaw, pitch);
+	}
 
-    public String getWorld() {
-        return world;
-    }
+	public float getPitch()
+	{
+		return pitch;
+	}
 
-    public void setWorld(String world) {
-        this.world = world;
-    }
+	public void setPitch(float pitch)
+	{
+		this.pitch = pitch;
+	}
 
-    public double getX() {
-        return x;
-    }
+	public String getWorld()
+	{
+		return world;
+	}
 
-    public void setX(double x) {
-        this.x = x;
-    }
+	public void setWorld(String world)
+	{
+		this.world = world;
+	}
 
-    public double getY() {
-        return y;
-    }
+	public double getX()
+	{
+		return x;
+	}
 
-    public void setY(double y) {
-        this.y = y;
-    }
+	public void setX(double x)
+	{
+		this.x = x;
+	}
 
-    public float getYaw() {
-        return yaw;
-    }
+	public double getY()
+	{
+		return y;
+	}
 
-    public void setYaw(float yaw) {
-        this.yaw = yaw;
-    }
+	public void setY(double y)
+	{
+		this.y = y;
+	}
 
-    public double getZ() {
-        return z;
-    }
+	public float getYaw()
+	{
+		return yaw;
+	}
 
-    public void setZ(double z) {
-        this.z = z;
-    }
+	public void setYaw(float yaw)
+	{
+		this.yaw = yaw;
+	}
+
+	public double getZ()
+	{
+		return z;
+	}
+
+	public void setZ(double z)
+	{
+		this.z = z;
+	}
 }

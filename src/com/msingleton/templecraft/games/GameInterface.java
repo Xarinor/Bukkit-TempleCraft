@@ -1,6 +1,7 @@
 package com.msingleton.templecraft.games;
 
-public interface GameInterface{
+public interface GameInterface
+{
 	
 	abstract void startGame();
 
