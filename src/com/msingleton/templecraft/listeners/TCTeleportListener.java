@@ -19,36 +19,40 @@ import com.msingleton.templecraft.util.Translation;
 // TO-DO: Fix the bug that causes the message when people get stuck in walls.
 public class TCTeleportListener extends PlayerListener
 {
-    @SuppressWarnings("unused")
+	@SuppressWarnings("unused")
 	private TempleCraft plugin;
-    
-    public TCTeleportListener(TempleCraft instance)
-    {
-        plugin = instance;
-    }
-    
-    public void onPlayerTeleport(PlayerTeleportEvent event)
-    {
-        Player p = event.getPlayer();
-        TemplePlayer tp = TempleManager.templePlayerMap.get(p);
-        
-        if (!TempleManager.playerSet.contains(p))
-            return;
-        
-        Temple temple = tp.currentTemple;
-        
-        if(temple == null)
-        	return;
-        
-        Location to = event.getTo();
-        Location from = event.getFrom();
-        
-        if ((!TCUtils.isTCWorld(from.getWorld()) && TCUtils.isTCWorld(to.getWorld())) || to.getWorld().equals(p.getWorld()))
-        {
-            return;
-        }
-        
-        TempleManager.tellPlayer(p, Translation.tr("teleportListener.deny"));
-        event.setCancelled(true);
-    }
+
+	public TCTeleportListener(TempleCraft instance)
+	{
+		plugin = instance;
+	}
+
+	public void onPlayerTeleport(PlayerTeleportEvent event)
+	{
+		Player p = event.getPlayer();
+		TemplePlayer tp = TempleManager.templePlayerMap.get(p);
+
+		if (!TempleManager.playerSet.contains(p))
+		{
+			return;
+		}
+
+		Temple temple = tp.currentTemple;
+
+		if(temple == null)
+		{
+			return;
+		}
+
+		Location to = event.getTo();
+		Location from = event.getFrom();
+
+		if ((!TCUtils.isTCWorld(from.getWorld()) && TCUtils.isTCWorld(to.getWorld())) || to.getWorld().equals(p.getWorld()))
+		{
+			return;
+		}
+
+		TempleManager.tellPlayer(p, Translation.tr("teleportListener.deny"));
+		event.setCancelled(true);
+	}
 }

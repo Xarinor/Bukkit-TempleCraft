@@ -1,12 +1,14 @@
 name: TempleCraft
-author: Mike Singleton
+author: Bootscreen
+authors: Mike Singleton
 main: com.msingleton.templecraft.TempleCraft
-version: 0.43
+depend: [Spout, Vault]
+version: 0.43.1
 commands:
-  tc:
+  tct:
     description: Base command for TempleCraft
     usage: |
-           /tc - List commands you have permission to use.
+           /tct - List commands you have permission to use.
 permissions:
     templecraft.*:
         description: Gives access to all TempleCraft commands
