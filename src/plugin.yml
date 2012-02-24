@@ -1,6 +1,6 @@
 name: TempleCraft
 author: Bootscreen
-authors: Mike Singleton
+authors: [Mike Singleton]
 main: com.msingleton.templecraft.TempleCraft
 depend: [Spout, Vault]
 version: 0.43.1
