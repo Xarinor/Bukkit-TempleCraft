@@ -9,9 +9,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -30,7 +31,8 @@ import com.msingleton.templecraft.games.Arena;
  * arena, zombies and skeletons from burning in the sun, and
  * monsters (mostly spiders) from losing their targets.
  */
-public class TCMonsterListener extends EntityListener
+//public class TCMonsterListener extends EntityListener
+public class TCMonsterListener implements Listener
 {
 	private TempleCraft plugin;
 
@@ -42,6 +44,7 @@ public class TCMonsterListener extends EntityListener
 	/**
 	 * Handles all explosion events, also from TNT.
 	 */
+	@EventHandler
 	public void onEntityExplode(EntityExplodeEvent event)
 	{
 		if(!TCUtils.isTCWorld(event.getLocation().getWorld()))
@@ -144,6 +147,7 @@ public class TCMonsterListener extends EntityListener
 	}
 
 	// Zombie/skeleton combustion from the sun.
+	@EventHandler
 	public void onEntityCombust(EntityCombustEvent event)
 	{
 		Game game = TCUtils.getGame(event.getEntity());
@@ -159,6 +163,7 @@ public class TCMonsterListener extends EntityListener
 	}
 
 	// Monsters losing their targets.
+	@EventHandler
 	public void onEntityTarget(EntityTargetEvent event)
 	{
 		Game game = TCUtils.getGame(event.getEntity());
@@ -197,6 +202,7 @@ public class TCMonsterListener extends EntityListener
 	 * Prevents monsters from spawning inside a temple unless
 	 * it's running.
 	 */
+	@EventHandler
 	public void onCreatureSpawn(CreatureSpawnEvent event)
 	{		
 		Location loc = event.getLocation();

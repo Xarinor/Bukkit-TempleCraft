@@ -1,10 +1,11 @@
 package com.msingleton.templecraft.listeners;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.msingleton.templecraft.TCUtils;
 import com.msingleton.templecraft.TempleCraft;
@@ -16,12 +17,17 @@ import com.msingleton.templecraft.TemplePlayer;
  * from the server. If 15 seconds pass, and the player hasn't
  * reconnected, the player is forced to leave the arena.
  */
-public class TCDisconnectListener extends PlayerListener
+//public class TCDisconnectListener extends PlayerListener
+public class TCDisconnectListener implements Listener
 {
+	private TempleCraft plugin;
+
 	public TCDisconnectListener(TempleCraft instance)
 	{
+		plugin = instance;
 	}
-
+	
+	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event)
 	{
 		if(!TempleManager.isEnabled)
@@ -44,6 +50,7 @@ public class TCDisconnectListener extends PlayerListener
 		}
 	}
 
+	@EventHandler
 	public void onPlayerKick(PlayerKickEvent event)
 	{
 		if(!TempleManager.isEnabled)
@@ -66,6 +73,9 @@ public class TCDisconnectListener extends PlayerListener
 		}
 	}
 
+	
+	
+	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event)
 	{		
 		if(!TempleManager.isEnabled)
@@ -76,6 +86,8 @@ public class TCDisconnectListener extends PlayerListener
 		final Player p = event.getPlayer();
 		TempleManager.templePlayerMap.put(p, new TemplePlayer(p));
 
+		// TODO: UpdateNotification überarbeiten
+		
 		if (!TempleManager.checkUpdates)
 		{
 			return;
@@ -86,13 +98,16 @@ public class TCDisconnectListener extends PlayerListener
 			return;
 		}
 
-		TempleManager.server.getScheduler().scheduleSyncDelayedTask(TempleManager.plugin,
-				new Runnable()
-				{
-					public void run()
-					{
-						TCUtils.checkForUpdates(p, false);
-					}
-				}, 100);
+        try {
+        	plugin.newVersionString = TCUtils.updateCheck(plugin.currentVersionString);
+            plugin.currentVersion = TCUtils.convertVersion(plugin.currentVersionString);
+            plugin.newVersion = TCUtils.convertVersion(plugin.newVersionString);
+            if (plugin.newVersion > plugin.currentVersion) {
+                p.sendMessage(plugin.newVersionString + " is out! You are running " + plugin.currentVersionString);
+                p.sendMessage("Update TempleCraft at: http://dev.bukkit.org/server-mods/templecraft-bootscreen");
+            }
+        } catch (Exception e) {
+            // Ignore exceptions
+        }
 	}
 }

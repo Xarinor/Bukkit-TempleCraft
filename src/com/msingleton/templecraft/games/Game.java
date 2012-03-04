@@ -18,12 +18,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.ContainerBlock;
+import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -75,7 +75,7 @@ public class Game
 	public int saveAmount = 5;
 
 	// Contains Active Mob Spawnpoints and Creature Types
-	public Map<Location,Pair<CreatureType,Integer>> mobSpawnpointMap	 = new HashMap<Location,Pair<CreatureType,Integer>>();
+	public Map<Location,Pair<EntityType,Integer>> mobSpawnpointMap	 = new HashMap<Location,Pair<EntityType,Integer>>();
 	public Map<Integer, Integer> mobGoldMap			= new HashMap<Integer, Integer>();
 	public Map<Location, Integer> checkpointMap		= new HashMap<Location, Integer>();
 	public Map<Location, String[]> chatMap			 = new HashMap<Location, String[]>();
@@ -289,7 +289,7 @@ public class Game
 				temple.coordLocSet.remove(b);
 			}
 			mobSpawnpointSet.add(b.getLocation());
-			mobSpawnpointMap.put(b.getLocation(),new Pair<CreatureType,Integer>(TCMobHandler.getRandomCreature(),20));
+			mobSpawnpointMap.put(b.getLocation(),new Pair<EntityType,Integer>(TCMobHandler.getRandomCreature(),20));
 			b.setTypeId(0);
 		}
 		for(Block b: getBlockSet(diamondBlock))
@@ -316,10 +316,10 @@ public class Game
 				b.setTypeId(0);
 				rb.setTypeId(goldBlock);
 				// If block above is a chest
-				if(rb2.getState() instanceof ContainerBlock)
+				if(rb2.getState() instanceof Chest)
 				{
-					rewards.addAll(Arrays.asList(((ContainerBlock)rb2.getState()).getInventory().getContents()));
-					((ContainerBlock)rb2.getState()).getInventory().clear();
+					rewards.addAll(Arrays.asList(((Chest)rb2.getState()).getInventory().getContents()));
+					((Chest)rb2.getState()).getInventory().clear();
 					rb2.setTypeId(0);
 				}
 			}
@@ -331,9 +331,9 @@ public class Game
 		for(Block b: getBlockSet(ironBlock))
 		{
 			Block rb = b.getRelative(0, 1, 0);
-			if(rb.getState() instanceof ContainerBlock)
+			if(rb.getState() instanceof Chest)
 			{
-				Inventory inv = ((ContainerBlock)rb.getState()).getInventory();
+				Inventory inv = ((Chest)rb.getState()).getInventory();
 				rewardLocMap.put(b.getLocation(),Arrays.asList(inv.getContents()));
 				inv.clear();
 				rb.setTypeId(0);
@@ -385,7 +385,7 @@ public class Game
 		}
 		else if(Lines[1].toLowerCase().equals("classes"))
 		{
-			sign.getBlock().setTypeId(0);
+			//sign.getBlock().setTypeId(0);
 		}
 		else if(Lines[1].toLowerCase().equals("checkpoint"))
 		{
@@ -435,7 +435,7 @@ public class Game
 		}
 		else
 		{
-			CreatureType ct = CreatureType.fromName(Lines[1]);
+			EntityType ct = EntityType.fromName(Lines[1]);
 			if(ct == null)
 			{
 				return;
@@ -451,7 +451,7 @@ public class Game
 			}
 			Location loc = new Location(b.getWorld(),b.getX()+.5,b.getY(),b.getZ()+.5);
 			mobSpawnpointSet.add(loc);
-			mobSpawnpointMap.put(loc,new Pair<CreatureType,Integer>(ct,range));
+			mobSpawnpointMap.put(loc,new Pair<EntityType,Integer>(ct,range));
 			b.setTypeId(0);
 		}
 	}

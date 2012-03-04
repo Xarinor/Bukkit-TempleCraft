@@ -2,12 +2,12 @@ package com.msingleton.templecraft.listeners;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import com.msingleton.templecraft.TCUtils;
 import com.msingleton.templecraft.Temple;
-import com.msingleton.templecraft.TempleCraft;
 import com.msingleton.templecraft.TempleManager;
 import com.msingleton.templecraft.TemplePlayer;
 import com.msingleton.templecraft.util.Translation;
@@ -17,16 +17,10 @@ import com.msingleton.templecraft.util.Translation;
  * they are in the arena session.
  */
 // TO-DO: Fix the bug that causes the message when people get stuck in walls.
-public class TCTeleportListener extends PlayerListener
+//public class TCTeleportListener extends PlayerListener
+public class TCTeleportListener implements Listener
 {
-	@SuppressWarnings("unused")
-	private TempleCraft plugin;
-
-	public TCTeleportListener(TempleCraft instance)
-	{
-		plugin = instance;
-	}
-
+	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event)
 	{
 		Player p = event.getPlayer();

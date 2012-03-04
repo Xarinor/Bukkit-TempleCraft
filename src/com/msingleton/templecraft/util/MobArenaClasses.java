@@ -16,9 +16,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -28,7 +29,9 @@ import com.msingleton.templecraft.TemplePlayer;
 import com.msingleton.templecraft.TempleManager;
 import com.msingleton.templecraft.games.Game;
 
-public class MobArenaClasses extends PlayerListener{
+//public class MobArenaClasses extends PlayerListener
+public class MobArenaClasses implements Listener
+{
 
 	protected static File configFile				  = null;
 	public static boolean enabled					 = false;
@@ -56,7 +59,8 @@ public class MobArenaClasses extends PlayerListener{
 			classArmorMap = getClassItems(configFile, "classes.","armor");
 		}
 	}
-
+	
+	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event)
 	{	
 
@@ -377,12 +381,17 @@ public class MobArenaClasses extends PlayerListener{
 		int z = loc.getBlockZ();
 		for (String s : classes)
 		{
-			world.getBlockAt(x, y, z).setTypeIdAndData(b.getTypeId(), b.getData(), false);
-			Sign classSign = (Sign) world.getBlockAt(x, y, z).getState();
+			Block signblock = world.getBlockAt(x, y, z);
+			if(!(signblock instanceof Sign))
+			{
+				world.getBlockAt(x, y, z).setTypeIdAndData(b.getTypeId(), b.getData(), false);
+			}
+			Sign classSign = (Sign) signblock.getState();
 			classSign.setLine(0, "");
 			classSign.setLine(1, s);
 			classSign.setLine(2, "");
 			classSign.setLine(3, "");
+			classSign.update();
 			Material type = b.getType();
 			byte data = b.getData();
 			if(type == Material.WALL_SIGN)

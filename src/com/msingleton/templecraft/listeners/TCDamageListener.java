@@ -4,13 +4,13 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import com.msingleton.templecraft.TCUtils;
-import com.msingleton.templecraft.TempleCraft;
 import com.msingleton.templecraft.TempleManager;
 import com.msingleton.templecraft.TemplePlayer;
 import com.msingleton.templecraft.games.Game;
@@ -25,13 +25,10 @@ import com.msingleton.templecraft.games.Arena;
  * By the end of the arena session, the rewards are given.
  */
 // TO-DO: Perhaps implement TeamFluff's respawn-packet-code.
-public class TCDamageListener extends EntityListener
+//public class TCDamageListener extends EntityListener
+public class TCDamageListener implements Listener
 {	
-
-	public TCDamageListener(TempleCraft instance)
-	{
-	}
-
+	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event)
 	{
 		if (TCUtils.isTCEditWorld(event.getEntity().getWorld()))
@@ -115,6 +112,7 @@ public class TCDamageListener extends EntityListener
 	/**
 	 * Clears all player/monster drops on death.
 	 */
+	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event)
 	{		
 		if (!TCUtils.isTCWorld(event.getEntity().getWorld()))

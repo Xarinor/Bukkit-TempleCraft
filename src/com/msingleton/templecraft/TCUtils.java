@@ -5,8 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -19,6 +18,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.jar.JarFile;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.World;
@@ -26,18 +27,20 @@ import org.bukkit.Material;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.CaveSpider;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Ghast;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.MagmaCube;
-import org.bukkit.entity.PigZombie;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.herocraftonline.dev.heroes.hero.Hero;
 import com.msingleton.templecraft.games.Adventure;
@@ -64,7 +67,6 @@ public class TCUtils
 		SWORDS_TYPE.add(Material.IRON_SWORD);
 		SWORDS_TYPE.add(Material.DIAMOND_SWORD);
 	}
-
 
 	/* ///////////////////////////////////////////////////////////////////// //
 
@@ -174,7 +176,7 @@ public class TCUtils
 	{
 		new File("plugins/TempleCraft").mkdir();
 		File configFile = new File("plugins/TempleCraft/"+name+".yml");
-
+		
 		try
 		{
 			if(!configFile.exists())
@@ -185,7 +187,8 @@ public class TCUtils
 			System.out.println("[TempleCraft] ERROR: Config file could not be created.");
 			return null;
 		}
-
+		
+		
 		return configFile;
 	}
 
@@ -983,55 +986,44 @@ public class TCUtils
 
 	/**
 	 * Checks if there is a new update of TempleCraft and notifies the
-	 * player if the boolean specified is true
+	 * Thanks Sleaker for the permission to use his updatecheck code from vault
 	 */
-	public static void checkForUpdates(final Player p, boolean response)
-	{
-		String site = "http://dev.bukkit.org/server-mods/templecraft/images/1";
-		try
-		{
-			// Make a URL of the site address
-			URI baseURL = new URI(site);
-
-			// Open the connection and don't redirect.
-			HttpURLConnection con = (HttpURLConnection) baseURL.toURL().openConnection();
-			con.setInstanceFollowRedirects(false);
-
-			String header = con.getHeaderField("Location");
-
-			// If something's wrong with the connection...
-			if (header == null)
-			{
-				TempleManager.tellPlayer(p, Translation.tr("checkForUpdatesFail"));
-				return;
-			}
-
-			// Otherwise, grab the location header to get the real URI.
-			String[] url = new URI(con.getHeaderField("Location")).toString().split("-");
-			double urlVersion = Double.parseDouble(url[4].replace("v", "")+"."+url[5]);
-
-			double thisVersion = Double.parseDouble(TempleManager.plugin.getDescription().getVersion());
-
-			// If the current version is the same as the thread version.
-			if (thisVersion >= urlVersion)
-			{
-				if (!response)
-				{
-					return;
-				}
-
-				TempleManager.tellPlayer(p, Translation.tr("upToDate"));
-				return;
-			}
-
-			// Otherwise, notify the player that there is a new version.
-			TempleManager.tellPlayer(p, Translation.tr("notUpToDate"));
-		}
-		catch (Exception e)
-		{
-		}
-	}
-
+    public static String updateCheck(String currentVersion) throws Exception {
+        String pluginUrlString = "http://dev.bukkit.org/server-mods/templecraft-bootscreen/files.rss";
+        try {
+            URL url = new URL(pluginUrlString);
+            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(url.openConnection().getInputStream());
+            doc.getDocumentElement().normalize();
+            NodeList nodes = doc.getElementsByTagName("item");
+            Node firstNode = nodes.item(0);
+            if (firstNode.getNodeType() == 1) 
+            {
+                Element firstElement = (Element)firstNode;
+                NodeList firstElementTagName = firstElement.getElementsByTagName("title");
+                Element firstNameElement = (Element) firstElementTagName.item(0);
+                NodeList firstNodes = firstNameElement.getChildNodes();
+                return firstNodes.item(0).getNodeValue().replace("Templecraft v", "");
+            }
+        }
+        catch (Exception localException)
+        {
+        	localException.printStackTrace();
+        }
+        return currentVersion;
+    }
+    
+    public static double convertVersion(String Version)
+    {
+    	try
+    	{
+			String[] version = Version.split("\\.", 2);
+	        return Double.valueOf(version[0] + "." + version[1].replace(".", ""));
+    	}
+    	catch(Exception e)
+    	{}
+    	return 0;
+    }
+    
 	public static void sendDeathMessage(Game game, Entity entity, Entity entity2)
 	{
 

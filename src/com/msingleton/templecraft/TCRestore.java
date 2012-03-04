@@ -22,7 +22,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.ContainerBlock;
+import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -329,7 +329,7 @@ public class TCRestore
 		loadBlockMap(startLoc, pistonMap, temple, true);
 	}
 
-	private static void contentsFromString(ContainerBlock cb, String string)
+	private static void contentsFromString(Chest cb, String string)
 	{
 		String[] items = string.split(s);
 		for(int i = 0; i < items.length; i+=3)
@@ -385,11 +385,11 @@ public class TCRestore
 				}
 				// If it's a container, add it's contents
 			}
-			else if(b.getState() instanceof ContainerBlock)
+			else if(b.getState() instanceof Chest)
 			{
 				if(s.length > 2)
 				{
-					contentsFromString((ContainerBlock)b.getState(), s[2]);
+					contentsFromString((Chest)b.getState(), s[2]);
 				}
 				// If it's diamond,gold or iron or bedrock, add it to coordBlockSet
 			}

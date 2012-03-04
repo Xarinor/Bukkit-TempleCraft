@@ -1,7 +1,8 @@
 package com.msingleton.templecraft;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import com.msingleton.templecraft.util.Translation;
@@ -9,7 +10,8 @@ import com.msingleton.templecraft.util.Translation;
 /**
  * Handles the disabled commands.
  */
-public class TCEnabledCommands extends PlayerListener
+//public class TCEnabledCommands extends PlayerListener
+public class TCEnabledCommands implements Listener
 {
 	private TempleCraft plugin;
 	
@@ -17,7 +19,8 @@ public class TCEnabledCommands extends PlayerListener
 	{
 		plugin = instance;
 	}
-	
+
+	@EventHandler
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event)
 	{
 		Player p = event.getPlayer();

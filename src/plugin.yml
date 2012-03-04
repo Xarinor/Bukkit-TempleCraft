@@ -2,8 +2,8 @@ name: TempleCraft
 author: Bootscreen
 authors: [Mike Singleton]
 main: com.msingleton.templecraft.TempleCraft
-depend: [Spout, Vault]
-version: 0.43.1
+depend: [Vault]
+version: 0.44.1
 commands:
   tct:
     description: Base command for TempleCraft

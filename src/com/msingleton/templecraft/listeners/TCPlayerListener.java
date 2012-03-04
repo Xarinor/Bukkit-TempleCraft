@@ -7,30 +7,27 @@ import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import com.msingleton.templecraft.TCPermissionHandler;
 import com.msingleton.templecraft.TCUtils;
 import com.msingleton.templecraft.Temple;
-import com.msingleton.templecraft.TempleCraft;
 import com.msingleton.templecraft.TempleManager;
 import com.msingleton.templecraft.TemplePlayer;
 import com.msingleton.templecraft.games.*;
 import com.msingleton.templecraft.scoreboards.ScoreBoard;
 import com.msingleton.templecraft.util.Translation;
 
-public class TCPlayerListener  extends PlayerListener
+//public class TCPlayerListener  extends PlayerListener
+public class TCPlayerListener implements Listener
 {
-
-	public TCPlayerListener(TempleCraft templeCraft)
-	{		
-	}
-
+	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event)
 	{	
 
@@ -171,6 +168,7 @@ public class TCPlayerListener  extends PlayerListener
 		}
 	}
 
+	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event)
 	{
 		Player p = event.getPlayer();
@@ -328,6 +326,7 @@ public class TCPlayerListener  extends PlayerListener
 		}
 	}
 
+	@EventHandler
 	public void onFoodLevelChange(FoodLevelChangeEvent event)
 	{
 
@@ -354,6 +353,7 @@ public class TCPlayerListener  extends PlayerListener
 	/**
 	 * Adds liquid blocks to the blockset when players empty their buckets.
 	 */
+	@EventHandler
 	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event)
 	{			
 		Player p = event.getPlayer();

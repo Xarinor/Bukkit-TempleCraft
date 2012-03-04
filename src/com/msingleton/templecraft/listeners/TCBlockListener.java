@@ -5,7 +5,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockListener;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
@@ -14,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import com.msingleton.templecraft.TCPermissionHandler;
 import com.msingleton.templecraft.TCUtils;
 import com.msingleton.templecraft.Temple;
-import com.msingleton.templecraft.TempleCraft;
 import com.msingleton.templecraft.TempleManager;
 import com.msingleton.templecraft.TemplePlayer;
 import com.msingleton.templecraft.games.Game;
@@ -28,15 +28,14 @@ import com.msingleton.templecraft.util.Translation;
  * the game world cannot be destroyed, and blocks can only
  * be placed by a participant in the current arena session.
  */
-public class TCBlockListener extends BlockListener
-{	
-	public TCBlockListener(TempleCraft instance)
-	{
-	}	
+//public class TCBlockListener extends BlockListener
+public class TCBlockListener implements Listener
+{
 
 	/**
 	 * Prevents blocks from breaking if block protection is on.
 	 */	
+	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event)
 	{	
 		Player p = event.getPlayer();
@@ -122,6 +121,7 @@ public class TCBlockListener extends BlockListener
 	 * drop purposes. If the block is placed within the arena
 	 * region, cancel the event if protection is on.
 	 */
+	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event)
 	{		
 		Player p = event.getPlayer();
@@ -177,6 +177,7 @@ public class TCBlockListener extends BlockListener
 		event.setCancelled(true);
 	}
 
+	@EventHandler
 	public void onSignChange(SignChangeEvent event)
 	{
 		Player p = event.getPlayer();

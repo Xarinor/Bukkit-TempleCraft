@@ -78,7 +78,7 @@ public class TempleManager
 			plugin				 = instance;
 			config 				   = TCUtils.getConfig("config");
 			server				 = plugin.getServer();
-
+			
 			// Configuration
 			repairDelay			= TCUtils.getInt(config, "settings.repairdelay", 5);
 			maxEditWorlds		  = TCUtils.getInt(config, "settings.maxeditworlds", 2);
