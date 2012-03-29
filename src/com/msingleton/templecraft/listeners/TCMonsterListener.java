@@ -207,22 +207,31 @@ public class TCMonsterListener implements Listener
 	{		
 		Location loc = event.getLocation();
 
-		// When in TCWorld, Only Spawn Custom Monsters
-		LivingEntity e = (LivingEntity) event.getEntity();
-		if(TCUtils.isTCWorld(loc.getWorld()))
+		if(loc != null)
 		{
-			if(event.getSpawnReason().equals(SpawnReason.CUSTOM))
+			// When in TCWorld, Only Spawn Custom Monsters
+			if(event.getEntity() instanceof LivingEntity && event.getEntity() != null)
 			{
-				Game game = TCUtils.getGameByWorld(loc.getWorld());
-				game.monsterSet.add(e);
-				if(game instanceof Arena)
+				LivingEntity e = (LivingEntity) event.getEntity();
+				if(TCUtils.isTCWorld(loc.getWorld()))
 				{
-					e.setHealth((int) ((Arena)game).getZombieHealth());
+					if(event.getSpawnReason().equals(SpawnReason.CUSTOM))
+					{
+						Game game = TCUtils.getGameByWorld(loc.getWorld());
+						if(game != null)
+						{
+							game.monsterSet.add(e);
+							if(game instanceof Arena)
+							{
+								e.setHealth((int) ((Arena)game).getZombieHealth());
+							}
+						}
+					}
+					else
+					{
+						event.setCancelled(true);
+					}
 				}
-			}
-			else
-			{
-				event.setCancelled(true);
 			}
 		}
 	}

@@ -3,7 +3,7 @@ author: Bootscreen
 authors: [Mike Singleton]
 main: com.msingleton.templecraft.TempleCraft
 depend: [Vault]
-version: 0.44.1
+version: 0.44.2
 commands:
   tct:
     description: Base command for TempleCraft

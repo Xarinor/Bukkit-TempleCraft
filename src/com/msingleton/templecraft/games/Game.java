@@ -570,16 +570,17 @@ public class Game
 		{
 			TempleManager.locationMap.put(p, p.getLocation());
 		}
-
-		if(!TCUtils.hasPlayerInventory(p.getName()))
+		if(TempleManager.manageInventory)
 		{
-			TCUtils.keepPlayerInventory(p);
+			if(!TCUtils.hasPlayerInventory(p.getName()))
+			{
+				TCUtils.keepPlayerInventory(p);
+			}
+			TCUtils.clearInventory(p);
+			p.setFoodLevel(TCUtils.MAX_FOOD);
+			p.setTotalExperience(0);
 		}
-
 		TCUtils.restoreHealth(p);
-		p.setFoodLevel(TCUtils.MAX_FOOD);
-		p.setTotalExperience(0);
-		TCUtils.clearInventory(p);
 
 		p.teleport(lobbyLoc);
 		tellPlayer(p, Translation.tr("game.join", gameName));

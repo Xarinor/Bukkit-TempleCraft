@@ -196,7 +196,7 @@ public class TCUtils
 	{
 		YamlConfiguration c = YamlConfiguration.loadConfiguration(TempleManager.config);
 
-		String commands = c.getString("settings.enabledcommands", "/tc");
+		String commands = c.getString("settings.enabledcommands", "/tct");
 		c.set("settings.enabledcommands", commands);
 		try
 		{

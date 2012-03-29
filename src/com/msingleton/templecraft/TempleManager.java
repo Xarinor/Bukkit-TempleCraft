@@ -33,6 +33,7 @@ public class TempleManager
 	public static boolean checkUpdates;
 	public static boolean dropBlocks;
 	public static boolean constantWorldNames;
+	public static boolean manageInventory;
 
 	// Colors
 	public static ChatColor c1 = TempleCraft.c1;
@@ -88,6 +89,7 @@ public class TempleManager
 			goldPerMob			 = TCUtils.getString(config, "settings.goldpermob", "50-100");
 			dropBlocks			 = TCUtils.getBoolean(config, "settings.dropblocks", false);
 			constantWorldNames	 = TCUtils.getBoolean(config, "settings.constantworldnames", false);
+			manageInventory		 = TCUtils.getBoolean(config, "settings.manageinventory", true);
 
 			loadMisc();
 			loadTemplePlayers();
