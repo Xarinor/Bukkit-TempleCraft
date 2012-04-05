@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -57,6 +58,26 @@ public class MobArenaClasses implements Listener
 			classes	   = getClasses();
 			classItemMap  = getClassItems(configFile, "classes.","items");
 			classArmorMap = getClassItems(configFile, "classes.","armor");
+		}
+	}
+
+	@EventHandler
+	public void onPlayerDropItem(PlayerDropItemEvent event)
+	{	
+		if(!TempleManager.isEnabled)
+		{
+			return;
+		}
+
+		Player p = event.getPlayer();
+
+		TemplePlayer tp = TempleManager.templePlayerMap.get(p);
+
+		// Set the player's class.
+		Game game = tp.currentGame;
+		if(game != null && (!game.isRunning || game.deadSet.contains(p)))
+		{		
+			event.setCancelled(true);
 		}
 	}
 	
