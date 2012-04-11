@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -18,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.msingleton.templecraft.util.Translation;
+
 
 public class Temple {
 	protected File config;
@@ -110,17 +112,26 @@ public class Temple {
 				}
 			}
 			result = TempleManager.server.createWorld(wc);
+			if(TempleCraft.MVWM != null)
+			{
+				TempleCraft.MVWM.addWorld(wc.name(), wc.environment(), Long.toString(wc.seed()), wc.type(), wc.generateStructures(), wc.generator().toString());
+			}
 			System.out.println("[TempleCraft] World \""+worldName+"\" Loaded!");
 		}
 		else if(type.equals("Edit") || type.equals("Convert"))
 		{
-			File file = new File("plugins/TempleCraft/SavedTemples/"+templeName);
+			/*File file = new File("plugins/TempleCraft/SavedTemples/"+templeName);
 			file.mkdir();
 			TCUtils.copyFromJarToDisk("Flat1.jar", file);
 			ChunkGeneratorFile = new File("plugins/TempleCraft/SavedTemples/"+templeName+"/Flat1.jar");
 			ChunkGenerator cg = TCRestore.getChunkGenerator(ChunkGeneratorFile);
-			wc.generator(cg);
+			wc.generator(cg);*/
+			wc.type(WorldType.FLAT);
 			result = TempleManager.server.createWorld(wc);
+			if(TempleCraft.MVWM != null)
+			{
+				TempleCraft.MVWM.addWorld(wc.name(), wc.environment(), Long.toString(wc.seed()), wc.type(), wc.generateStructures(), wc.generator().toString());
+			}
 			TCRestore.loadTemple(new Location(result,0,0,0), this);
 		}
 		else
