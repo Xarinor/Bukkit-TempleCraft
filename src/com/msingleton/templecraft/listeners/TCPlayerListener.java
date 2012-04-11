@@ -76,6 +76,23 @@ public class TCPlayerListener implements Listener
 
 		if(p.getGameMode().equals(GameMode.CREATIVE))
 		{
+			if(!p.isSneaking())
+			{
+				Block b = event.getClickedBlock();
+				if(b != null)
+				{
+					if(b.getState() instanceof Sign)
+					{
+						Sign sign = (Sign) b.getState();
+						sign.update();
+						String Line1 = sign.getLine(0);
+						if(Line1.equals("[TempleCraft]") || Line1.equals("[TC]") || Line1.equals("[TempleCraftS]") || Line1.equals("[TCS]"))
+						{
+							event.setCancelled(true);
+						}
+					}
+				}
+			}
 			return;
 		}
 
