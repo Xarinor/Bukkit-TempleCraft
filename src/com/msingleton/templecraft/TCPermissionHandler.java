@@ -34,7 +34,7 @@ public class TCPermissionHandler {
 		c1+"/tct findsigblocks <radius>"+c2+" - Finds significant blocks."
 	};
 	public static int entsPerPage = 7;
-	public static String[] editBasics = {"newtemple","edittemple","savetemple","addplayer","removeplayer","templelist","gamelist","playerlist"};
+	public static String[] editBasics = {"newgame","newtemple","edittemple","savetemple","addplayer","removeplayer"};
 	
 	public static boolean hasPermission(Player p, String s)
 	{

@@ -26,6 +26,7 @@ public class RecentScoreBoard extends ScoreBoard
 				if(strings.size() > i)
 				{
 					signs.get(i).setLine(1, strings.get(i));
+					signs.get(i).update();
 				}
 			}
 		}

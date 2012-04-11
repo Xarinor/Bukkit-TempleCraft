@@ -3,7 +3,7 @@ author: Bootscreen
 authors: [Mike Singleton]
 main: com.msingleton.templecraft.TempleCraft
 depend: [Vault]
-version: 0.44.3
+version: 0.44.4
 dev-url: http://dev.bukkit.org/server-mods/templecraft-bootscreen/
 
 commands:
@@ -31,17 +31,18 @@ permissions:
             templecraft.renametemple: true
             templecraft.setmaxplayers: true
             templecraft.findsigblocks: true
+        default: false
 
     templecraft.editbasics:
         description: Gives access to basic edit commands
         children:
-            templecraft.join: true
             templecraft.newgame: true
             templecraft.newtemple: true
             templecraft.edittemple: true
             templecraft.savetemple: true
             templecraft.addplayer: true
             templecraft.removeplayer: true
+        default: op
 
 # General Play Commands
     templecraft.tc:
@@ -78,25 +79,25 @@ permissions:
 # Temple Edit Commands
     templecraft.newtemple:
         description: Allows Creating New Temples.
-        default: true
+        default: op
     templecraft.deletetemple:
         description: Allows Deletion of Temples.
         default: op
     templecraft.edittemple:
         description: Allows Editing Temples.
-        default: true
+        default: op
     templecraft.addplayer:
         description: Allows Adding Players Access to Edit Temple.
-        default: true
+        default: op
     templecraft.removeplayer:
         description: Allows Removing Players Access to Edit Temple.
-        default: true
+        default: op
     templecraft.editall:
         description: Allows Editing & Adding/Removing of players in Any Temple.
         default: op
     templecraft.savetemple:
         description: Allows Saving the current Temple.
-        default: true
+        default: op
     templecraft.worldtotemple:
         description: Save a world as a temple.
         default: op
