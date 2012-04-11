@@ -26,6 +26,8 @@ import com.msingleton.templecraft.listeners.TCPlayerListener;
 import com.msingleton.templecraft.listeners.TCTeleportListener;
 import com.msingleton.templecraft.util.MobArenaClasses;
 import com.msingleton.templecraft.util.Translation;
+import com.onarandombox.MultiverseCore.MultiverseCore;
+import com.onarandombox.MultiverseCore.api.MVWorldManager;
 
 /**
  * TempleCraft
@@ -44,6 +46,7 @@ public class TempleCraft extends JavaPlugin
 	public String newVersionString;
     public String currentVersionString;
 	public static Permission permission = null;
+	public static MVWorldManager MVWM = null;
 	public static Economy economy = null;
 	public static HeroManager heroManager;
 	public static String language;
@@ -94,6 +97,7 @@ public class TempleCraft extends JavaPlugin
 		setupPermissions();
 		setupEconomy();
 		setupHeroes();
+		setupMultiverse();
 
 		ENABLED_COMMANDS = TCUtils.getEnabledCommands();
 
@@ -109,44 +113,6 @@ public class TempleCraft extends JavaPlugin
 		pm.registerEvents(new TCDamageListener(), this);
 		pm.registerEvents(new TCMonsterListener(this), this);
 		pm.registerEvents(new TCInventoryListener(), this);
-		
-		/*
-		 *  OLD Event System
-		 * 
-		
-		PlayerListener commandListener	  = new TCEnabledCommands(this);
-		PlayerListener playerListener	   = new TCPlayerListener(this);
-		InventoryListener inventoryListener = new TCInventoryListener();
-		PlayerListener maListener		   = new MobArenaClasses(this);
-		PlayerListener teleportListener	 = new TCTeleportListener(this);
-		PlayerListener discListener		 = new TCDisconnectListener(this);
-		BlockListener  blockListener		= new TCBlockListener(this);
-		EntityListener damageListener	   = new TCDamageListener(this);
-		EntityListener monsterListener	  = new TCMonsterListener(this);
-
-		// TO-DO: PlayerListener to check for kills/deaths.
-
-		// Register events.
-
-		pm.registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, commandListener, Priority.Monitor, this);
-		pm.registerEvent(Event.Type.PLAYER_BUCKET_EMPTY, playerListener,Priority.Normal,  this);
-		pm.registerEvent(Event.Type.PLAYER_MOVE,	  playerListener,   Priority.Normal,  this);
-		pm.registerEvent(Event.Type.PLAYER_INTERACT,  playerListener,   Priority.Normal,  this);
-		pm.registerEvent(Event.Type.CUSTOM_EVENT,	 inventoryListener,   Priority.Normal,  this);
-		pm.registerEvent(Event.Type.PLAYER_INTERACT,  maListener,	   Priority.Normal,  this);
-		pm.registerEvent(Event.Type.PLAYER_TELEPORT,  teleportListener, Priority.Normal,  this);
-		pm.registerEvent(Event.Type.PLAYER_QUIT,	  discListener,	 Priority.Normal,  this);
-		pm.registerEvent(Event.Type.PLAYER_KICK,	  discListener,	 Priority.Normal,  this);
-		pm.registerEvent(Event.Type.PLAYER_JOIN,	  discListener,	 Priority.Normal,  this);
-		pm.registerEvent(Event.Type.BLOCK_BREAK,	  blockListener,	Priority.Normal,  this);
-		pm.registerEvent(Event.Type.BLOCK_PLACE,	  blockListener,	Priority.Normal,  this);
-		pm.registerEvent(Event.Type.SIGN_CHANGE,	  blockListener,	Priority.Normal,  this);
-		pm.registerEvent(Event.Type.ENTITY_DAMAGE,	damageListener,   Priority.Normal,  this);
-		pm.registerEvent(Event.Type.ENTITY_DEATH,	 damageListener,   Priority.Normal,  this);
-		pm.registerEvent(Event.Type.CREATURE_SPAWN,   monsterListener,  Priority.Normal,  this);
-		pm.registerEvent(Event.Type.ENTITY_EXPLODE,   monsterListener,  Priority.Normal,  this);
-		pm.registerEvent(Event.Type.ENTITY_COMBUST,   monsterListener,  Priority.Normal,  this);
-		pm.registerEvent(Event.Type.ENTITY_TARGET,	monsterListener,  Priority.Normal,  this);*/
 
 		System.out.println(Translation.tr("enableMessage", pdfFile.getName(), pdfFile.getVersion()));
 	}
@@ -174,6 +140,21 @@ public class TempleCraft extends JavaPlugin
 		TCUtils.cleanConfigFiles();
 	}
 
+	private void setupMultiverse()
+	{
+		Plugin multiverse = this.getServer().getPluginManager().getPlugin("Multiverse-Core");
+		if (multiverse == null)
+		{
+			return;
+		}
+
+		MVWM = ((MultiverseCore) multiverse).getMVWorldManager();
+		if(MVWM != null)
+		{
+			System.out.println("[TempleCraft] Hooked into MultiverseCore");
+		}
+	}
+	
 	private Boolean setupPermissions()
 	{
 		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);

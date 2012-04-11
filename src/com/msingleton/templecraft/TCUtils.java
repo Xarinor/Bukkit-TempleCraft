@@ -472,7 +472,6 @@ public class TCUtils
 				return false;
 			}
 		}
-
 		temple = new Temple(templeName);
 		tp.ownedTemples++;
 		temple.addOwner(p.getName());
@@ -734,6 +733,13 @@ public class TCUtils
 		for(Entity e : w.getEntities())
 		{
 			e.remove();
+		}
+		if(TempleCraft.MVWM != null)
+		{
+			if(TempleCraft.MVWM.isMVWorld(w.getName()))
+			{
+				TempleCraft.MVWM.removeWorldFromConfig(w.getName());
+			}
 		}
 		TempleManager.server.unloadWorld(w, true);
 		if(folder.exists())
