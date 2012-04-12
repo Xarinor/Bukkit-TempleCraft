@@ -114,7 +114,7 @@ public class Temple {
 			result = TempleManager.server.createWorld(wc);
 			if(TempleCraft.MVWM != null)
 			{
-				TempleCraft.MVWM.addWorld(wc.name(), wc.environment(), Long.toString(wc.seed()), wc.type(), wc.generateStructures(), wc.generator().toString());
+				TempleCraft.MVWM.addWorld(result.getName(), result.getEnvironment(), Long.toString(result.getSeed()), result.getWorldType(), false, null, true);
 			}
 			System.out.println("[TempleCraft] World \""+worldName+"\" Loaded!");
 		}
@@ -130,7 +130,7 @@ public class Temple {
 			result = TempleManager.server.createWorld(wc);
 			if(TempleCraft.MVWM != null)
 			{
-				TempleCraft.MVWM.addWorld(wc.name(), wc.environment(), Long.toString(wc.seed()), wc.type(), wc.generateStructures(), wc.generator().toString());
+				TempleCraft.MVWM.addWorld(result.getName(), result.getEnvironment(), Long.toString(result.getSeed()), result.getWorldType(), false, null, true);
 			}
 			TCRestore.loadTemple(new Location(result,0,0,0), this);
 		}

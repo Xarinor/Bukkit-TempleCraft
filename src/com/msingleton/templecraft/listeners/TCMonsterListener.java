@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -70,7 +71,8 @@ public class TCMonsterListener implements Listener
 		}
 
 		// Only apply to creepers in adventure mode
-		if((game instanceof Adventure) && !(e instanceof LivingEntity))
+		//if((game instanceof Adventure) && !(e instanceof LivingEntity))
+		if((game instanceof Adventure) && (e.getType() == EntityType.CREEPER))
 		{
 			if(TempleManager.dropBlocks)
 			{
@@ -79,16 +81,16 @@ public class TCMonsterListener implements Listener
 
 			// TODO: Remove torches or levers attached to blocks exploding
 			// for(Block b : event.blockList())
-			{
+			//{
 				// }
 
 				// Remove blocks without drops
-				for(Block b : event.blockList())
-				{
-					b.setTypeId(0);
-				}
-				event.setYield(0);
-			}
+				//for(Block b : event.blockList())
+				//{
+				//	b.setTypeId(0);
+				//}
+				//event.setYield(0);
+			//}
 
 			/* This could be done by simply cancelling the event, but that
 			 * also cancels the explosion animation. This is a workaround. */
@@ -96,7 +98,7 @@ public class TCMonsterListener implements Listener
 			event.setYield(0);
 
 			// Store the blocks and their values in the map.
-			final HashMap<Block,Integer> blockMap = new HashMap<Block,Integer>();
+			final HashMap<Block,Material> blockMap = new HashMap<Block,Material>();
 
 			for (Block b : event.blockList())
 			{
@@ -114,12 +116,13 @@ public class TCMonsterListener implements Listener
 					continue;
 				}
 
-				// If a block has extra data, store it as a fourth digit (thousand).
-				int type = b.getTypeId() + (b.getData() * 1000);
-				blockMap.put(b, type);
+				// If a block has extra data, store it as a five digit (ten-thousand).
+				//int type = b.getTypeId() + (b.getData() * 10000);
+				blockMap.put(b, b.getType());
 			}
 
 			// Wait a couple of ticks, then rebuild the blocks.
+			System.err.print(e.getType());
 			TempleManager.server.getScheduler().scheduleSyncDelayedTask(plugin,
 					new Runnable()
 			{
@@ -127,19 +130,19 @@ public class TCMonsterListener implements Listener
 				{
 					for (Block b : blockMap.keySet())
 					{
-						int type = blockMap.get(b);
+						//int type = blockMap.get(b);
 
-						// Modulo 1000 to get the actual type id.
-						b.getLocation().getBlock().setTypeId(type % 1000);
+						// Modulo 10000 to get the actual type id.
+						b.getLocation().getBlock().setType(blockMap.get(b));
 
-						/* If the type ID is greater than 1000, it means the block
+						/* If the type ID is greater than 10000, it means the block
 						 * has extra data (stairs, levers, etc.). We subtract the
-						 * block type data by dividing by 1000. Integer division
-						 * always rounds by truncation. */
-						if (type > 1000)
+						 * block type data by dividing by 10000. Integer division
+						 * always rounds by truncation. 
+						if (type > 10000)
 						{
-							b.getLocation().getBlock().setData((byte) (type / 1000));
-						}
+							b.getLocation().getBlock().setData((byte) (type / 10000));
+						}*/
 					}
 				}
 			}, TempleManager.repairDelay);

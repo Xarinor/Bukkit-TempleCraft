@@ -26,7 +26,7 @@ public class RecentScoreBoard extends ScoreBoard
 				if(strings.size() > i)
 				{
 					signs.get(i).setLine(1, strings.get(i));
-					signs.get(i).update();
+					signs.get(i).update(true);
 				}
 			}
 		}
@@ -42,11 +42,13 @@ public class RecentScoreBoard extends ScoreBoard
 			{
 				shiftDown(newSign,0);
 				newSign.setLine(0, sign.getLine(3));
+				newSign.update(true);
 			}
 		}
 		for(int i = 3;i > start;i--)
 		{
 			sign.setLine(i, sign.getLine(i-1));
+			sign.update(true);
 		}
 	}
 }

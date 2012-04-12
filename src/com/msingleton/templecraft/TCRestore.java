@@ -381,6 +381,7 @@ public class TCRestore
 						}
 						Sign sign = (Sign) b.getState();
 						sign.setLine((i-2), s[i]);
+						sign.update(true);
 					}
 				}
 				// If it's a container, add it's contents

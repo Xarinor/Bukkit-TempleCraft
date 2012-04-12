@@ -412,7 +412,7 @@ public class MobArenaClasses implements Listener
 			classSign.setLine(1, s);
 			classSign.setLine(2, "");
 			classSign.setLine(3, "");
-			classSign.update();
+			classSign.update(true);
 			Material type = b.getType();
 			byte data = b.getData();
 			if(type == Material.WALL_SIGN)

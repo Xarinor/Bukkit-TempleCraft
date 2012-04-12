@@ -84,7 +84,7 @@ public class TCPlayerListener implements Listener
 					if(b.getState() instanceof Sign)
 					{
 						Sign sign = (Sign) b.getState();
-						sign.update();
+						sign.update(true);
 						String Line1 = sign.getLine(0);
 						if(Line1.equals("[TempleCraft]") || Line1.equals("[TC]") || Line1.equals("[TempleCraftS]") || Line1.equals("[TCS]"))
 						{
@@ -205,11 +205,11 @@ public class TCPlayerListener implements Listener
 			{
 				Set<Sign> signs = new HashSet<Sign>();
 				Block b = p.getLocation().getBlock();
-				for(int i = -3; i<=3;i++)
+				for(int i = -2; i<=2;i++)
 				{
 					for(int j = -3; j<0;j++)
 					{
-						for(int k = -3; k<=3;k++)
+						for(int k = -2; k<=2;k++)
 						{
 							Block sign = b.getRelative(i,j,k);
 							if(sign.getState() instanceof Sign)

@@ -168,6 +168,7 @@ public class ScoreBoard {
 			if(!newSign.getLine(0).equals(s))
 			{
 				newSign.setLine(0, s);
+				newSign.update(true);
 			}
 			result.add(newSign);
 			Material type = b.getType();

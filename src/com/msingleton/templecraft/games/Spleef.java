@@ -65,6 +65,7 @@ public class Spleef extends Game
 		isRunning = false;
 		for(Player p : aliveSet)
 		{
+			lobbyLoc.getChunk().load(true);
 			p.teleport(lobbyLoc);
 		}
 		tellAll(winner.getDisplayName()+" won round "+roundNum);
@@ -112,6 +113,7 @@ public class Spleef extends Game
 
 	public void playerDeath(Player p)
 	{
+		lobbyLoc.getChunk().load(true);
 		p.teleport(lobbyLoc);
 		super.playerDeath(p);
 		aliveSet.remove(p);

@@ -35,6 +35,7 @@ public class Race extends Game
 
 	public void playerDeath(Player p)
 	{
+		lobbyLoc.getChunk().load(true);
 		p.teleport(lobbyLoc);
 		super.playerDeath(p);
 	}

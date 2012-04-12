@@ -129,6 +129,7 @@ public class Game
 			{
 				p.getInventory().setHelmet(new ItemStack(Material.WOOL,1,(short)0,(byte)tp.team));
 			}
+			getPlayerSpawnLoc(tp).getChunk().load(true);
 			p.teleport(getPlayerSpawnLoc(tp));
 		}
 		readySet.clear();
@@ -582,6 +583,7 @@ public class Game
 		}
 		TCUtils.restoreHealth(p);
 
+		lobbyLoc.getChunk().load(true);
 		p.teleport(lobbyLoc);
 		tellPlayer(p, Translation.tr("game.join", gameName));
 		p.setGameMode(GameMode.SURVIVAL);
@@ -974,10 +976,12 @@ public class Game
 					deadSet.remove(p);
 					if(tp.currentCheckpoint != null)
 					{
+						tp.currentCheckpoint.getChunk().load(true);
 						p.teleport(tp.currentCheckpoint);
 					}
 					else
 					{
+						getPlayerSpawnLoc(tp).getChunk().load(true);
 						p.teleport(getPlayerSpawnLoc(tp));
 					}
 
@@ -997,10 +1001,12 @@ public class Game
 				deadSet.remove(p);
 				if(tp.currentCheckpoint != null)
 				{
+					tp.currentCheckpoint.getChunk().load(true);
 					p.teleport(tp.currentCheckpoint);
 				}
 				else
 				{
+					getPlayerSpawnLoc(tp).getChunk().load(true);
 					p.teleport(getPlayerSpawnLoc(tp));
 				}
 

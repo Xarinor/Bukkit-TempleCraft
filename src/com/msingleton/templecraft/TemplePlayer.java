@@ -84,27 +84,52 @@ public class TemplePlayer
 	public void startEnterTimer(final Player p)
 	{
 		final TemplePlayer tp = TempleManager.templePlayerMap.get(p);
-		count = 5;
-		counter = new TimerTask()
+		
+		try
 		{
-			public void run()
+			count = Integer.parseInt(tp.sensedSign.getLine(3));
+		}
+		catch (Exception e)
+		{
+			count = 5;
+		}
+		
+		if(count == 0)
+		{
+			try 
 			{
-				if(count <= 3 && count > 0)
-				{
-					TempleManager.tellPlayer(p, Translation.tr("enteringTemple",count));
-				}
-				else if(count <= 0)
-				{
-					TCPlayerListener.handleSignClicked(p,tp.sensedSign);
-					tp.sensedSign = null;
-					tp.canAutoTele = false;
-					cancel();
-				}
-				count--;
+				Thread.sleep(1000);
+			} 
+			catch (InterruptedException e) 
+			{
 			}
-		};
-
-		playerTimer.scheduleAtFixedRate(counter, 0, 1000);
+			TCPlayerListener.handleSignClicked(p,tp.sensedSign);
+			tp.sensedSign = null;
+			tp.canAutoTele = false;
+		}
+		else
+		{
+			counter = new TimerTask() //ToDo: check timer task
+			{
+				public void run()
+				{
+					if(count <= 3 && count > 0)
+					{
+						TempleManager.tellPlayer(p, Translation.tr("enteringTemple",count));
+					}
+					else if(count <= 0)
+					{
+						TCPlayerListener.handleSignClicked(p,tp.sensedSign);
+						tp.sensedSign = null;
+						tp.canAutoTele = false;
+						cancel();
+					}
+					count--;
+				}
+			};
+	
+			playerTimer.scheduleAtFixedRate(counter, 0, 1000);
+		}
 	}
 
 	public void stopEnterTimer()

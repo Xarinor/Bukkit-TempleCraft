@@ -56,6 +56,7 @@ public class Adventure extends Game
 				TempleManager.tellPlayer(p, Translation.tr("adventure.rejoinFail2"));
 			}
 		}
+		lobbyLoc.getChunk().load(true);
 		p.teleport(lobbyLoc);
 		super.playerDeath(p);
 	}

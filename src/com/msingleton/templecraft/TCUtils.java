@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -571,14 +572,12 @@ public class TCUtils
 			TempleManager.locationMap.put(p, p.getLocation());
 		}
 		Location lobbyLoc = temple.getLobbyLoc(EditWorld);
-		if(lobbyLoc != null)
+		if(lobbyLoc == null)
 		{
-			p.teleport(lobbyLoc);
+			lobbyLoc = new Location(EditWorld,-1, EditWorld.getHighestBlockYAt(-1, -1)+2, -1);
 		}
-		else
-		{
-			p.teleport(new Location(EditWorld,-1, EditWorld.getHighestBlockYAt(-1, -1)+2, -1));
-		}
+		lobbyLoc.getChunk().load(true);
+		p.teleport(lobbyLoc);
 		p.setGameMode(GameMode.CREATIVE);
 	}
 
@@ -696,6 +695,7 @@ public class TCUtils
 				{
 					p.kickPlayer("Could not find a non temporary world to teleport you to.");
 				}
+				(new Location(w,0,0,0)).getChunk().load(true);
 				p.teleport(new Location(w,0,0,0));
 			}
 			else
@@ -998,17 +998,25 @@ public class TCUtils
         String pluginUrlString = "http://dev.bukkit.org/server-mods/templecraft-bootscreen/files.rss";
         try {
             URL url = new URL(pluginUrlString);
-            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(url.openConnection().getInputStream());
-            doc.getDocumentElement().normalize();
-            NodeList nodes = doc.getElementsByTagName("item");
-            Node firstNode = nodes.item(0);
-            if (firstNode.getNodeType() == 1) 
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            if(con.getResponseCode() == 200)
             {
-                Element firstElement = (Element)firstNode;
-                NodeList firstElementTagName = firstElement.getElementsByTagName("title");
-                Element firstNameElement = (Element) firstElementTagName.item(0);
-                NodeList firstNodes = firstNameElement.getChildNodes();
-                return firstNodes.item(0).getNodeValue().replace("Templecraft v", "");
+	            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(url.openConnection().getInputStream());
+	            doc.getDocumentElement().normalize();
+	            NodeList nodes = doc.getElementsByTagName("item");
+	            Node firstNode = nodes.item(0);
+	            if (firstNode.getNodeType() == 1) 
+	            {
+	                Element firstElement = (Element)firstNode;
+	                NodeList firstElementTagName = firstElement.getElementsByTagName("title");
+	                Element firstNameElement = (Element) firstElementTagName.item(0);
+	                NodeList firstNodes = firstNameElement.getChildNodes();
+	                return firstNodes.item(0).getNodeValue().replace("Templecraft v", "");
+	            }
+            }
+            else
+            {
+            	System.err.println("[TempleCraft] Can't check http://dev.bukkit.org/server-mods/templecraft-bootscreen/files.rss for updates");
             }
         }
         catch (Exception localException)

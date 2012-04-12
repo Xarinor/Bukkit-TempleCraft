@@ -60,6 +60,7 @@ public class PVP extends Game
 
 	public void playerDeath(Player p)
 	{
+		lobbyLoc.getChunk().load(true);
 		p.teleport(lobbyLoc);
 		super.playerDeath(p);
 		aliveSet.remove(p);
