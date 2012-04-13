@@ -55,7 +55,12 @@ public class TCMonsterListener implements Listener
 
 		Entity e = event.getEntity();
 
-		Game game;
+		if (e == null)
+		{
+			return;
+		}
+
+		Game game = null;
 		if(e instanceof Creature)
 		{
 			game = TCUtils.getGame(e);
@@ -122,7 +127,6 @@ public class TCMonsterListener implements Listener
 			}
 
 			// Wait a couple of ticks, then rebuild the blocks.
-			System.err.print(e.getType());
 			TempleManager.server.getScheduler().scheduleSyncDelayedTask(plugin,
 					new Runnable()
 			{
@@ -228,6 +232,20 @@ public class TCMonsterListener implements Listener
 							{
 								e.setHealth((int) ((Arena)game).getZombieHealth());
 							}
+							
+							//TODO: implement setMaxHealth() when bukkit support it.
+							/*if(game instanceof Adventure)
+							{
+								int i = game.LocHealthMap.get(loc);
+								if(i > 0)
+								{
+									if(i > e.getMaxHealth())
+									{
+										i = e.getMaxHealth();
+									}
+									e.setHealth(i);
+								}
+							}*/
 						}
 					}
 					else

@@ -75,13 +75,14 @@ public class Game
 	public int saveAmount = 5;
 
 	// Contains Active Mob Spawnpoints and Creature Types
-	public Map<Location,Pair<EntityType,Integer>> mobSpawnpointMap	 = new HashMap<Location,Pair<EntityType,Integer>>();
+	public Map<Location,Pair<EntityType,Pair<Integer,Integer>>> mobSpawnpointMap	 = new HashMap<Location,Pair<EntityType,Pair<Integer,Integer>>>();
 	public Map<Integer, Integer> mobGoldMap			= new HashMap<Integer, Integer>();
 	public Map<Location, Integer> checkpointMap		= new HashMap<Location, Integer>();
 	public Map<Location, String[]> chatMap			 = new HashMap<Location, String[]>();
 	public Map<Location, List<ItemStack>> rewardLocMap = new HashMap<Location, List<ItemStack>>();
 	public Map<Location, Integer> lobbyLocMap		  = new HashMap<Location, Integer>();
 	public Map<Location, Integer> startLocMap		  = new HashMap<Location, Integer>();
+	public Map<Location, Integer> LocHealthMap		  = new HashMap<Location, Integer>();
 
 	public Set<Player> playerSet		= new HashSet<Player>();
 	public Set<Player> readySet		 = new HashSet<Player>();
@@ -290,7 +291,7 @@ public class Game
 				temple.coordLocSet.remove(b);
 			}
 			mobSpawnpointSet.add(b.getLocation());
-			mobSpawnpointMap.put(b.getLocation(),new Pair<EntityType,Integer>(TCMobHandler.getRandomCreature(),20));
+			mobSpawnpointMap.put(b.getLocation(),new Pair<EntityType,Pair<Integer,Integer>>(TCMobHandler.getRandomCreature(),new Pair<Integer,Integer>(20,0)));
 			b.setTypeId(0);
 		}
 		for(Block b: getBlockSet(diamondBlock))
@@ -450,9 +451,20 @@ public class Game
 			{
 				range = 20;
 			}
+			int health;
+			try
+			{
+				health = Integer.parseInt(Lines[2]);
+			}
+			catch(Exception e)
+			{
+				health = 0;
+			}
 			Location loc = new Location(b.getWorld(),b.getX()+.5,b.getY(),b.getZ()+.5);
 			mobSpawnpointSet.add(loc);
-			mobSpawnpointMap.put(loc,new Pair<EntityType,Integer>(ct,range));
+			//mobSpawnpointMap.put(loc,new Pair<EntityType,Integer>(ct,range));
+			mobSpawnpointMap.put(loc,new Pair<EntityType,Pair<Integer,Integer>>(ct,new Pair<Integer,Integer>(range,health)));
+			LocHealthMap.put(loc, health);
 			b.setTypeId(0);
 		}
 	}

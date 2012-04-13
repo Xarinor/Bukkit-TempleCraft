@@ -14,14 +14,25 @@ public class TCMobHandler
 	
 	public static void SpawnMobs(Game game, Location loc, EntityType mob) 
 	{
+		SpawnMobs(game, loc, mob, 0);
+	}
+	
+	public static void SpawnMobs(Game game, Location loc, EntityType mob, int health) 
+	{
 		//for (int i = 0; i < playerSet.size(); i++)
 		//{
 			try
 			{
 				LivingEntity e = game.world.spawnCreature(loc,mob);
-			
+				
 				if(e == null)
 					return;
+
+				//TODO: implement setMaxHealth() when bukkit support it.
+				/*if(health > 0)
+				{
+					e.setHealth(health);
+				}*/
 				
 				Random r = new Random();
 				if(TempleCraft.economy != null && (TempleManager.mobGoldMin + TempleManager.mobGoldRan) != 0 && r.nextInt(3) == 0)

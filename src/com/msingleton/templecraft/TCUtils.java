@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -1018,6 +1019,10 @@ public class TCUtils
             {
             	System.err.println("[TempleCraft] Can't check http://dev.bukkit.org/server-mods/templecraft-bootscreen/files.rss for updates");
             }
+        }
+        catch (SocketException localException)
+        {
+        	System.err.println("[TempleCraft] Can't check http://dev.bukkit.org/server-mods/templecraft-bootscreen/files.rss for updates");
         }
         catch (Exception localException)
         {

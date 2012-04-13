@@ -127,7 +127,7 @@ public class Adventure extends Game
 		Set<Location> tempLocs = new HashSet<Location>();
 		for(Location loc : mobSpawnpointMap.keySet())
 		{
-			if(p.getLocation().distance(loc) < mobSpawnpointMap.get(loc).b)
+			if(p.getLocation().distance(loc) < mobSpawnpointMap.get(loc).b.a)
 			{
 				tempLocs.add(loc);
 			}
@@ -135,7 +135,8 @@ public class Adventure extends Game
 
 		for(Location loc : tempLocs)
 		{
-			TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.remove(loc).a);
+			TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc).a,mobSpawnpointMap.get(loc).b.b);
+			mobSpawnpointMap.remove(loc);
 		}
 	}
 
