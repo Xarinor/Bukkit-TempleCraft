@@ -222,7 +222,7 @@ public class TCMonsterListener implements Listener
 				LivingEntity e = (LivingEntity) event.getEntity();
 				if(TCUtils.isTCWorld(loc.getWorld()))
 				{
-					if(event.getSpawnReason().equals(SpawnReason.CUSTOM))
+					if(event.getSpawnReason().equals(SpawnReason.CUSTOM) || event.getSpawnReason().equals(SpawnReason.SPAWNER_EGG))
 					{
 						Game game = TCUtils.getGameByWorld(loc.getWorld());
 						if(game != null)

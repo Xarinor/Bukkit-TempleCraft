@@ -32,6 +32,8 @@ public class Temple {
 	protected String owners;
 	protected String editors;
 	protected File ChunkGeneratorFile;
+	protected Environment env = null;
+	protected WorldType wt = null;
 
 	// Sets and Maps for storing players and their locations.
 	protected Set<String> ownerSet	= new HashSet<String>();
@@ -60,6 +62,8 @@ public class Temple {
 		maxPlayersPerGame = TCUtils.getInt(config,"Temples."+name+".maxPlayersPerGame", -1);
 		isEnabled  = true;
 		ChunkGeneratorFile = TCRestore.getChunkGenerator(this);
+		env = Environment.NORMAL;
+		wt = WorldType.NORMAL;
 		loadEditors();
 		TempleManager.templeSet.add(this);
 	}
@@ -73,7 +77,7 @@ public class Temple {
 	public World loadTemple(String type)
 	{
 		World result;
-
+		
 		String worldName;
 		if(TempleManager.constantWorldNames)
 		{
@@ -99,18 +103,34 @@ public class Temple {
 		File tcffile = new File("plugins/TempleCraft/SavedTemples/"+templeName+TempleCraft.fileExtention);
 
 		WorldCreator wc = new WorldCreator(worldName);
-		wc.environment(Environment.NORMAL);
+		if(env != null)
+		{
+			wc.environment(env);
+		}
+		else
+		{
+			wc.environment(Environment.NORMAL);
+		}
+		if(wt != null)
+		{
+			wc.type(wt);
+		}
+		else
+		{
+			wc.type(WorldType.NORMAL);
+		}
+
+		if(ChunkGeneratorFile != null)
+		{
+			ChunkGenerator cg = TCRestore.getChunkGenerator(ChunkGeneratorFile);
+			if(cg != null)
+			{
+				wc.generator(cg);
+			}
+		}
 		// if the tcf file doesn't exist
 		if(TCRestore.loadTemple(worldName, this) || !tcffile.exists())
 		{
-			if(ChunkGeneratorFile != null)
-			{
-				ChunkGenerator cg = TCRestore.getChunkGenerator(ChunkGeneratorFile);
-				if(cg != null)
-				{
-					wc.generator(cg);
-				}
-			}
 			result = TempleManager.server.createWorld(wc);
 			if(TempleCraft.MVWM != null)
 			{
@@ -126,7 +146,6 @@ public class Temple {
 			ChunkGeneratorFile = new File("plugins/TempleCraft/SavedTemples/"+templeName+"/Flat1.jar");
 			ChunkGenerator cg = TCRestore.getChunkGenerator(ChunkGeneratorFile);
 			wc.generator(cg);*/
-			wc.type(WorldType.FLAT);
 			result = TempleManager.server.createWorld(wc);
 			if(TempleCraft.MVWM != null)
 			{

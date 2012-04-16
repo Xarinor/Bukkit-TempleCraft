@@ -298,7 +298,7 @@ public class TempleManager
 		if(!cgFolder.exists())
 		{
 			cgFolder.mkdir();
-			TCUtils.copyFromJarToDisk("Flat1.jar", cgFolder);
+			/*TCUtils.copyFromJarToDisk("Flat1.jar", cgFolder);*/
 		}
 
 		// Handles getting mob gold drop amount from config

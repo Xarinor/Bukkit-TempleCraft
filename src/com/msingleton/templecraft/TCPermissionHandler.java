@@ -22,7 +22,7 @@ public class TCPermissionHandler {
 		c1+"/tct forcestart <game>"+c2+" - Manually start a Game.",
 		c1+"/tct forceend <game>"+c2+"   - Manually end a Game.",
 		c1+"/tct checkupdates"+c2+"		 - Checks for updates.",
-		c1+"/tct new <temple>"+c2+"		 - Creates a new Temple.",
+		c1+"/tct new <temple> (generator)"+c2+" - Creates a new Temple.",
 		c1+"/tct edit <temple>"+c2+"	 - Edit an existing temple.",
 		c1+"/tct delete <temple>"+c2+"  - Delete an existing temple.",
 		c1+"/tct save"+c2+"			   - Save the current temple.",

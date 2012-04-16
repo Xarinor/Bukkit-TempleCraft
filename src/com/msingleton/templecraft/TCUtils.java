@@ -27,6 +27,8 @@ import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.Material;
 import org.bukkit.Location;
+import org.bukkit.World.Environment;
+import org.bukkit.WorldType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Creature;
@@ -480,7 +482,22 @@ public class TCUtils
 
 		if(ChunkGen != null)
 		{
-			temple.ChunkGeneratorFile = getChunkGeneratorByName(ChunkGen);
+			if(ChunkGen.equalsIgnoreCase("nether"))
+			{
+				temple.env = Environment.NETHER;
+			}
+			else if(ChunkGen.equalsIgnoreCase("the_end"))
+			{
+				temple.env = Environment.THE_END;
+			}
+			else if(ChunkGen.equalsIgnoreCase("flat"))
+			{
+				temple.wt = WorldType.FLAT;
+			}
+			else
+			{
+				temple.ChunkGeneratorFile = getChunkGeneratorByName(ChunkGen);
+			}
 		}
 
 		if(!edit)
