@@ -3,8 +3,8 @@ author: Bootscreen
 authors: [Mike Singleton]
 main: com.msingleton.templecraft.TempleCraft
 depend: [Vault]
-softdepend: [Heroes,Multiverse-Core]
-version: 0.44.7
+softdepend: [Heroes,Multiverse-Core,Catacombs]
+version: 0.45
 dev-url: http://dev.bukkit.org/server-mods/templecraft-bootscreen/
 
 commands:
@@ -46,8 +46,11 @@ permissions:
         default: op
 
 # General Play Commands
-    templecraft.tc:
+    templecraft.tct:
         description: Default Command for TempleCraft.
+        default: true
+    templecraft.version:
+        description: Display the used Version.
         default: true
     templecraft.newgame:
         description: Create a new game.
@@ -75,6 +78,9 @@ permissions:
         default: op
     templecraft.forceend:
         description: Ends the Temple.
+        default: op
+    templecraft.closeall:
+        description: Close all Temple.
         default: op
 
 # Temple Edit Commands

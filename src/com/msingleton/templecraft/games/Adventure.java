@@ -65,7 +65,7 @@ public class Adventure extends Game
 	{
 		String[] Lines = sign.getLines();
 
-		if(!Lines[0].equals("[TempleCraft]") && !Lines[0].equals("[TC]") && !Lines[0].equals("[TempleCraftM]") && !Lines[0].equals("[TCM]"))
+		if(!Lines[0].equals("[TempleCraft]") && !Lines[0].equals("[TC]") && !Lines[0].equals("[TCB]") && !Lines[0].equals("[TempleCraftM]") && !Lines[0].equals("[TCM]"))
 		{
 			return;
 		}
@@ -95,7 +95,7 @@ public class Adventure extends Game
 
 			// Update ScoreBoards
 			List<String> scores = new ArrayList<String>();
-			scores.add(p.getDisplayName());
+			scores.add(p.getName());
 			scores.add(tp.roundMobsKilled + "");
 			scores.add(tp.roundGold + "");
 			scores.add(tp.roundDeaths + "");
@@ -135,8 +135,37 @@ public class Adventure extends Game
 
 		for(Location loc : tempLocs)
 		{
-			TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc).a,mobSpawnpointMap.get(loc).b.b);
-			mobSpawnpointMap.remove(loc);
+			try
+			{
+				if(mobSpawnpointMap.get(loc).a.b.contains(":"))
+				{
+					String[] split = mobSpawnpointMap.get(loc).a.b.split(":");
+					if(split.length > 1)
+					{
+						//spawn continoues mobs
+						int count = Integer.parseInt(split[1]);
+						long time = Integer.parseInt(split[0]) * 20;
+
+						TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc).a.a.a, mobSpawnpointMap.get(loc).a.a.b, mobSpawnpointMap.get(loc).b.b.a, count, time);
+						mobSpawnpointMap.remove(loc);
+					}
+					else
+					{
+						TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc).a.a.a, mobSpawnpointMap.get(loc).a.a.b, mobSpawnpointMap.get(loc).b.b.a, mobSpawnpointMap.get(loc).b.b.b, mobSpawnpointMap.get(loc).a.b);
+						mobSpawnpointMap.remove(loc);
+					}
+				}
+				else
+				{
+					TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc).a.a.a, mobSpawnpointMap.get(loc).a.a.b, mobSpawnpointMap.get(loc).b.b.a, mobSpawnpointMap.get(loc).b.b.b, mobSpawnpointMap.get(loc).a.b);
+					mobSpawnpointMap.remove(loc);
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc).a.a.a, mobSpawnpointMap.get(loc).a.a.b, mobSpawnpointMap.get(loc).b.b.a);
+				mobSpawnpointMap.remove(loc);
+			}
 		}
 	}
 

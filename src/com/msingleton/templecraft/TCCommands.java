@@ -117,6 +117,14 @@ public class TCCommands implements CommandExecutor
 	 */
 	private boolean basicCommands(Player p, String cmd)
 	{   
+
+		if(cmd.equals("version"))
+		{
+			TempleManager.tellPlayer(p,"[TempleCraft] Version " + plugin.getDescription().getVersion());
+			
+			return true;
+		}
+		
 		TemplePlayer tp = TempleManager.templePlayerMap.get(p);
 
 		if((cmd.equals("join") || cmd.equals("j")) && TCPermissionHandler.hasPermission(p, "templecraft.join"))
@@ -137,6 +145,18 @@ public class TCCommands implements CommandExecutor
 		{
 			TempleManager.playerLeave(p);
 			return true;
+		}
+		
+		if ((cmd.equals("closeall") || cmd.equals("ca")) && TCPermissionHandler.hasPermission(p, "templecraft.forceend"))
+		{
+			TempleManager.removeAll();
+			TempleCraft.TCScheduler.cancelAllTasks();
+			for(Game game : TempleManager.gameSet)
+			{
+				game.AbilityTaskIDs.clear();
+				game.SpawnTaskIDs.clear();
+				game.endGame();
+			}
 		}
 
 		if (cmd.equals("save"))

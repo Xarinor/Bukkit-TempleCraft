@@ -45,6 +45,7 @@ public class Temple {
 	public static int ironBlock = 42;
 	public static int goldBlock = 41;
 	public Set<Location> coordLocSet  = new HashSet<Location>();
+	//public Set<Location> placeableMatLocSet  = new HashSet<Location>();
 	public static int[] coordBlocks = {mobSpawner, diamondBlock, ironBlock, goldBlock, 63, 68};
 
 	protected Temple()
@@ -95,6 +96,10 @@ public class Temple {
 
 		// if the world already exists and it can not be deleted (i.e. it contains players) return null
 		World world = TempleManager.server.getWorld(worldName);
+		if(world != null && TempleManager.constantWorldNames)
+		{
+			return null;
+		}
 		if(world != null && !TCUtils.deleteTempWorld(world))
 		{
 			return null;
@@ -119,7 +124,6 @@ public class Temple {
 		{
 			wc.type(WorldType.NORMAL);
 		}
-
 		if(ChunkGeneratorFile != null)
 		{
 			ChunkGenerator cg = TCRestore.getChunkGenerator(ChunkGeneratorFile);
@@ -136,6 +140,10 @@ public class Temple {
 			{
 				TempleCraft.MVWM.addWorld(result.getName(), result.getEnvironment(), Long.toString(result.getSeed()), result.getWorldType(), false, null, true);
 			}
+			if(TempleCraft.catacombs != null)
+			{
+				TempleCraft.catacombs.loadWorld(result.getName());
+			}
 			System.out.println("[TempleCraft] World \""+worldName+"\" Loaded!");
 		}
 		else if(type.equals("Edit") || type.equals("Convert"))
@@ -150,6 +158,10 @@ public class Temple {
 			if(TempleCraft.MVWM != null)
 			{
 				TempleCraft.MVWM.addWorld(result.getName(), result.getEnvironment(), Long.toString(result.getSeed()), result.getWorldType(), false, null, true);
+			}
+			if(TempleCraft.catacombs != null)
+			{
+				TempleCraft.catacombs.loadWorld(result.getName());
 			}
 			TCRestore.loadTemple(new Location(result,0,0,0), this);
 		}

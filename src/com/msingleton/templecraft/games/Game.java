@@ -13,6 +13,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,6 +37,8 @@ import com.msingleton.templecraft.Temple;
 import com.msingleton.templecraft.TempleCraft;
 import com.msingleton.templecraft.TempleManager;
 import com.msingleton.templecraft.TemplePlayer;
+import com.msingleton.templecraft.custommobs.CustomMob;
+import com.msingleton.templecraft.custommobs.CustomMobManager;
 import com.msingleton.templecraft.util.MobArenaClasses;
 import com.msingleton.templecraft.util.Pair;
 import com.msingleton.templecraft.util.Translation;
@@ -59,6 +62,7 @@ public class Game
 	public static ChatColor c1 = TempleCraft.c1;
 	public static ChatColor c2 = TempleCraft.c2;
 	public static ChatColor c3 = TempleCraft.c3;
+	
 
 	// Location variables for the Temple region.
 	public Location lobbyLoc = null;
@@ -75,14 +79,15 @@ public class Game
 	public int saveAmount = 5;
 
 	// Contains Active Mob Spawnpoints and Creature Types
-	public Map<Location,Pair<EntityType,Pair<Integer,Integer>>> mobSpawnpointMap	 = new HashMap<Location,Pair<EntityType,Pair<Integer,Integer>>>();
+	public Map<Location,Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>> mobSpawnpointMap	 = new HashMap<Location,Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>>();
 	public Map<Integer, Integer> mobGoldMap			= new HashMap<Integer, Integer>();
 	public Map<Location, Integer> checkpointMap		= new HashMap<Location, Integer>();
 	public Map<Location, String[]> chatMap			 = new HashMap<Location, String[]>();
 	public Map<Location, List<ItemStack>> rewardLocMap = new HashMap<Location, List<ItemStack>>();
 	public Map<Location, Integer> lobbyLocMap		  = new HashMap<Location, Integer>();
 	public Map<Location, Integer> startLocMap		  = new HashMap<Location, Integer>();
-	public Map<Location, Integer> LocHealthMap		  = new HashMap<Location, Integer>();
+	public Map<Chunk, Entity[]> tempMobLoc		  = new HashMap<Chunk, Entity[]>();
+	//public Map<Location, Integer> LocHealthMap		  = new HashMap<Location, Integer>();
 
 	public Set<Player> playerSet		= new HashSet<Player>();
 	public Set<Player> readySet		 = new HashSet<Player>();
@@ -90,10 +95,16 @@ public class Game
 	public Set<Player> rewardSet		= new HashSet<Player>();
 	public Set<LivingEntity> monsterSet = new HashSet<LivingEntity>();
 
+	public Set<Pair<Location,Set<Integer>>> placeableLocs = new HashSet<Pair<Location,Set<Integer>>>();
 	public Set<Location> coordLocSet = new HashSet<Location>();
 	public Set<Block> tempBlockSet   = new HashSet<Block>();
 	public Set<Location> endLocSet   = new HashSet<Location>();
 	public List<ItemStack> rewards	= new ArrayList<ItemStack>();
+
+	public Set<Integer> SpawnTaskIDs   = new HashSet<Integer>();
+	public Map<CustomMob,Integer> AbilityTaskIDs   = new HashMap<CustomMob,Integer>();
+	
+	public CustomMobManager customMobManager = new CustomMobManager();
 
 	public long startTime;
 	public static int mobSpawner = 7;
@@ -123,6 +134,7 @@ public class Game
 		isRunning = true;
 		startTime = System.currentTimeMillis();
 		convertSpawnpoints();
+		//getplaceableLocs();
 		for(Player p : playerSet)
 		{
 			TemplePlayer tp = TempleManager.templePlayerMap.get(p);
@@ -138,12 +150,24 @@ public class Game
 		tellAll(Translation.tr("game.start"));
 	}
 
+
 	/**
 	 * Ends the game.
 	 */
 	public void endGame()
 	{
 		TempleManager.tellAll(Translation.tr("game.finished", gameType, temple.templeName));
+		for(int id : SpawnTaskIDs)
+		{
+			TempleCraft.TCScheduler.cancelTask(id);
+		}
+		SpawnTaskIDs.clear();
+		for(int id : AbilityTaskIDs.values())
+		{
+			TempleCraft.TCScheduler.cancelTask(id);
+		}
+		AbilityTaskIDs.clear();
+		tempMobLoc.clear();
 		isRunning = false;
 		isEnding = true;
 		readySet.clear();
@@ -186,40 +210,48 @@ public class Game
 		consolidateRewards();
 		for(Player p : players)
 		{
-			StringBuilder msg = new StringBuilder();
-			TemplePlayer tp = TempleManager.templePlayerMap.get(p);
-			List<ItemStack> tempList = new ArrayList<ItemStack>();
-			for(ItemStack item : tp.rewards)
+			try
 			{
-				if(item != null)
+				StringBuilder msg = new StringBuilder();
+				TemplePlayer tp = TempleManager.templePlayerMap.get(p);
+				List<ItemStack> tempList = new ArrayList<ItemStack>();
+				for(ItemStack item : tp.rewards)
 				{
-					tempList.add(item);
+					if(item != null)
+					{
+						tempList.add(item);
+					}
 				}
-			}
-
-			int size = tempList.size();
-			if(size == 0)
-			{
-				continue;
-			}
-			for(int i = 0; i<size; i++)
-			{
-				ItemStack item = tempList.get(i);
-				if(item != null)
+	
+				int size = tempList.size();
+				if(size == 0)
 				{
-					msg.append(item.getAmount()+" "+TCUtils.getMaterialName(item.getType().name()));
-					if(i<size-2)
-					{
-						msg.append(", ");
-					}
-					else if(i<size-1)
-					{
-						msg.append(" "+Translation.tr("and")+" ");
-					}
-					p.getInventory().addItem(item);
+					continue;
 				}
+				for(int i = 0; i<size; i++)
+				{
+					ItemStack item = tempList.get(i);
+					if(item != null)
+					{
+						msg.append(item.getAmount()+" "+TCUtils.getMaterialName(item.getType().name()));
+						if(i<size-2)
+						{
+							msg.append(", ");
+						}
+						else if(i<size-1)
+						{
+							msg.append(" "+Translation.tr("and")+" ");
+						}
+						p.getInventory().addItem(item);
+					}
+				}
+				TempleManager.tellPlayer(p,Translation.tr("game.treasureReceived", msg.toString()));
 			}
-			TempleManager.tellPlayer(p,Translation.tr("game.treasureReceived", msg.toString()));
+			catch (Exception e)
+			{
+				System.out.print("[TempleCraft] Error during reward distribution to player:" + p.getName());
+				System.out.print("[TempleCraft] " + e.getMessage());
+			}
 		}
 	}
 
@@ -269,7 +301,7 @@ public class Game
 			}
 		}
 	}
-
+	
 	protected void convertSpawnpoints()
 	{
 		for(Block b: getBlockSet(Material.WALL_SIGN.getId()))
@@ -291,7 +323,7 @@ public class Game
 				temple.coordLocSet.remove(b);
 			}
 			mobSpawnpointSet.add(b.getLocation());
-			mobSpawnpointMap.put(b.getLocation(),new Pair<EntityType,Pair<Integer,Integer>>(TCMobHandler.getRandomCreature(),new Pair<Integer,Integer>(20,0)));
+			mobSpawnpointMap.put(b.getLocation(),new Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>(new Pair<Pair<EntityType,Integer>,String>(new Pair<EntityType,Integer>(TCMobHandler.getRandomCreature(),-1),"0:1"),new Pair<Integer,Pair<Integer,Integer>>(20,new Pair<Integer,Integer>(0,1))));
 			b.setTypeId(0);
 		}
 		for(Block b: getBlockSet(diamondBlock))
@@ -365,6 +397,98 @@ public class Game
 		Block b = sign.getBlock();
 
 
+		if(Lines[0].equals("[TCB]"))
+		{
+			int size = -1;
+			EntityType ct = null;
+			if(Lines[1].contains(":"))
+			{
+				String[] split = Lines[1].split(":");
+				ct = EntityType.fromName(split[0]);
+
+				if(ct == null)
+				{
+					System.out.println("[TempleCraft] Could not find EntityType \"" + split[0] + "\"");
+					return;
+				}
+				if(split.length == 2)
+				{
+					if(ct == EntityType.SLIME)
+					{
+						try
+						{
+							size = Integer.parseInt(split[1]);
+						}
+						catch (Exception e) 
+						{
+							size = -1;
+						}
+					}
+				}
+			}
+			else
+			{
+				ct = EntityType.fromName(Lines[1]);
+			}
+			if(ct == null)
+			{
+				System.out.println("[TempleCraft] Could not find EntityType \"" + Lines[1] + "\"");
+				return;
+			}
+			int range = 20;
+			int health = 0;
+			int dmgmulti = 0;
+			try
+			{
+				String[] split = Lines[2].split(":");
+				if(split[0].contains("-"))
+				{
+					health = 0;
+				}
+				else
+				{
+					health = Integer.parseInt(split[0]);
+				}
+				
+				if(split.length > 1)
+				{
+					if(split[1].contains("-"))
+					{
+						range = 20;
+					}
+					else
+					{
+						range = Integer.parseInt(split[1]);
+					}
+				}
+				
+				if(split.length > 2)
+				{
+					if(split[2].contains("-"))
+					{
+						dmgmulti = 0;
+					}
+					else
+					{
+						dmgmulti = Integer.parseInt(split[2]);
+					}
+				}
+			}
+			catch(Exception e)
+			{
+				health = 0;
+				range = 20;
+				System.out.println("[TempleCraft] Could not use this line \"" + Lines[2] + "\" for health:range:dmgmultiplicator");
+			}
+			Location loc = new Location(b.getWorld(),b.getX()+.5,b.getY(),b.getZ()+.5);
+			mobSpawnpointSet.add(loc);
+			//mobSpawnpointMap.put(loc,new Pair<EntityType,Integer>(ct,range));
+			mobSpawnpointMap.put(loc,new Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>(new Pair<Pair<EntityType,Integer>,String>(new Pair<EntityType,Integer>(ct,size),Lines[3]),new Pair<Integer,Pair<Integer,Integer>>(range,new Pair<Integer,Integer>(health,dmgmulti))));
+			//LocHealthMap.put(loc, health);
+			b.setTypeId(0);
+			return;		
+		}
+		
 		if(!Lines[0].equals("[TempleCraft]") && !Lines[0].equals("[TC]"))
 		{
 			if(Lines[0].equals("[TempleCraftM]") || Lines[0].equals("[TCM]"))
@@ -387,6 +511,42 @@ public class Game
 		}
 		else if(Lines[1].toLowerCase().equals("classes"))
 		{
+			//sign.getBlock().setTypeId(0);
+		}
+		else if(Lines[1].toLowerCase().equals("place"))
+		{
+			int radius = 1;
+			try
+			{
+				radius = Integer.parseInt(Lines[2]);
+			}
+			catch(Exception e)
+			{
+				radius = 1;
+			}
+			for(int x=-radius;x<=radius;x++)
+			{
+				for(int y=-radius;y<=radius;y++)
+				{
+					for(int z=-radius;z<=radius;z++)
+					{
+						Location loc = new Location(world,b.getX() + x, b.getY() + y, b.getZ() + z);
+						String[] split = Lines[3].split(",");
+						Set<Integer> blocks = new HashSet<Integer>();
+						for (String str : split)
+						{
+							try
+							{
+								blocks.add(Integer.parseInt(str));
+							}
+							catch (Exception e) {}
+						}
+						placeableLocs.add(new Pair<Location,Set<Integer>>(loc,blocks));
+						
+						b.setTypeId(0);
+					}
+				}
+			}
 			//sign.getBlock().setTypeId(0);
 		}
 		else if(Lines[1].toLowerCase().equals("checkpoint"))
@@ -437,19 +597,63 @@ public class Game
 		}
 		else
 		{
-			EntityType ct = EntityType.fromName(Lines[1]);
+			int size = -1;
+			EntityType ct = null;
+			if(Lines[1].contains(":"))
+			{
+				String[] split = Lines[1].split(":");
+				ct = EntityType.fromName(split[0]);
+				if(split.length == 2)
+				{
+					if(ct == EntityType.SLIME)
+					{
+						try
+						{
+							size = Integer.parseInt(split[1]);
+						}
+						catch (Exception e) 
+						{
+							size = -1;
+						}
+					}
+				}
+			}
+			else
+			{
+				ct = EntityType.fromName(Lines[1]);
+			}
+			
 			if(ct == null)
 			{
 				return;
 			}
-			int range;
+			int range = 20;
+			String time_count = "0:1";
 			try
 			{
-				range = Integer.parseInt(Lines[3]);
+				String[] split = Lines[3].split(":");
+				if(split[0].contains("-"))
+				{
+					range = 20;
+				}
+				else
+				{
+					range = Integer.parseInt(split[0]);
+				}
+				
+				if(split.length > 2)
+				{
+					time_count = split[1] + ":" +  split[2];
+				}
+				else if(split.length > 1)
+				{
+					time_count = split[1] + ":1";
+				}
 			}
 			catch(Exception e)
 			{
 				range = 20;
+				time_count = "0:1";
 			}
 			int health;
 			try
@@ -460,18 +664,14 @@ public class Game
 			{
 				health = 0;
 			}
+			int dmgmulti = 1;
 			Location loc = new Location(b.getWorld(),b.getX()+.5,b.getY(),b.getZ()+.5);
 			mobSpawnpointSet.add(loc);
 			//mobSpawnpointMap.put(loc,new Pair<EntityType,Integer>(ct,range));
-			mobSpawnpointMap.put(loc,new Pair<EntityType,Pair<Integer,Integer>>(ct,new Pair<Integer,Integer>(range,health)));
-			LocHealthMap.put(loc, health);
+			mobSpawnpointMap.put(loc,new Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>(new Pair<Pair<EntityType,Integer>,String>(new Pair<EntityType,Integer>(ct,size),time_count),new Pair<Integer,Pair<Integer,Integer>>(range,new Pair<Integer,Integer>(health,dmgmulti))));
+			//LocHealthMap.put(loc, health);
 			b.setTypeId(0);
 		}
-	}
-
-	public void handleSignClicked(Player p, Sign sign)
-	{
-
 	}
 
 	public Set<Location> getPossibleSpawnLocs(int team)
@@ -646,6 +846,16 @@ public class Game
 		MobArenaClasses.classMap.remove(p);
 		tp.tempSet.clear();
 		tp.roundDeaths++;
+
+		
+		for( LivingEntity tamedMob : tp.tamedMobSet)
+		{
+			if(!tamedMob.isDead())
+			{
+				tamedMob.damage(tamedMob.getMaxHealth());
+			}
+			tp.tamedMobSet.remove(tamedMob);
+		}
 
 		TCUtils.restoreHealth(p);
 		p.setFoodLevel(20);
@@ -1169,7 +1379,7 @@ public class Game
 
 	public void onEntityKilledByEntity(LivingEntity killed, Entity killer)
 	{
-
+		
 		if (killed instanceof Player)
 		{		
 			Player p = (Player) killed;

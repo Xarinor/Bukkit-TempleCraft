@@ -64,9 +64,9 @@ playerAlreadyRemoved=%s hat keinen Zugang zu %s.
 cantEdit=Du hast keine Berechtigung diesen Tempel zu verändern.
 
 adventure.rejoin1=Das Weiterspielen kostet dich [GOLD]%d %s.
-adventure.rejoin2=Oder schreibe ""/\/tc leave"" und beginne wieder von vorne!
+adventure.rejoin2=Oder schreibe "/tct leave" und beginne wieder von vorne!
 adventure.rejoinFail1=Du hast nicht genug %s um weiterzumachen.
-adventure.rejoinFail2=Du willst gehen? Dann Schreibe"" /tc leave"" um den Tempel zu verlassen..
+adventure.rejoinFail2=Du willst gehen? Dann Schreibe "/tct leave" um den Tempel zu verlassen..
 
 game.created=Das neue Spiel %s ist erstellt.
 game.start=Es geht los!
@@ -84,7 +84,7 @@ game.everyoneReady=Alle sind bereit in %s.
 game.join=Du bist beim Spiel %s. Viel Spass!
 game.plist=[GRAY]Spielen in %s: [WHITE]%s 
 game.rlist=[GRAY]Sind nicht bereit in %s: [WHITE]%s 
-game.forceStartFail=Es sind keine Spieler da und deshalb kannst mich nicht zwingen das Spiel zu beginnen.
+game.forceStartFail=Es sind keine Spieler da und deshalb kannst du mich nicht zwingen das Spiel zu beginnen.
 game.forcedStart=Du zwingst mich ein Spiel zu beginnen. Na Gut.
 game.forcedEnd=Endlich. Dein von die erzwungenes Spiel endet.
 game.transaction=[GOLD]%d %s [WHITE]wurde von deinem Konto abgezogen.
@@ -109,7 +109,7 @@ playerListener.entranceFound=DU hast einen Eingang zu einem Tempel gefunden!! Sa
 playerListener.denyHelmet=Du darfst deinen Helm nicht entfernen.
 enteringTemple=Du betrittst den Tempel in %d... 
 
-teleportListener.deny=Du kannst den Tempel nicht verlassen! Wenn du unbedingt willst, dann schreibe ""/tc leave"" und gerate in Vergessenheit wie so viele schon vor dir...
+teleportListener.deny=Du kannst den Tempel nicht verlassen! Wenn du unbedingt willst, dann schreibe "/tct leave" und gerate in Vergessenheit wie so viele schon vor dir...
 
 classes.selectClass=Schlag das jeweilige Schild um dein Klasse zu wählen.
 classes.classChosen=Du hast %s als deine Klasse ausgewählt!

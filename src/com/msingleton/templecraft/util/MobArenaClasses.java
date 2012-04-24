@@ -15,6 +15,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -105,25 +106,28 @@ public class MobArenaClasses implements Listener
 	private void handleSign(Player p, Action a, Sign sign)
 	{
 		// Check if the first line of the sign is a class name.
-		String Line2 = sign.getLine(1);
-		if(classes.contains(Line2))
+		if(p != null)
 		{
-			if (a == Action.RIGHT_CLICK_BLOCK)
+			String Line2 = sign.getLine(1);
+			if(classes.contains(Line2))
 			{
-				TempleManager.tellPlayer(p, Translation.tr("classes.selectClass"));
+				if (a == Action.RIGHT_CLICK_BLOCK)
+				{
+					TempleManager.tellPlayer(p, Translation.tr("classes.selectClass"));
+					return;
+				}
+	
+				TemplePlayer tp = TempleManager.templePlayerMap.get(p);
+	
+				// Set the player's class.
+				Game game = tp.currentGame;
+				if(game != null && (!game.isRunning || game.deadSet.contains(p)))
+				{
+					assignClass(p, Line2);
+					TempleManager.tellPlayer(p, Translation.tr("classes.classChosen", Line2));
+				}
 				return;
 			}
-
-			TemplePlayer tp = TempleManager.templePlayerMap.get(p);
-
-			// Set the player's class.
-			Game game = tp.currentGame;
-			if(game != null && (!game.isRunning || game.deadSet.contains(p)))
-			{
-				assignClass(p, Line2);
-				TempleManager.tellPlayer(p, Translation.tr("classes.classChosen", Line2));
-			}
-			return;
 		}
 	}
 
@@ -221,6 +225,7 @@ public class MobArenaClasses implements Listener
 				{
 					amount = 1;
 				}
+				
 
 				// Create ItemStack with appropriate constructor.
 				if (item[0].matches("[0-9]+"))
@@ -248,7 +253,38 @@ public class MobArenaClasses implements Listener
 				{
 					stack.setDurability((short) Integer.parseInt(item[2]));
 				}
-
+				if (item.length == 2  && !item[1].matches("[0-9]+") && item[1].matches("^([0-9]{1,2}([-][1-6])?)((;)([0-9]{1,2}([-][1-6])?))*$"))
+				{
+					try
+					{
+						String[] ench_strings = item[1].split(";");
+						Map<Enchantment,Integer> enchantments = new HashMap<Enchantment,Integer>();
+						for (String ench_string : ench_strings)
+						{
+							String[] ench_string_parts = ench_string.split("-");
+							if(ench_string_parts.length == 2)
+							{
+								enchantments.put(Enchantment.getById(Integer.parseInt(ench_string_parts[0])), Integer.parseInt(ench_string_parts[1]));
+							}
+							else if(ench_string_parts.length == 1)
+							{
+								enchantments.put(Enchantment.getById(Integer.parseInt(ench_string_parts[0])), 1);
+							}
+						}
+						if(TempleManager.allowunsafeEnchantments)
+						{
+							stack.addUnsafeEnchantments(enchantments);							
+						}
+						else
+						{
+							stack.addEnchantments(enchantments);
+						}
+					}
+					catch (Exception e) {
+						System.out.println("[TempleCraft] " + e.getMessage());
+					}
+				}
+				
 				inv.addItem(stack);
 			}
 		}
@@ -263,6 +299,8 @@ public class MobArenaClasses implements Listener
 	/* Places armor listed in the input string on the Player */
 	public static void equipArmor(Player p, String s)
 	{
+		try
+		{
 		// Variables used.
 		ItemStack stack;
 		int id;
@@ -283,37 +321,70 @@ public class MobArenaClasses implements Listener
 			i = i.trim();
 
 			// Create ItemStack with appropriate constructor.
-			if (i.matches("[0-9]+"))
+
+			String[] item = i.split(":");
+			if (item[0].matches("[0-9]+"))
 			{
-				id = Integer.parseInt(i);
+				id = Integer.parseInt(item[0]);
 				stack = new ItemStack(id, 1);
 			}
 			else
 			{
-				stack = makeItemStack(i, 1);
+				stack = makeItemStack(item[0], 1);
 				if (stack == null) continue;
 			}
 
+			if (item.length == 2  && item[1].matches("^([0-9]{1,2}([-][1-6])?)((;)([0-9]{1,2}([-][1-6])?))+$"))
+			{
+				String[] ench_strings = item[1].split(";");
+				Map<Enchantment,Integer> enchantments = new HashMap<Enchantment,Integer>();
+				for (String ench_string : ench_strings)
+				{
+					String[] ench_string_parts = ench_string.split("-");
+					if(ench_string_parts.length == 2)
+					{
+						enchantments.put(Enchantment.getById(Integer.parseInt(ench_string_parts[0])), Integer.parseInt(ench_string_parts[1]));
+					}
+					else if(ench_string_parts.length == 1)
+					{
+						enchantments.put(Enchantment.getById(Integer.parseInt(ench_string_parts[0])), 1);
+					}
+				}
+				stack.addEnchantments(enchantments);
+			}
+
 			// Apply the armor to the correct part of the body
-			if(stack.getType() == Material.LEATHER_HELMET || stack.getType() == Material.IRON_HELMET || stack.getType() == Material.GOLD_HELMET || stack.getType() == Material.DIAMOND_HELMET)
+			if(stack.getType() == Material.LEATHER_HELMET || stack.getType() == Material.CHAINMAIL_HELMET || stack.getType() == Material.IRON_HELMET || stack.getType() == Material.GOLD_HELMET || stack.getType() == Material.DIAMOND_HELMET)
 			{
 				inv.setHelmet(stack);
 			}
-			else if(stack.getType() == Material.LEATHER_CHESTPLATE || stack.getType() == Material.IRON_CHESTPLATE || stack.getType() == Material.GOLD_CHESTPLATE || stack.getType() == Material.DIAMOND_CHESTPLATE)
+			else if(stack.getType() == Material.LEATHER_CHESTPLATE || stack.getType() == Material.CHAINMAIL_CHESTPLATE || stack.getType() == Material.IRON_CHESTPLATE || stack.getType() == Material.GOLD_CHESTPLATE || stack.getType() == Material.DIAMOND_CHESTPLATE)
 			{
 				inv.setChestplate(stack);
 			}
-			else if(stack.getType() == Material.LEATHER_LEGGINGS || stack.getType() == Material.IRON_LEGGINGS || stack.getType() == Material.GOLD_LEGGINGS || stack.getType() == Material.DIAMOND_LEGGINGS)
+			else if(stack.getType() == Material.LEATHER_LEGGINGS || stack.getType() == Material.CHAINMAIL_LEGGINGS || stack.getType() == Material.IRON_LEGGINGS || stack.getType() == Material.GOLD_LEGGINGS || stack.getType() == Material.DIAMOND_LEGGINGS)
 			{
 				inv.setLeggings(stack);
 			}
-			else if(stack.getType() == Material.LEATHER_BOOTS || stack.getType() == Material.IRON_BOOTS || stack.getType() == Material.GOLD_BOOTS || stack.getType() == Material.DIAMOND_BOOTS)
+			else if(stack.getType() == Material.LEATHER_BOOTS || stack.getType() == Material.CHAINMAIL_BOOTS || stack.getType() == Material.IRON_BOOTS || stack.getType() == Material.GOLD_BOOTS || stack.getType() == Material.DIAMOND_BOOTS)
 			{
 				inv.setBoots(stack);
 			}
-			else
+			else if(stack.getType() != Material.AIR)
 			{
 				System.out.println("[TempleCraft] No Armor was detected by getArmor");
+			}
+		}
+		}
+		catch (Exception e) 
+		{
+			if(p != null)
+			{
+				System.out.println("[TempleCraft] While equiping armor \"" + s + "\" at player \"" + p.getName() + "\"");
+			}
+			else
+			{
+				System.out.println("[TempleCraft] While equiping armor \"" + s + "\" at player \"null\"");
 			}
 		}
 	}
@@ -333,11 +404,22 @@ public class MobArenaClasses implements Listener
 	/* Helper method for making an ItemStack out of a string */
 	private static ItemStack makeItemStack(String s, int amount)
 	{
+		return makeItemStack(s, amount, (short) -1);
+	}
+	private static ItemStack makeItemStack(String s, int amount, short dmgval)
+	{
 		Material mat;
 		try
 		{
 			mat = Material.valueOf(s.toUpperCase());
-			return new ItemStack(mat, amount);
+			if(dmgval == -1)
+			{
+				return new ItemStack(mat, amount);
+			}
+			else
+			{
+				return new ItemStack(mat, amount, dmgval);
+			}
 		}
 		catch (Exception e)
 		{

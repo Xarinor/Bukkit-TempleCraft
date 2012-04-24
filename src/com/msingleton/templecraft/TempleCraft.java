@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+import net.steeleyes.catacombs.Catacombs;
 
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
@@ -14,9 +15,10 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitScheduler;
 
-import com.herocraftonline.dev.heroes.Heroes;
-import com.herocraftonline.dev.heroes.hero.HeroManager;
+import com.herocraftonline.heroes.Heroes;
+import com.herocraftonline.heroes.characters.CharacterManager;
 import com.msingleton.templecraft.listeners.TCBlockListener;
 import com.msingleton.templecraft.listeners.TCInventoryListener;
 import com.msingleton.templecraft.listeners.TCDamageListener;
@@ -45,10 +47,13 @@ public class TempleCraft extends JavaPlugin
     public double currentVersion;
 	public String newVersionString;
     public String currentVersionString;
+	public static BukkitScheduler TCScheduler = null;
+	public static TempleCraft TCPlugin = null;
 	public static Permission permission = null;
 	public static MVWorldManager MVWM = null;
+	public static Catacombs catacombs = null;
 	public static Economy economy = null;
-	public static HeroManager heroManager;
+	public static CharacterManager heroManager;
 	public static String language;
 	public static String fileExtention = ".tcf";
 	public static ChatColor c1 = ChatColor.DARK_AQUA;
@@ -70,6 +75,8 @@ public class TempleCraft extends JavaPlugin
 		// Initialize convenience variables in ArenaManager.
 		TempleManager.init(this);
 
+		TCScheduler = getServer().getScheduler();
+		TCPlugin = this;
         // Schedule to check the version every 30 minutes for an update. This is to update the most recent 
         // version so if an admin reconnects they will be warned about newer versions.
         // Thanks Sleaker for the permission to use his updatecheck code from vault 
@@ -98,6 +105,7 @@ public class TempleCraft extends JavaPlugin
 		setupEconomy();
 		setupHeroes();
 		setupMultiverse();
+		setupCatacombs();
 
 		ENABLED_COMMANDS = TCUtils.getEnabledCommands();
 
@@ -117,6 +125,15 @@ public class TempleCraft extends JavaPlugin
 		System.out.println(Translation.tr("enableMessage", pdfFile.getName(), pdfFile.getVersion()));
 	}
 
+	public void onDisable()
+	{	
+		//permissionHandler = null;
+		TempleManager.SBManager.save();
+		TempleManager.removeAll();
+		TCUtils.deleteTempWorlds();
+		TCUtils.cleanConfigFiles();
+	}
+
 	private void setupTranslations()
 	{			
 		File configFile = TCUtils.getConfig("config");
@@ -131,15 +148,6 @@ public class TempleCraft extends JavaPlugin
 		}
 	}
 
-	public void onDisable()
-	{	
-		//permissionHandler = null;
-		TempleManager.SBManager.save();
-		TempleManager.removeAll();
-		TCUtils.deleteTempWorlds();
-		TCUtils.cleanConfigFiles();
-	}
-
 	private void setupMultiverse()
 	{
 		Plugin multiverse = this.getServer().getPluginManager().getPlugin("Multiverse-Core");
@@ -151,7 +159,22 @@ public class TempleCraft extends JavaPlugin
 		MVWM = ((MultiverseCore) multiverse).getMVWorldManager();
 		if(MVWM != null)
 		{
-			System.out.println("[TempleCraft] Hooked into MultiverseCore");
+			System.out.println("[TempleCraft] Hooked into " + multiverse.getDescription().getName() + " Version "+ multiverse.getDescription().getVersion());
+		}
+	}
+	
+	private void setupCatacombs()
+	{
+		Plugin Cataplugin = this.getServer().getPluginManager().getPlugin("Catacombs");
+		if (Cataplugin == null)
+		{
+			return;
+		}
+
+		catacombs = ((Catacombs) Cataplugin);
+		if(catacombs != null)
+		{
+			System.out.println("[TempleCraft] Hooked into " + catacombs.info.getName() + " Version "+ catacombs.info.getVersion());
 		}
 	}
 	
@@ -184,7 +207,7 @@ public class TempleCraft extends JavaPlugin
 			return;
 		}
 
-		heroManager = ((Heroes) heroes).getHeroManager();
+		heroManager = ((Heroes) heroes).getCharacterManager();
 		if(heroManager != null)
 		{
 			System.out.println("[TempleCraft] Hooked into Heroes");

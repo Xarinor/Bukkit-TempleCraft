@@ -85,7 +85,7 @@ public class Race extends Game
 
 			// Update ScoreBoards
 			List<String> scores = new ArrayList<String>();
-			scores.add(p.getDisplayName());
+			scores.add(p.getName());
 			scores.add(totalTime + "");
 			TempleManager.SBManager.updateScoreBoards(this, scores);
 		}

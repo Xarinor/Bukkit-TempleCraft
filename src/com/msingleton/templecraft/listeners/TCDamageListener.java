@@ -11,8 +11,10 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import com.msingleton.templecraft.TCUtils;
+import com.msingleton.templecraft.TempleCraft;
 import com.msingleton.templecraft.TempleManager;
 import com.msingleton.templecraft.TemplePlayer;
+import com.msingleton.templecraft.custommobs.CustomMob;
 import com.msingleton.templecraft.games.Game;
 import com.msingleton.templecraft.games.Arena;
 
@@ -91,7 +93,24 @@ public class TCDamageListener implements Listener
 					return;
 				}
 			}
-
+			
+			if(entity instanceof LivingEntity)
+			{
+				Game game = TCUtils.getGame(entity);
+				if(game != null)
+				{
+					CustomMob cmob = game.customMobManager.getMob(entity);
+				
+					if(cmob != null)
+					{
+						if(cmob.getDMGMultiplikator() > 1)
+						{
+							event.setDamage(event.getDamage() * cmob.getDMGMultiplikator());
+						}
+					}
+				}
+			}
+			
 			if(entity2 instanceof LivingEntity && ((LivingEntity)entity2).getHealth() > 0)
 			{
 				Game game = TCUtils.getGame(entity);
@@ -105,6 +124,14 @@ public class TCDamageListener implements Listener
 				}
 				game.lastDamager.remove(id);
 				game.lastDamager.put(id, entity);
+				
+				CustomMob cmob = game.customMobManager.getMob(entity2);
+				
+				if(cmob != null)
+				{
+					cmob.damage(event.getDamage(), entity);
+					event.setDamage(0);
+				}
 			}
 		}
 	}
@@ -150,6 +177,14 @@ public class TCDamageListener implements Listener
 				// If a monster died
 				game = TCUtils.getGame(e);
 				lastDamager = game.lastDamager.remove(e.getEntityId());
+
+				CustomMob cmob = game.customMobManager.getMob(event.getEntity());
+				
+				if(cmob != null)
+				{
+					TempleCraft.TCScheduler.cancelTask(game.AbilityTaskIDs.get(cmob));
+					game.customMobManager.RemoveMob(cmob);
+				}
 			}
 
 			if(game != null && lastDamager != null)

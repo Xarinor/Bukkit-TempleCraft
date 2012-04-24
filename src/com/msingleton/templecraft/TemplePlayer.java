@@ -9,6 +9,7 @@ import java.util.TimerTask;
 
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -36,6 +37,7 @@ public class TemplePlayer
 	public Location currentCheckpoint;
 	public Temple currentTemple;
 	public Game currentGame;
+	public Set<LivingEntity> tamedMobSet = new HashSet<LivingEntity>();
 
 	public TemplePlayer()
 	{

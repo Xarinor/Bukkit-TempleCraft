@@ -1,5 +1,7 @@
 package com.msingleton.templecraft.listeners;
 
+import java.util.Set;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,6 +22,7 @@ import com.msingleton.templecraft.TemplePlayer;
 import com.msingleton.templecraft.games.Game;
 import com.msingleton.templecraft.scoreboards.ScoreBoard;
 //import org.bukkit.event.block.BlockDamageEvent;
+import com.msingleton.templecraft.util.Pair;
 import com.msingleton.templecraft.util.Translation;
 
 
@@ -160,19 +163,66 @@ public class TCBlockListener implements Listener
 			return;
 		}
 
-		if (game.isRunning && TempleManager.playerSet.contains(event.getPlayer()))
+		if (game.isRunning && 
+			TempleManager.playerSet.contains(event.getPlayer()))
 		{
-			game.tempBlockSet.add(b);
-			Material type = b.getType();
-
-			// Make sure to add the top parts of doors.
-			if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK)
+			
+			if(!game.placeableLocs.isEmpty())
 			{
-				game.tempBlockSet.add(b.getRelative(0,1,0));
-			}
+				for (Pair<Location, Set<Integer>> pr : game.placeableLocs)
+				{
+					if(pr.a.equals(b.getLocation()))
+					{
+						if(pr.b.contains(-1) || pr.b.contains(b.getTypeId()))
+						{
+							game.tempBlockSet.add(b);
+							Material type = b.getType();
 
-			return;
+							// Make sure to add the top parts of doors.
+							if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK)
+							{
+								game.tempBlockSet.add(b.getRelative(0,1,0));
+							}
+
+							return;
+						}
+					}
+				}
+			}
+			
+			
+			if(!TempleManager.placeable.isEmpty())
+			{
+				if(TempleManager.placeable.contains(b.getTypeId()))
+				{
+					game.tempBlockSet.add(b);
+					Material type = b.getType();
+		
+					// Make sure to add the top parts of doors.
+					if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK)
+					{
+						game.tempBlockSet.add(b.getRelative(0,1,0));
+					}
+		
+					return;
+				}
+			}
+			else
+			{			
+				game.tempBlockSet.add(b);
+				Material type = b.getType();
+	
+				// Make sure to add the top parts of doors.
+				if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK)
+				{
+					game.tempBlockSet.add(b.getRelative(0,1,0));
+				}
+	
+				return;
+			}
 		}
+
+		
 
 		event.setCancelled(true);
 	}
@@ -187,7 +237,7 @@ public class TCBlockListener implements Listener
 
 		if(temple == null)
 		{
-			if(event.getLine(0).equals("[TCSB]") || event.getLine(0).equals("[TCS]") || event.getLine(0).equals("[TC]") || event.getLine(0).equals("[TempleCraft]"))
+			if(event.getLine(0).equals("[TCSB]") || event.getLine(0).equals("[TCS]") || event.getLine(0).equals("[TC]") || event.getLine(0).equals("[TCB]") || event.getLine(0).equals("[TempleCraft]"))
 			{
 				if(!TCPermissionHandler.hasPermission(p, "templecraft.placesigns"))
 				{

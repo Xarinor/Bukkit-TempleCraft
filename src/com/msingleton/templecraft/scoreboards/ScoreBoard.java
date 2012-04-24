@@ -30,7 +30,7 @@ public class ScoreBoard {
 
 	public ScoreBoard(String id, Location p1, Location p2, String templeName, String gameMode)
 	{
-		System.out.println("New Scoreboard Created: "+id+", ("+p1.getX()+","+p1.getY()+","+p1.getZ()+"),"+templeName+","+gameMode);
+		System.out.println("[TempleCraft] New Scoreboard Created: "+id+", ("+p1.getX()+","+p1.getY()+","+p1.getZ()+"),"+templeName+","+gameMode);
 		this.id		 = id;
 		this.p1		 = p1;
 		this.p2		 = p2;

@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 
@@ -34,6 +35,7 @@ public class TempleManager
 	public static boolean dropBlocks;
 	public static boolean constantWorldNames;
 	public static boolean manageInventory;
+	public static boolean allowunsafeEnchantments;
 
 	// Colors
 	public static ChatColor c1 = TempleCraft.c1;
@@ -50,7 +52,9 @@ public class TempleManager
 	public static Set<Game> gameSet			  = new HashSet<Game>();
 	public static Set<Player> playerSet		  = new HashSet<Player>();
 	public static Set<Integer> breakable		 = new HashSet<Integer>();	
+	public static Set<Integer> placeable		 = new HashSet<Integer>();	
 	public static String breakableMats;
+	public static String placeableMats;
 	public static String goldPerMob;
 
 	final public static Set<String> modes = new HashSet<String>(Arrays.asList("adventure","race","spleef","pvp"));
@@ -86,10 +90,12 @@ public class TempleManager
 			maxTemplesPerPerson	= TCUtils.getInt(config, "settings.maxtemplesperperson", 1);
 			rejoinCost			 = TCUtils.getInt(config, "settings.rejoincost", 0);
 			breakableMats		  = TCUtils.getString(config, "settings.breakablemats", "31,37,38,39,40,46,82");
+			placeableMats		  = TCUtils.getString(config, "settings.placeablemats", "31,37,38,39,40,46,82");
 			goldPerMob			 = TCUtils.getString(config, "settings.goldpermob", "50-100");
 			dropBlocks			 = TCUtils.getBoolean(config, "settings.dropblocks", false);
 			constantWorldNames	 = TCUtils.getBoolean(config, "settings.constantworldnames", false);
 			manageInventory		 = TCUtils.getBoolean(config, "settings.manageinventory", true);
+			allowunsafeEnchantments		 = TCUtils.getBoolean(config, "settings.allowunsafeenchantments", false);
 
 			loadMisc();
 			loadTemplePlayers();
@@ -269,6 +275,12 @@ public class TempleManager
 		}// else
 		//tp.displayStats();
 
+		for( LivingEntity tamedMob : tp.tamedMobSet)
+		{
+			tamedMob.damage(tamedMob.getMaxHealth());
+			tp.tamedMobSet.remove(tamedMob);
+		}
+
 		if(game != null && !game.isEnding)
 		{
 			if(game.readySet.equals(game.playerSet))
@@ -327,6 +339,16 @@ public class TempleManager
 			if(!s.isEmpty())
 			{
 				breakable.add(Integer.parseInt(s));
+			}
+		}
+		
+		// Handles what is breakable
+		for(String s : placeableMats.split(","))
+		{
+			s = s.trim();
+			if(!s.isEmpty())
+			{
+				placeable.add(Integer.parseInt(s));
 			}
 		}
 	}

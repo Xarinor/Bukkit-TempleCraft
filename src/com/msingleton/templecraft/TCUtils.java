@@ -35,6 +35,7 @@ import org.bukkit.entity.Creature;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Ghast;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.MagmaCube;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
@@ -46,7 +47,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.herocraftonline.dev.heroes.hero.Hero;
+import com.herocraftonline.heroes.characters.Hero;
 import com.msingleton.templecraft.games.Adventure;
 import com.msingleton.templecraft.games.Arena;
 import com.msingleton.templecraft.games.Game;
@@ -123,7 +124,7 @@ public class TCUtils
 		if(TempleCraft.heroManager != null)
 		{
 			Hero hero = TempleCraft.heroManager.getHero(player);
-			hero.setHealth(originalContents.getHealth());
+			hero.setHealth((int) originalContents.getHealth());
 			player.setHealth((int)(originalContents.getHealth()/hero.getMaxHealth()));
 		}
 		else
@@ -412,6 +413,17 @@ public class TCUtils
 		Object[] array = TempleManager.server.getOnlinePlayers();
 		return (Player) array[random.nextInt(array.length)];
 	}
+	
+	/**
+	 * Turns the current set of players in the game into an array, and grabs a random
+	 * element out of it.
+	 */
+	public static Player getRandomPlayer(Game game)
+	{
+		Random random = new Random();
+		Object[] array = game.playerSet.toArray();
+		return (Player) array[random.nextInt(array.length)];
+	}
 
 	/* ///////////////////////////////////////////////////////////////////// //
 
@@ -485,18 +497,26 @@ public class TCUtils
 			if(ChunkGen.equalsIgnoreCase("nether"))
 			{
 				temple.env = Environment.NETHER;
+				temple.wt = null;
+				temple.ChunkGeneratorFile = null;
 			}
 			else if(ChunkGen.equalsIgnoreCase("the_end"))
 			{
 				temple.env = Environment.THE_END;
+				temple.wt = null;
+				temple.ChunkGeneratorFile = null;
 			}
 			else if(ChunkGen.equalsIgnoreCase("flat"))
 			{
 				temple.wt = WorldType.FLAT;
+				temple.env = null;
+				temple.ChunkGeneratorFile = null;
 			}
 			else
 			{
 				temple.ChunkGeneratorFile = getChunkGeneratorByName(ChunkGen);
+				temple.wt = null;
+				temple.env = null;
 			}
 		}
 
@@ -584,6 +604,7 @@ public class TCUtils
 		if(!TCUtils.hasPlayerInventory(p.getName()))
 		{
 			TCUtils.keepPlayerInventory(p);
+			TCUtils.clearInventory(p);
 		}
 		if(!TempleManager.locationMap.containsKey(p))
 		{
@@ -597,6 +618,10 @@ public class TCUtils
 		lobbyLoc.getChunk().load(true);
 		p.teleport(lobbyLoc);
 		p.setGameMode(GameMode.CREATIVE);
+		if(TempleCraft.MVWM != null)
+		{
+			TempleCraft.MVWM.getMVWorld(EditWorld).setGameMode("creative");
+		}
 	}
 
 	public static void convertTemple(Player p, Temple temple)
@@ -757,6 +782,10 @@ public class TCUtils
 			if(TempleCraft.MVWM.isMVWorld(w.getName()))
 			{
 				TempleCraft.MVWM.removeWorldFromConfig(w.getName());
+			}
+			if(TempleCraft.catacombs != null)
+			{
+				TempleCraft.catacombs.unloadWorld(w.getName());
 			}
 		}
 		TempleManager.server.unloadWorld(w, true);
@@ -989,6 +1018,7 @@ public class TCUtils
 		}
 		return result;
 	}
+
 
 	/**
 	 * Calculates the squared distance between locations.
@@ -1322,5 +1352,27 @@ public class TCUtils
 			hero.setMana(0);
 		}
 		p.setHealth(MAX_HEALTH);
+	}
+	
+	/**
+	 * Get the target player of the LivingEntity if possible.
+	 * @param entity The entity whose target to get
+	 * @return The target player, or null
+	 */
+	public static LivingEntity getTarget(LivingEntity entity)
+	{
+		if (entity instanceof Creature)
+		{
+			LivingEntity target = null;
+			try
+			{
+				target = ((Creature) entity).getTarget();
+			}
+			catch (Exception e) {}
+
+			if (target instanceof Player)
+				return target;
+		}
+		return null;
 	}
 }

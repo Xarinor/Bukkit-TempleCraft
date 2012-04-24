@@ -1,6 +1,9 @@
 package com.msingleton.templecraft.listeners;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,6 +28,7 @@ import com.msingleton.templecraft.TempleManager;
 import com.msingleton.templecraft.games.Game;
 import com.msingleton.templecraft.games.Adventure;
 import com.msingleton.templecraft.games.Arena;
+import com.msingleton.templecraft.util.Pair;
 
 
 /**
@@ -36,7 +40,8 @@ import com.msingleton.templecraft.games.Arena;
 public class TCMonsterListener implements Listener
 {
 	private TempleCraft plugin;
-
+	private static Set<Integer> nonFullblockSet = new HashSet<Integer>(Arrays.asList(27,28,37,38,39,40,50,55,65,66,68,69,70,72,75,76,77,93,94,96,106,111,115));
+	
 	public TCMonsterListener(TempleCraft instance)
 	{
 		plugin = instance;
@@ -77,7 +82,7 @@ public class TCMonsterListener implements Listener
 
 		// Only apply to creepers in adventure mode
 		//if((game instanceof Adventure) && !(e instanceof LivingEntity))
-		if((game instanceof Adventure) && (e.getType() == EntityType.CREEPER))
+		if(game instanceof Adventure && !e.getType().equals(EntityType.PRIMED_TNT))
 		{
 			if(TempleManager.dropBlocks)
 			{
@@ -103,7 +108,7 @@ public class TCMonsterListener implements Listener
 			event.setYield(0);
 
 			// Store the blocks and their values in the map.
-			final HashMap<Block,Material> blockMap = new HashMap<Block,Material>();
+			final HashMap<Block,Pair<Material,Byte>> blockMap = new HashMap<Block,Pair<Material,Byte>>();
 
 			for (Block b : event.blockList())
 			{
@@ -123,7 +128,7 @@ public class TCMonsterListener implements Listener
 
 				// If a block has extra data, store it as a five digit (ten-thousand).
 				//int type = b.getTypeId() + (b.getData() * 10000);
-				blockMap.put(b, b.getType());
+				blockMap.put(b, new Pair<Material,Byte>(b.getType(),b.getData()));
 			}
 
 			// Wait a couple of ticks, then rebuild the blocks.
@@ -132,13 +137,21 @@ public class TCMonsterListener implements Listener
 			{
 				public void run()
 				{
+					final Set<Block> nonFullBlocks = new HashSet<Block>();
 					for (Block b : blockMap.keySet())
 					{
 						//int type = blockMap.get(b);
 
 						// Modulo 10000 to get the actual type id.
-						b.getLocation().getBlock().setType(blockMap.get(b));
-
+						if(nonFullblockSet.contains(blockMap.get(b).a.getId()))
+						{
+							nonFullBlocks.add(b);
+						}
+						else
+						{
+							b.getLocation().getBlock().setType(blockMap.get(b).a);
+							b.getLocation().getBlock().setData(blockMap.get(b).b);
+						}
 						/* If the type ID is greater than 10000, it means the block
 						 * has extra data (stairs, levers, etc.). We subtract the
 						 * block type data by dividing by 10000. Integer division
@@ -147,6 +160,11 @@ public class TCMonsterListener implements Listener
 						{
 							b.getLocation().getBlock().setData((byte) (type / 10000));
 						}*/
+					}
+					for(Block b : nonFullBlocks)
+					{
+						b.getLocation().getBlock().setType(blockMap.get(b).a);
+						b.getLocation().getBlock().setData(blockMap.get(b).b);
 					}
 				}
 			}, TempleManager.repairDelay);
@@ -232,20 +250,6 @@ public class TCMonsterListener implements Listener
 							{
 								e.setHealth((int) ((Arena)game).getZombieHealth());
 							}
-							
-							//TODO: implement setMaxHealth() when bukkit support it.
-							/*if(game instanceof Adventure)
-							{
-								int i = game.LocHealthMap.get(loc);
-								if(i > 0)
-								{
-									if(i > e.getMaxHealth())
-									{
-										i = e.getMaxHealth();
-									}
-									e.setHealth(i);
-								}
-							}*/
 						}
 					}
 					else
@@ -256,4 +260,5 @@ public class TCMonsterListener implements Listener
 			}
 		}
 	}
+	
 }

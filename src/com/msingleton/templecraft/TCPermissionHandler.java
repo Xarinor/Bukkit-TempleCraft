@@ -21,6 +21,7 @@ public class TCPermissionHandler {
 		c1+"/tct plist"+c2+"			- Lists players in Games.",
 		c1+"/tct forcestart <game>"+c2+" - Manually start a Game.",
 		c1+"/tct forceend <game>"+c2+"   - Manually end a Game.",
+		c1+"/tct closeall"+c2+"   - close all running games.",
 		c1+"/tct checkupdates"+c2+"		 - Checks for updates.",
 		c1+"/tct new <temple> (generator)"+c2+" - Creates a new Temple.",
 		c1+"/tct edit <temple>"+c2+"	 - Edit an existing temple.",

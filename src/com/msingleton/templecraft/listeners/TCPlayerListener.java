@@ -10,10 +10,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import com.msingleton.templecraft.TCPermissionHandler;
 import com.msingleton.templecraft.TCUtils;
@@ -38,7 +40,7 @@ public class TCPlayerListener implements Listener
 
 		Player p = event.getPlayer();
 		Action a = event.getAction();
-
+		
 		// Expands and contracts ScoreBoards
 		if(p.isSneaking() && TCPermissionHandler.hasPermission(p, "templecraft.placesigns"))
 		{
@@ -86,7 +88,7 @@ public class TCPlayerListener implements Listener
 						Sign sign = (Sign) b.getState();
 						sign.update(true);
 						String Line1 = sign.getLine(0);
-						if(Line1.equals("[TempleCraft]") || Line1.equals("[TC]") || Line1.equals("[TempleCraftS]") || Line1.equals("[TCS]"))
+						if(Line1.equals("[TempleCraft]") || Line1.equals("[TC]") || Line1.equals("[TCB]") || Line1.equals("[TempleCraftS]") || Line1.equals("[TCS]"))
 						{
 							event.setCancelled(true);
 						}
@@ -102,6 +104,12 @@ public class TCPlayerListener implements Listener
 		// Special Use of TNT for Arena Mode
 		if(game != null && (a.equals(Action.RIGHT_CLICK_AIR) || a.equals(Action.RIGHT_CLICK_BLOCK)))
 		{
+			if(!game.isRunning || game.deadSet.contains(tp))
+			{
+				event.setCancelled(true);
+				return;
+			}
+			
 			if(game instanceof Arena)
 			{
 				if(p.getInventory().getItemInHand().getTypeId() == 46)
@@ -185,6 +193,16 @@ public class TCPlayerListener implements Listener
 		}
 	}
 
+	
+	@EventHandler
+	public void onPlayerTeleport(PlayerTeleportEvent event)
+	{
+		if(TempleManager.templeEditMap.containsValue(event.getTo().getWorld()))
+		{
+			event.getPlayer().setGameMode(GameMode.CREATIVE);
+		}
+	}
+	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event)
 	{
@@ -279,7 +297,7 @@ public class TCPlayerListener implements Listener
 			return;
 		}
 
-		if(!Line1.equals("[TempleCraft]") && !Line1.equals("[TC]") && !Line1.equals("[TempleCraftS]") && !Line1.equals("[TCS]"))
+		if(!Line1.equals("[TempleCraft]") && !Line1.equals("[TC]") && !Line1.equals("[TCB]") && !Line1.equals("[TempleCraftS]") && !Line1.equals("[TCS]"))
 		{
 			return;
 		}
@@ -334,11 +352,15 @@ public class TCPlayerListener implements Listener
 			TempleManager.tellPlayer(p, Translation.tr("game.allInProgress"));
 		}
 
-		TempleManager.tellPlayer(p, Translation.tr("newGame"));
 		String gameName = TCUtils.getUniqueGameName(temple.templeName, mode);
 		Game game = TCUtils.newGame(gameName, temple, mode);
-		if(game != null)
+		if(game == null)
 		{
+			TempleManager.tellPlayer(p, Translation.tr("newGameFail"));
+		}
+		else
+		{
+			TempleManager.tellPlayer(p, Translation.tr("newGame"));
 			game.playerJoin(p);
 		}
 	}
@@ -346,7 +368,6 @@ public class TCPlayerListener implements Listener
 	@EventHandler
 	public void onFoodLevelChange(FoodLevelChangeEvent event)
 	{
-
 		if(!(event.getEntity() instanceof Player))
 		{
 			return;
@@ -395,5 +416,28 @@ public class TCPlayerListener implements Listener
 		{
 			game.tempBlockSet.add(liquid);
 		}
+	}
+
+	@EventHandler
+	public void onEntityTame(EntityTameEvent event)
+	{	
+	    if (event.getOwner() instanceof Player)
+	    {
+	        Player player = (Player) event.getOwner();
+	        
+	        if (!TempleManager.playerSet.contains(player))
+			{
+				return;
+			}
+
+			if (!TempleManager.isEnabled)
+			{
+				return;
+			}
+
+			TemplePlayer tp = TempleManager.templePlayerMap.get(player);
+			
+			tp.tamedMobSet.add(event.getEntity());
+	    }
 	}
 }
