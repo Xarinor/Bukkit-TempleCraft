@@ -27,8 +27,8 @@ import org.bukkit.inventory.PlayerInventory;
 
 import com.msingleton.templecraft.TCUtils;
 import com.msingleton.templecraft.TempleCraft;
-import com.msingleton.templecraft.TemplePlayer;
 import com.msingleton.templecraft.TempleManager;
+import com.msingleton.templecraft.TemplePlayer;
 import com.msingleton.templecraft.games.Game;
 
 //public class MobArenaClasses extends PlayerListener
@@ -37,7 +37,7 @@ public class MobArenaClasses implements Listener
 
 	protected static File configFile				  = null;
 	public static boolean enabled					 = false;
-	protected static Set<String> classes			  = new HashSet<String>();;
+	protected static Set<String> classes			  = new HashSet<String>();
 	public static Map<Player,String> classMap		 = new HashMap<Player,String>();
 	protected static Map<String,String> classItemMap  = new HashMap<String,String>();
 	protected static Map<String,String> classArmorMap = new HashMap<String,String>();

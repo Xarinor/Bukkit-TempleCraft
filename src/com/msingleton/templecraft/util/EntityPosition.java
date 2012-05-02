@@ -1,6 +1,7 @@
 package com.msingleton.templecraft.util;
 
 import java.io.Serializable;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 

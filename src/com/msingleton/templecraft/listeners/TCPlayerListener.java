@@ -17,12 +17,15 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+
 import com.msingleton.templecraft.TCPermissionHandler;
 import com.msingleton.templecraft.TCUtils;
 import com.msingleton.templecraft.Temple;
 import com.msingleton.templecraft.TempleManager;
 import com.msingleton.templecraft.TemplePlayer;
-import com.msingleton.templecraft.games.*;
+import com.msingleton.templecraft.games.Arena;
+import com.msingleton.templecraft.games.Game;
+import com.msingleton.templecraft.games.Spleef;
 import com.msingleton.templecraft.scoreboards.ScoreBoard;
 import com.msingleton.templecraft.util.Translation;
 

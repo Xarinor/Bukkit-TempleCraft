@@ -7,16 +7,16 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 
 import com.msingleton.templecraft.TCUtils;
 import com.msingleton.templecraft.TempleCraft;
 import com.msingleton.templecraft.TempleManager;
 import com.msingleton.templecraft.TemplePlayer;
 import com.msingleton.templecraft.custommobs.CustomMob;
-import com.msingleton.templecraft.games.Game;
 import com.msingleton.templecraft.games.Arena;
+import com.msingleton.templecraft.games.Game;
 
 /**
  * This listener acts as a type of death-listener.

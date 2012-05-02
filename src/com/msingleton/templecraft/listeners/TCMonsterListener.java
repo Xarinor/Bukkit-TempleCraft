@@ -8,7 +8,6 @@ import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -17,17 +16,18 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
+import org.bukkit.inventory.ItemStack;
 
 import com.msingleton.templecraft.TCUtils;
 import com.msingleton.templecraft.TempleCraft;
 import com.msingleton.templecraft.TempleManager;
-import com.msingleton.templecraft.games.Game;
 import com.msingleton.templecraft.games.Adventure;
 import com.msingleton.templecraft.games.Arena;
+import com.msingleton.templecraft.games.Game;
 import com.msingleton.templecraft.util.Pair;
 
 

@@ -21,7 +21,6 @@ import com.msingleton.templecraft.TempleManager;
 import com.msingleton.templecraft.TemplePlayer;
 import com.msingleton.templecraft.games.Game;
 import com.msingleton.templecraft.scoreboards.ScoreBoard;
-//import org.bukkit.event.block.BlockDamageEvent;
 import com.msingleton.templecraft.util.Pair;
 import com.msingleton.templecraft.util.Translation;
 
