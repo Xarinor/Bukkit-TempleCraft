@@ -39,7 +39,10 @@ import com.msingleton.templecraft.TempleManager;
 import com.msingleton.templecraft.TemplePlayer;
 import com.msingleton.templecraft.custommobs.CustomMob;
 import com.msingleton.templecraft.custommobs.CustomMobManager;
+import com.msingleton.templecraft.custommobs.CustomMobType;
+import com.msingleton.templecraft.custommobs.CustomMobUtils;
 import com.msingleton.templecraft.util.MobArenaClasses;
+import com.msingleton.templecraft.util.MobSpawnProperties;
 import com.msingleton.templecraft.util.Pair;
 import com.msingleton.templecraft.util.Translation;
 
@@ -79,7 +82,8 @@ public class Game
 	public int saveAmount = 5;
 
 	// Contains Active Mob Spawnpoints and Creature Types
-	public Map<Location,Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>> mobSpawnpointMap	 = new HashMap<Location,Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>>();
+	//public Map<Location,Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>> mobSpawnpointMap	 = new HashMap<Location,Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>>();
+	public Map<Location,MobSpawnProperties> mobSpawnpointMap	 = new HashMap<Location,MobSpawnProperties>();
 	public Map<Integer, Integer> mobGoldMap			= new HashMap<Integer, Integer>();
 	public Map<Location, Integer> checkpointMap		= new HashMap<Location, Integer>();
 	public Map<Location, String[]> chatMap			 = new HashMap<Location, String[]>();
@@ -156,26 +160,36 @@ public class Game
 	 */
 	public void endGame()
 	{
-		TempleManager.tellAll(Translation.tr("game.finished", gameType, temple.templeName));
-		for(int id : SpawnTaskIDs)
+		try
 		{
-			TempleCraft.TCScheduler.cancelTask(id);
+			TempleManager.tellAll(Translation.tr("game.finished", gameType, temple.templeName));
+			for(int id : SpawnTaskIDs)
+			{
+				TempleCraft.TCScheduler.cancelTask(id);
+			}
+			SpawnTaskIDs.clear();
+			for(int id : AbilityTaskIDs.values())
+			{
+				TempleCraft.TCScheduler.cancelTask(id);
+			}
+			AbilityTaskIDs.clear();
+			tempMobLoc.clear();
+			isRunning = false;
+			isEnding = true;
+			readySet.clear();
+			playerSet.clear();
+			rewardPlayers(rewardSet);
 		}
-		SpawnTaskIDs.clear();
-		for(int id : AbilityTaskIDs.values())
+		catch (Exception e) {
+			System.out.println("[TempleCraft] Error while closing the temple.");
+			e.printStackTrace();
+		}
+		finally
 		{
-			TempleCraft.TCScheduler.cancelTask(id);
+			TCUtils.removePlayers(world);
+			TempleManager.gameSet.remove(this);
+			TCUtils.deleteTempWorld(world);
 		}
-		AbilityTaskIDs.clear();
-		tempMobLoc.clear();
-		isRunning = false;
-		isEnding = true;
-		readySet.clear();
-		playerSet.clear();
-		TCUtils.removePlayers(world);
-		rewardPlayers(rewardSet);
-		TempleManager.gameSet.remove(this);
-		TCUtils.deleteTempWorld(world);
 	}
 
 	private void consolidateRewards()
@@ -323,7 +337,10 @@ public class Game
 				temple.coordLocSet.remove(b);
 			}
 			mobSpawnpointSet.add(b.getLocation());
-			mobSpawnpointMap.put(b.getLocation(),new Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>(new Pair<Pair<EntityType,Integer>,String>(new Pair<EntityType,Integer>(TCMobHandler.getRandomCreature(),-1),"0:1"),new Pair<Integer,Pair<Integer,Integer>>(20,new Pair<Integer,Integer>(0,1))));
+			MobSpawnProperties msp = new MobSpawnProperties();
+			msp.setEntityType(TCMobHandler.getRandomCreature());
+			mobSpawnpointMap.put(b.getLocation(),msp);
+			//mobSpawnpointMap.put(b.getLocation(),new Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>(new Pair<Pair<EntityType,Integer>,String>(new Pair<EntityType,Integer>(TCMobHandler.getRandomCreature(),-1),"0:1"),new Pair<Integer,Pair<Integer,Integer>>(20,new Pair<Integer,Integer>(0,1))));
 			b.setTypeId(0);
 		}
 		for(Block b: getBlockSet(diamondBlock))
@@ -399,94 +416,127 @@ public class Game
 
 		if(Lines[0].equals("[TCB]"))
 		{
-			int size = -1;
-			EntityType ct = null;
-			if(Lines[1].contains(":"))
+			if(CustomMobUtils.bossTypeExists(Lines[1]))
 			{
-				String[] split = Lines[1].split(":");
-				ct = EntityType.fromName(split[0]);
-
-				if(ct == null)
-				{
-					System.out.println("[TempleCraft] Could not find EntityType \"" + split[0] + "\"");
-					return;
-				}
-				if(split.length == 2)
-				{
-					if(ct == EntityType.SLIME)
-					{
-						try
-						{
-							size = Integer.parseInt(split[1]);
-						}
-						catch (Exception e) 
-						{
-							size = -1;
-						}
-					}
-				}
+				CustomMobType cmt = CustomMobUtils.getBoss(Lines[1]);
+				Location loc = new Location(b.getWorld(),b.getX()+.5,b.getY(),b.getZ()+.5);
+				mobSpawnpointSet.add(loc);
+				MobSpawnProperties msp = new MobSpawnProperties();
+				msp.setEntityType(TCMobHandler.getRandomCreature());
+				msp.setDMGMulti(cmt.getDmgmulti());
+				msp.setEntityType(cmt.getMobtype());
+				msp.setRange(cmt.getRange());
+				msp.setHealth(cmt.getMaxhealth());
+				msp.setSize(cmt.getSize());
+				msp.setIsbossmob(true);
+				msp.setAbilities_random(cmt.getAbilities_random());
+				msp.setAbilities_rotation(cmt.getAbilities_rotation());
+				mobSpawnpointMap.put(b.getLocation(),msp);
+				b.setTypeId(0);
 			}
 			else
 			{
-				ct = EntityType.fromName(Lines[1]);
-			}
-			if(ct == null)
-			{
-				System.out.println("[TempleCraft] Could not find EntityType \"" + Lines[1] + "\"");
-				return;
-			}
-			int range = 20;
-			int health = 0;
-			int dmgmulti = 0;
-			try
-			{
-				String[] split = Lines[2].split(":");
-				if(split[0].contains("-"))
+				int size = -1;
+				EntityType ct = null;
+				if(Lines[1].contains(":"))
 				{
-					health = 0;
+					String[] split = Lines[1].split(":");
+					ct = EntityType.fromName(split[0]);
+	
+					if(ct == null)
+					{
+						System.out.println("[TempleCraft] Could not find EntityType \"" + split[0] + "\"");
+						return;
+					}
+					if(split.length == 2)
+					{
+						if(ct == EntityType.SLIME)
+						{
+							try
+							{
+								size = Integer.parseInt(split[1]);
+							}
+							catch (Exception e) 
+							{
+								size = -1;
+							}
+						}
+					}
 				}
 				else
 				{
-					health = Integer.parseInt(split[0]);
+					ct = EntityType.fromName(Lines[1]);
 				}
-				
-				if(split.length > 1)
+				if(ct == null)
 				{
-					if(split[1].contains("-"))
+					System.out.println("[TempleCraft] Could not find EntityType \"" + Lines[1] + "\"");
+					return;
+				}
+				int range = 20;
+				int health = 0;
+				int dmgmulti = 0;
+				try
+				{
+					String[] split = Lines[2].split(":");
+					if(split[0].contains("-"))
 					{
-						range = 20;
+						health = 0;
 					}
 					else
 					{
-						range = Integer.parseInt(split[1]);
+						health = Integer.parseInt(split[0]);
+					}
+					
+					if(split.length > 1)
+					{
+						if(split[1].contains("-"))
+						{
+							range = 20;
+						}
+						else
+						{
+							range = Integer.parseInt(split[1]);
+						}
+					}
+					
+					if(split.length > 2)
+					{
+						if(split[2].contains("-"))
+						{
+							dmgmulti = 1;
+						}
+						else
+						{
+							dmgmulti = Integer.parseInt(split[2]);
+						}
 					}
 				}
-				
-				if(split.length > 2)
+				catch(Exception e)
 				{
-					if(split[2].contains("-"))
-					{
-						dmgmulti = 0;
-					}
-					else
-					{
-						dmgmulti = Integer.parseInt(split[2]);
-					}
+					health = 0;
+					range = 20;
+					System.out.println("[TempleCraft] Could not use this line \"" + Lines[2] + "\" for health:range:dmgmultiplicator");
 				}
+				Location loc = new Location(b.getWorld(),b.getX()+.5,b.getY(),b.getZ()+.5);
+				mobSpawnpointSet.add(loc);
+				//mobSpawnpointMap.put(loc,new Pair<EntityType,Integer>(ct,range));
+	
+				MobSpawnProperties msp = new MobSpawnProperties();
+				msp.setEntityType(TCMobHandler.getRandomCreature());
+				msp.setAbilitys(Lines[3]);
+				msp.setDMGMulti(dmgmulti);
+				msp.setEntityType(ct);
+				msp.setRange(range);
+				msp.setHealth(health);
+				msp.setSize(size);
+				msp.setIsbossmob(true);
+				mobSpawnpointMap.put(b.getLocation(),msp);
+				//mobSpawnpointMap.put(loc,new Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>(new Pair<Pair<EntityType,Integer>,String>(new Pair<EntityType,Integer>(ct,size),Lines[3]),new Pair<Integer,Pair<Integer,Integer>>(range,new Pair<Integer,Integer>(health,dmgmulti))));
+				//LocHealthMap.put(loc, health);
+				b.setTypeId(0);
 			}
-			catch(Exception e)
-			{
-				health = 0;
-				range = 20;
-				System.out.println("[TempleCraft] Could not use this line \"" + Lines[2] + "\" for health:range:dmgmultiplicator");
-			}
-			Location loc = new Location(b.getWorld(),b.getX()+.5,b.getY(),b.getZ()+.5);
-			mobSpawnpointSet.add(loc);
-			//mobSpawnpointMap.put(loc,new Pair<EntityType,Integer>(ct,range));
-			mobSpawnpointMap.put(loc,new Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>(new Pair<Pair<EntityType,Integer>,String>(new Pair<EntityType,Integer>(ct,size),Lines[3]),new Pair<Integer,Pair<Integer,Integer>>(range,new Pair<Integer,Integer>(health,dmgmulti))));
-			//LocHealthMap.put(loc, health);
-			b.setTypeId(0);
-			return;		
+			
+			return;	
 		}
 		
 		if(!Lines[0].equals("[TempleCraft]") && !Lines[0].equals("[TC]"))
@@ -628,7 +678,8 @@ public class Game
 				return;
 			}
 			int range = 20;
-			String time_count = "0:1";
+			long time = 0;
+			int count = 1;
 			try
 			{
 				String[] split = Lines[3].split(":");
@@ -641,20 +692,37 @@ public class Game
 					range = Integer.parseInt(split[0]);
 				}
 				
+				if(split.length > 1)
+				{
+					if(split[1].contains("-"))
+					{
+						time = 20;
+					}
+					else
+					{
+						time = Integer.parseInt(split[1]);
+					}
+				}
+				
 				if(split.length > 2)
 				{
-					time_count = split[1] + ":" +  split[2];
-				}
-				else if(split.length > 1)
-				{
-					time_count = split[1] + ":1";
+					if(split[2].contains("-"))
+					{
+						count = 1;
+					}
+					else
+					{
+						count = Integer.parseInt(split[2]);
+					}
 				}
 			}
 			catch(Exception e)
 			{
 				range = 20;
-				time_count = "0:1";
+				time = 0;
+				count = 1;
 			}
+			
 			int health;
 			try
 			{
@@ -667,8 +735,18 @@ public class Game
 			int dmgmulti = 1;
 			Location loc = new Location(b.getWorld(),b.getX()+.5,b.getY(),b.getZ()+.5);
 			mobSpawnpointSet.add(loc);
+			MobSpawnProperties msp = new MobSpawnProperties();
+			msp.setEntityType(TCMobHandler.getRandomCreature());
+			msp.setDMGMulti(dmgmulti);
+			msp.setEntityType(ct);
+			msp.setRange(range);
+			msp.setHealth(health);
+			msp.setSize(size);
+			msp.setTime(time);
+			msp.setCount(count);
+			mobSpawnpointMap.put(b.getLocation(),msp);
 			//mobSpawnpointMap.put(loc,new Pair<EntityType,Integer>(ct,range));
-			mobSpawnpointMap.put(loc,new Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>(new Pair<Pair<EntityType,Integer>,String>(new Pair<EntityType,Integer>(ct,size),time_count),new Pair<Integer,Pair<Integer,Integer>>(range,new Pair<Integer,Integer>(health,dmgmulti))));
+			//mobSpawnpointMap.put(loc,new Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>(new Pair<Pair<EntityType,Integer>,String>(new Pair<EntityType,Integer>(ct,size),time_count),new Pair<Integer,Pair<Integer,Integer>>(range,new Pair<Integer,Integer>(health,dmgmulti))));
 			//LocHealthMap.put(loc, health);
 			b.setTypeId(0);
 		}

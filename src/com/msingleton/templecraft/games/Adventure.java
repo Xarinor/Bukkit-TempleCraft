@@ -127,7 +127,7 @@ public class Adventure extends Game
 		Set<Location> tempLocs = new HashSet<Location>();
 		for(Location loc : mobSpawnpointMap.keySet())
 		{
-			if(p.getLocation().distance(loc) < mobSpawnpointMap.get(loc).b.a)
+			if(p.getLocation().distance(loc) < mobSpawnpointMap.get(loc).getRange())
 			{
 				tempLocs.add(loc);
 			}
@@ -137,7 +137,9 @@ public class Adventure extends Game
 		{
 			try
 			{
-				if(mobSpawnpointMap.get(loc).a.b.contains(":"))
+				TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc));
+				mobSpawnpointMap.remove(loc);
+				/*if(mobSpawnpointMap.get(loc).a.b.contains(":"))
 				{
 					String[] split = mobSpawnpointMap.get(loc).a.b.split(":");
 					if(split.length > 1)
@@ -159,11 +161,11 @@ public class Adventure extends Game
 				{
 					TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc).a.a.a, mobSpawnpointMap.get(loc).a.a.b, mobSpawnpointMap.get(loc).b.b.a, mobSpawnpointMap.get(loc).b.b.b, mobSpawnpointMap.get(loc).a.b);
 					mobSpawnpointMap.remove(loc);
-				}
+				}*/
 			}
 			catch (Exception e) {
 				e.printStackTrace();
-				TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc).a.a.a, mobSpawnpointMap.get(loc).a.a.b, mobSpawnpointMap.get(loc).b.b.a);
+				//TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc).a.a.a, mobSpawnpointMap.get(loc).a.a.b, mobSpawnpointMap.get(loc).b.b.a);
 				mobSpawnpointMap.remove(loc);
 			}
 		}

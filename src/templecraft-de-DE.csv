@@ -110,6 +110,7 @@ playerListener.denyHelmet=Du darfst deinen Helm nicht entfernen.
 enteringTemple=Du betrittst den Tempel in %d... 
 
 teleportListener.deny=Du kannst den Tempel nicht verlassen! Wenn du unbedingt willst, dann schreibe "/tct leave" und gerate in Vergessenheit wie so viele schon vor dir...
+teleportListener.deny2=Du kannst dich nicht in einen laufenden Tempel teleportieren.
 
 classes.selectClass=Schlag das jeweilige Schild um dein Klasse zu wählen.
 classes.classChosen=Du hast %s als deine Klasse ausgewählt!

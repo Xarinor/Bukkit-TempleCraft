@@ -77,7 +77,7 @@ public class Temple {
 
 	public World loadTemple(String type)
 	{
-		World result;
+		World result = null;
 		
 		String worldName;
 		if(TempleManager.constantWorldNames)
@@ -111,18 +111,21 @@ public class Temple {
 		if(env != null)
 		{
 			wc.environment(env);
+			TCUtils.setInt(TCUtils.getConfig("temples"),"Temples."+this.templeName+".environment", env.getId());
 		}
 		else
 		{
-			wc.environment(Environment.NORMAL);
+			wc.environment(Environment.getEnvironment(TCUtils.getInt(TCUtils.getConfig("temples"),"Temples."+this.templeName+".environment", Environment.NORMAL.getId())));
 		}
+		
 		if(wt != null)
 		{
 			wc.type(wt);
+			TCUtils.getString(TCUtils.getConfig("temples"),"Temples."+this.templeName+".worldtype", wt.getName());
 		}
 		else
 		{
-			wc.type(WorldType.NORMAL);
+			wc.type(WorldType.getByName(TCUtils.getString(TCUtils.getConfig("temples"),"Temples."+this.templeName+".worldtype", WorldType.NORMAL.getName())));
 		}
 		if(ChunkGeneratorFile != null)
 		{
@@ -132,19 +135,29 @@ public class Temple {
 				wc.generator(cg);
 			}
 		}
+		
 		// if the tcf file doesn't exist
 		if(TCRestore.loadTemple(worldName, this) || !tcffile.exists())
 		{
-			result = TempleManager.server.createWorld(wc);
-			if(TempleCraft.MVWM != null)
+			try
 			{
-				TempleCraft.MVWM.addWorld(result.getName(), result.getEnvironment(), Long.toString(result.getSeed()), result.getWorldType(), false, null, true);
+				result = TempleManager.server.createWorld(wc);
+				//result = TempleManager.server.getWorld(worldName);
+				if(TempleCraft.MVWM != null)
+				{
+					TempleCraft.MVWM.addWorld(result.getName(), result.getEnvironment(), Long.toString(result.getSeed()), result.getWorldType(), false, null, true);
+				}
+				if(TempleCraft.catacombs != null)
+				{
+					TempleCraft.catacombs.loadWorld(result.getName());
+				}
+				System.out.println("[TempleCraft] World \""+worldName+"\" Loaded!");
 			}
-			if(TempleCraft.catacombs != null)
+			catch (Exception e) 
 			{
-				TempleCraft.catacombs.loadWorld(result.getName());
+				System.out.println("[TempleCraft] World \""+worldName+"\" could not be loaded!");
+				e.printStackTrace();
 			}
-			System.out.println("[TempleCraft] World \""+worldName+"\" Loaded!");
 		}
 		else if(type.equals("Edit") || type.equals("Convert"))
 		{

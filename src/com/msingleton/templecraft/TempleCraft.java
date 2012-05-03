@@ -170,11 +170,9 @@ public class TempleCraft extends JavaPlugin
 		{
 			return;
 		}
-
-		catacombs = ((Catacombs) Cataplugin);
-		if(catacombs != null)
+		else
 		{
-			System.out.println("[TempleCraft] Hooked into " + catacombs.info.getName() + " Version "+ catacombs.info.getVersion());
+			System.out.println("[TempleCraft] Hooked into " + Cataplugin.getDescription().getName() + " Version "+ Cataplugin.getDescription().getVersion());
 		}
 	}
 	

@@ -9,11 +9,11 @@ import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.LinkedList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -24,9 +24,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.World;
-import org.bukkit.Material;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldType;
 import org.bukkit.configuration.ConfigurationSection;
@@ -41,7 +41,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -276,7 +275,7 @@ public class TCUtils
 		return result;
 	}
 
-	private static void setInt(File configFile, String path, int value)
+	public static void setInt(File configFile, String path, int value)
 	{
 		YamlConfiguration c = YamlConfiguration.loadConfiguration(configFile);
 		c.set(path, value);
@@ -422,6 +421,26 @@ public class TCUtils
 	{
 		Random random = new Random();
 		Object[] array = game.playerSet.toArray();
+		return (Player) array[random.nextInt(array.length)];
+	}
+	
+	/**
+	 * Turns the current set of players in the game into an array, and grabs a random
+	 * element out of it.
+	 */
+	public static Player getNearbyRandomPlayer(LivingEntity entity)
+	{
+		Random random = new Random();
+		List<Entity> entity_list = entity.getNearbyEntities(20, 20, 20);
+		List<Entity> nearby_players = new ArrayList<Entity>();
+		for(Entity e : entity_list)
+		{
+			if(e instanceof Player)
+			{
+				nearby_players.add(e);
+			}
+		}
+		Object[] array = nearby_players.toArray();
 		return (Player) array[random.nextInt(array.length)];
 	}
 
@@ -777,22 +796,34 @@ public class TCUtils
 		{
 			e.remove();
 		}
+		
+		if(TempleCraft.catacombs != null)
+		{
+			TempleCraft.catacombs.unloadWorld(w.getName());
+		}
+		
 		if(TempleCraft.MVWM != null)
 		{
 			if(TempleCraft.MVWM.isMVWorld(w.getName()))
 			{
-				TempleCraft.MVWM.removeWorldFromConfig(w.getName());
+				//TempleCraft.MVWM.removeWorldFromConfig(w.getName());
+				TempleCraft.MVWM.deleteWorld(w.getName(), true);
 			}
-			if(TempleCraft.catacombs != null)
+			else
 			{
-				TempleCraft.catacombs.unloadWorld(w.getName());
+				TempleManager.server.unloadWorld(w, false);
 			}
 		}
-		TempleManager.server.unloadWorld(w, true);
+		else
+		{
+			TempleManager.server.unloadWorld(w, false);
+		}
+		
 		if(folder.exists())
 		{
 			deleteFolder(folder);
 		}
+		
 		return true;
 	}
 

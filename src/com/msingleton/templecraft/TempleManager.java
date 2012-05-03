@@ -17,6 +17,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 
+import com.msingleton.templecraft.custommobs.CustomMobType;
+import com.msingleton.templecraft.custommobs.CustomMobUtils;
 import com.msingleton.templecraft.games.Game;
 import com.msingleton.templecraft.scoreboards.ScoreBoardManager;
 import com.msingleton.templecraft.util.MobArenaClasses;
@@ -51,6 +53,7 @@ public class TempleManager
 	public static Set<Temple> templeSet		  = new HashSet<Temple>();
 	public static Set<Game> gameSet			  = new HashSet<Game>();
 	public static Set<Player> playerSet		  = new HashSet<Player>();
+	public static Set<CustomMobType> BossTypeSet		  = new HashSet<CustomMobType>();
 	public static Set<Integer> breakable		 = new HashSet<Integer>();	
 	public static Set<Integer> placeable		 = new HashSet<Integer>();	
 	public static String breakableMats;
@@ -101,9 +104,15 @@ public class TempleManager
 			loadTemplePlayers();
 			loadCustomTemples();
 			SBManager = new ScoreBoardManager();
+			
+			checkUpdates			= TCUtils.getBoolean(config, "settings.updatenotification", true);
+			
+			//CustomMobUtils cmu = new CustomMobUtils();
+			
+			CustomMobUtils.loadBosses();
+			//BossTypeSet = cmu.getBosses();
 		}
 		// Convenience variables.
-		checkUpdates			= TCUtils.getBoolean(config, "settings.updatenotification", true);
 	}
 
 	/* ///////////////////////////////////////////////////////////////////// //

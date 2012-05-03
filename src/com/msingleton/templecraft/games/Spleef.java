@@ -43,8 +43,14 @@ public class Spleef extends Game
 
 	public void endGame()
 	{
-		gameTimer.cancel();
-		super.endGame();
+		try
+		{
+			gameTimer.cancel();
+			super.endGame();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void startRound()

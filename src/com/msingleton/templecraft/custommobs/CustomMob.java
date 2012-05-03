@@ -3,11 +3,11 @@ package com.msingleton.templecraft.custommobs;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 import com.msingleton.templecraft.TCUtils;
+import com.msingleton.templecraft.util.Pair;
 
 
 public class CustomMob{
@@ -18,6 +18,8 @@ public class CustomMob{
 	private int maxhealth = 0;
 	private int dmgmulti = 0;
 	private int size = 0;
+	private List<Pair<CustomMobAbility,Integer>> abilities_random = new ArrayList<Pair<CustomMobAbility,Integer>>();
+	private List<Pair<CustomMobAbility,Integer>> abilities_rotation = new ArrayList<Pair<CustomMobAbility,Integer>>();
 
 	public CustomMob(LivingEntity entity) 
 	{
@@ -65,12 +67,14 @@ public class CustomMob{
 		if(!entity.equals(damager))
 		{
 			health -= value;
-			if (health <= 0) {
-				entity.damage(entity.getMaxHealth()+1);
+			if (health <= 0) 
+			{
+				entity.setHealth(0);
+				/*entity.damage(entity.getMaxHealth()+1);
 				if(entity instanceof EnderDragon)
 				{
 					entity.setHealth(0);
-				}
+				}*/
 			}
 		}
 	}
@@ -113,5 +117,21 @@ public class CustomMob{
 	public LivingEntity getTarget()
 	{
 		return TCUtils.getTarget(this.entity);
+	}
+
+	public List<Pair<CustomMobAbility,Integer>> getAbilities_rotation() {
+		return abilities_rotation;
+	}
+
+	public void setAbilities_rotation(List<Pair<CustomMobAbility,Integer>> abilities_rotation) {
+		this.abilities_rotation = abilities_rotation;
+	}
+
+	public List<Pair<CustomMobAbility,Integer>> getAbilities_random() {
+		return abilities_random;
+	}
+
+	public void setAbilities_random(List<Pair<CustomMobAbility,Integer>> abilities_random) {
+		this.abilities_random = abilities_random;
 	}
 }

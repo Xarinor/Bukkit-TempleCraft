@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import com.msingleton.templecraft.games.Game;
 import com.msingleton.templecraft.util.Translation;
@@ -150,13 +150,14 @@ public class TCCommands implements CommandExecutor
 		if ((cmd.equals("closeall") || cmd.equals("ca")) && TCPermissionHandler.hasPermission(p, "templecraft.forceend"))
 		{
 			TempleManager.removeAll();
-			TempleCraft.TCScheduler.cancelAllTasks();
+			TempleCraft.TCScheduler.cancelTasks(plugin);
 			for(Game game : TempleManager.gameSet)
 			{
 				game.AbilityTaskIDs.clear();
 				game.SpawnTaskIDs.clear();
 				game.endGame();
 			}
+			TCUtils.deleteTempWorlds();
 		}
 
 		if (cmd.equals("save"))

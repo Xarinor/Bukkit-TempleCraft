@@ -5,11 +5,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import com.msingleton.templecraft.TCPermissionHandler;
 import com.msingleton.templecraft.TCUtils;
 import com.msingleton.templecraft.Temple;
 import com.msingleton.templecraft.TempleManager;
 import com.msingleton.templecraft.TemplePlayer;
+import com.msingleton.templecraft.games.Game;
 import com.msingleton.templecraft.util.Translation;
 
 /**
@@ -25,6 +28,24 @@ public class TCTeleportListener implements Listener
 	{
 		Player p = event.getPlayer();
 		TemplePlayer tp = TempleManager.templePlayerMap.get(p);
+		Location to = event.getTo();
+		Location from = event.getFrom();
+		
+		if(event.getCause().equals(TeleportCause.COMMAND))
+		{
+			if(TCUtils.isTCWorld(to.getWorld()))
+			{
+				Game game = TCUtils.getGameByWorld(to.getWorld());
+				if(game != null)
+				{
+					if(TCPermissionHandler.hasPermission(p, "templecraft.teleport"))
+					{
+						TempleManager.tellPlayer(p, Translation.tr("teleportListener.deny2"));
+						event.setCancelled(true);
+					}
+				}
+			}
+		}
 
 		if (!TempleManager.playerSet.contains(p))
 		{
@@ -37,9 +58,6 @@ public class TCTeleportListener implements Listener
 		{
 			return;
 		}
-
-		Location to = event.getTo();
-		Location from = event.getFrom();
 
 		if ((!TCUtils.isTCWorld(from.getWorld()) && TCUtils.isTCWorld(to.getWorld())) || to.getWorld().equals(p.getWorld()))
 		{

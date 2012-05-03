@@ -4,7 +4,7 @@ authors: [Mike Singleton]
 main: com.msingleton.templecraft.TempleCraft
 depend: [Vault]
 softdepend: [Heroes,Multiverse-Core,Catacombs]
-version: 0.45
+version: 0.45.2
 dev-url: http://dev.bukkit.org/server-mods/templecraft-bootscreen/
 
 commands:
@@ -32,6 +32,7 @@ permissions:
             templecraft.renametemple: true
             templecraft.setmaxplayers: true
             templecraft.findsigblocks: true
+            templecraft.teleport: true
         default: false
 
     templecraft.editbasics:
@@ -126,4 +127,7 @@ permissions:
         default: op
     templecraft.findsigblocks:
         description: Allows finding significant blocks in temples.
+        default: op
+    templecraft.teleport:
+        description: Allows you to teleport into running temples.
         default: op

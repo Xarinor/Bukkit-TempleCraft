@@ -60,7 +60,8 @@ public enum CustomMobAbility
 	{
 		public void run(Game game, LivingEntity customMob)
 		{
-			Player p = TCUtils.getRandomPlayer(game);
+			Player p = TCUtils.getNearbyRandomPlayer(customMob);
+			//Player p = TCUtils.getRandomPlayer(game);
 			if(p != null)
 			{
 	            while(game.deadSet.contains(p))
