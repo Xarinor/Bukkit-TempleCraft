@@ -358,7 +358,7 @@ public class TempleManager
 			}
 		}
 		
-		// Handles what is breakable
+		// Handles what is placeable
 		for(String s : placeableMats.split(","))
 		{
 			s = s.trim();

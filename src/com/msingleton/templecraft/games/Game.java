@@ -101,6 +101,7 @@ public class Game
 	public Set<LivingEntity> monsterSet = new HashSet<LivingEntity>();
 
 	public Set<Pair<Location,Set<Integer>>> placeableLocs = new HashSet<Pair<Location,Set<Integer>>>();
+	public Set<Pair<Location,Set<Integer>>> breakableLocs = new HashSet<Pair<Location,Set<Integer>>>();
 	public Set<Location> coordLocSet = new HashSet<Location>();
 	public Set<Block> tempBlockSet   = new HashSet<Block>();
 	public Set<Location> endLocSet   = new HashSet<Location>();
@@ -140,7 +141,6 @@ public class Game
 		isRunning = true;
 		startTime = System.currentTimeMillis();
 		convertSpawnpoints();
-		//getplaceableLocs();
 		TCUtils.debugMessage("Game " + gameName + "(" + gameType + ") gestartet");
 		for(Player p : playerSet)
 		{
@@ -590,16 +590,16 @@ public class Game
 		{
 			//sign.getBlock().setTypeId(0);
 		}
-		else if(Lines[1].toLowerCase().equals("place"))
+		else if(Lines[1].toLowerCase().equals("place") || Lines[1].toLowerCase().equals("break"))
 		{
-			int radius = 1;
+			int radius = 0;
 			try
 			{
 				radius = Integer.parseInt(Lines[2]);
 			}
 			catch(Exception e)
 			{
-				radius = 1;
+				radius = 0;
 			}
 			for(int x=-radius;x<=radius;x++)
 			{
@@ -618,8 +618,12 @@ public class Game
 							}
 							catch (Exception e) {}
 						}
-						placeableLocs.add(new Pair<Location,Set<Integer>>(loc,blocks));
-
+						if(Lines[1].toLowerCase().equals("place"))
+						{
+							placeableLocs.add(new Pair<Location,Set<Integer>>(loc,blocks));
+						} else {
+							breakableLocs.add(new Pair<Location,Set<Integer>>(loc,blocks));
+						}
 						b.setTypeId(0);
 					}
 				}
