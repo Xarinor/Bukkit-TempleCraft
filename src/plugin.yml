@@ -4,7 +4,7 @@ authors: [Mike Singleton]
 main: com.msingleton.templecraft.TempleCraft
 depend: [Vault]
 softdepend: [Heroes,Multiverse-Core,Catacombs]
-version: 0.45.2
+version: 0.45.3
 dev-url: http://dev.bukkit.org/server-mods/templecraft-bootscreen/
 
 commands:
@@ -12,6 +12,7 @@ commands:
     description: Base command for TempleCraft
     usage: |
            /tct - List commands you have permission to use.
+
 permissions:
     templecraft.*:
         description: Gives access to all TempleCraft commands

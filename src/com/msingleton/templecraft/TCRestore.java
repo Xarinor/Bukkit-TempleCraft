@@ -3,10 +3,9 @@ package com.msingleton.templecraft;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
@@ -17,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -49,13 +49,21 @@ public class TCRestore
 
 		w.save();
 		File folder = new File("plugins/TempleCraft/SavedTemples/"+temple.templeName);
-		copyDirectory(new File(w.getName()),folder);
+		try 
+		{
+			copyFiles(new File(w.getName()),folder);
+		} 
+		catch (IOException e) 
+		{
+			TCUtils.debugMessage("could not save Worldname " + w.getName() + ", Temple" + temple.templeName + "\n" + e.getMessage());
+			e.printStackTrace();
+		}
 		saveSignificantLocs(temple);
 	}
 
 	// Copies all files under srcDir to dstDir.
 	// If dstDir does not exist, it will be created.
-	public static void copyDirectory(File srcDir, File dstDir)
+	/*	public static void copyDirectory(File srcDir, File dstDir)
 	{
 		if(srcDir.getName().equals("uid.dat") || srcDir.getName().equals("session.lock"))
 		{
@@ -63,10 +71,12 @@ public class TCRestore
 			{
 				dstDir.delete();
 			}
+			TCUtils.debugMessage(srcDir.getName() + " ## srcDir.getName().equals(\"uid.dat\") || srcDir.getName().equals(\"session.lock\")");
 			return;
 		}
 		if (srcDir.isDirectory())
 		{
+			TCUtils.debugMessage(srcDir.getName() + " isDirectory");
 			if (!dstDir.exists())
 			{
 				dstDir.mkdir();
@@ -75,11 +85,13 @@ public class TCRestore
 			String[] children = srcDir.list();
 			for (int i=0; i<children.length; i++)
 			{
+				TCUtils.debugMessage(srcDir.getName() + " - " + children[i]);
 				copyDirectory(new File(srcDir, children[i]), new File(dstDir, children[i]));
 			}
 		}
 		else
 		{
+			TCUtils.debugMessage(srcDir.getName() + " isFile");
 			// This method is implemented in Copying a File
 			copyFile(srcDir, dstDir);
 		}
@@ -109,16 +121,112 @@ public class TCRestore
 			System.out.println("Could not copy file "+src);
 		}
 	}
+	 */
+
+	/**
+	 * This function will copy files or directories from one location to another.
+	 * note that the source and the destination must be mutually exclusive. This 
+	 * function can not be used to copy a directory to a sub directory of itself.
+	 * The function will also have problems if the destination files already exist.
+	 * @param src -- A File object that represents the source for the copy
+	 * @param dest -- A File object that represnts the destination for the copy.
+	 * @throws IOException if unable to copy.
+	 * 
+	 * copied from http://www.dreamincode.net/code/snippet1443.htm
+	 */
+	public static void copyFiles(File src, File dest) throws IOException 
+	{	
+		if (!src.exists()) //Check to ensure that the source is valid...
+		{
+			TCUtils.debugMessage("Can not find source: " + src.getAbsolutePath()+".",Level.SEVERE);
+			throw new IOException("copyFiles: Can not find source: " + src.getAbsolutePath()+".");
+		}
+		else if (!src.canRead()) //check to ensure we have rights to the source...
+		{ 
+			TCUtils.debugMessage("No right to source: " + src.getAbsolutePath()+".",Level.SEVERE);
+			throw new IOException("copyFiles: No right to source: " + src.getAbsolutePath()+".");
+		}
+
+		if (src.isDirectory()) 	//is this a directory copy?
+		{
+			TCUtils.debugMessage(src.getName() + " isDirectory");
+			if (!dest.exists()) //does the destination already exist?
+			{ 
+				//if not we need to make it exist if possible (note this is mkdirs not mkdir)
+				if (!dest.mkdirs()) 
+				{
+					TCUtils.debugMessage("Could not create direcotry: " + dest.getAbsolutePath() + ".",Level.SEVERE);
+					throw new IOException("copyFiles: Could not create direcotry: " + dest.getAbsolutePath() + ".");
+				}
+			}
+			//get a listing of files...
+			String list[] = src.list();
+			//copy all the files in the list.
+			for (int i = 0; i < list.length; i++)
+			{
+				File dest1 = new File(dest, list[i]);
+				File src1 = new File(src, list[i]);
+				TCUtils.debugMessage("copyChild: " + src1.getAbsolutePath() + " > " + dest1.getAbsolutePath());
+				copyFiles(src1 , dest1);
+			}
+		} 
+		else 
+		{ 
+			TCUtils.debugMessage(src.getName() + " isFile");
+			//This was not a directory, so lets just copy the file
+			FileInputStream fin = null;
+			FileOutputStream fout = null;
+			byte[] buffer = new byte[4096]; //Buffer 4K at a time (you can change this).
+			int bytesRead;
+			try
+			{
+				//open the files for input and output
+				fin =  new FileInputStream(src);
+				fout = new FileOutputStream(dest);
+				//while bytesRead indicates a successful read, lets write...
+				while ((bytesRead = fin.read(buffer)) >= 0)
+				{
+					fout.write(buffer,0,bytesRead);
+				}
+			} 
+			catch (Exception e) //Error copying file... 
+			{ 
+				TCUtils.debugMessage("Unable to copy file: " + 
+						src.getAbsolutePath() + "to" + dest.getAbsolutePath()+".",Level.SEVERE);
+				IOException wrapper = new IOException("copyFiles: Unable to copy file: " + 
+						src.getAbsolutePath() + "to" + dest.getAbsolutePath()+".");
+				wrapper.initCause(e);
+				wrapper.setStackTrace(e.getStackTrace());
+				throw wrapper;
+			} 
+			finally //Ensure that the files are closed (if they were open).
+			{ 
+				if (fin != null) { fin.close(); }
+				if (fout != null) { fout.close(); }
+			}
+		}
+	}
+
 
 	public static boolean loadTemple(String worldName, Temple temple)
 	{
+		TCUtils.debugMessage("loadtemple Worldname " + worldName + ", Temple" + temple.templeName);
 		File file = new File("plugins/TempleCraft/SavedTemples/"+temple.templeName);
 
 		if(!file.exists())
 		{
 			return false;
 		}
-		copyDirectory(file,new File(worldName));
+		try 
+		{
+			copyFiles(file,new File(worldName));
+		} 
+		catch (IOException e) 
+		{
+			TCUtils.debugMessage("could not load Worldname " + worldName + ", Temple" + temple.templeName + "\n" + e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
 		return true;
 	}
 
@@ -198,7 +306,7 @@ public class TCRestore
 		{
 			return;
 		}
-		
+
 		HashSet<EntityPosition> significantLocs = new HashSet<EntityPosition>();
 
 		for(Location loc : temple.coordLocSet)
@@ -279,7 +387,7 @@ public class TCRestore
 		{
 			return;
 		}
-		
+
 		String fileName = temple.templeName + TempleCraft.fileExtention;
 
 		HashMap<EntityPosition,String> preciousPatch;

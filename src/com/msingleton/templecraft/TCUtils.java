@@ -19,10 +19,12 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -257,6 +259,29 @@ public class TCUtils
 	/**
 	 * Grabs an int from the config-file.
 	 */
+	public static double getDouble(File configFile, String path)
+	{
+		YamlConfiguration c = YamlConfiguration.loadConfiguration(configFile);
+
+		return c.getDouble(path);
+	}
+	public static boolean setDouble(File configFile, String path, double dbl)
+	{
+		YamlConfiguration c = YamlConfiguration.loadConfiguration(configFile);
+
+		c.set(path, dbl);
+
+		try
+		{
+			c.save(configFile);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
 	public static int getInt(File configFile, String path, int def)
 	{
 		YamlConfiguration c = YamlConfiguration.loadConfiguration(configFile);
@@ -308,6 +333,21 @@ public class TCUtils
 			e.printStackTrace();
 		}
 		return result;
+	}
+	public static void setString(File configFile, String path, String def)
+	{
+		YamlConfiguration c = YamlConfiguration.loadConfiguration(configFile);
+
+		c.set(path, def);
+
+		try
+		{
+			c.save(configFile);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -738,6 +778,17 @@ public class TCUtils
 		TCUtils.setInt(getConfig("temples"),"Temples."+temple.templeName+".maxPlayersPerGame", value);
 		temple.maxPlayersPerGame = value;
 	}
+	
+	public static void setFinishLocation(Temple temple, Location loc)
+	{
+		TCUtils.setString(getConfig("temples"),"Temples."+temple.templeName+".finishLocation.world", loc.getWorld().getName());
+		TCUtils.setDouble(getConfig("temples"),"Temples."+temple.templeName+".finishLocation.x", loc.getX());
+		TCUtils.setDouble(getConfig("temples"),"Temples."+temple.templeName+".finishLocation.y", loc.getY());
+		TCUtils.setDouble(getConfig("temples"),"Temples."+temple.templeName+".finishLocation.z", loc.getZ());
+		TCUtils.setDouble(getConfig("temples"),"Temples."+temple.templeName+".finishLocation.pitch", loc.getPitch());
+		TCUtils.setDouble(getConfig("temples"),"Temples."+temple.templeName+".finishLocation.yaw", loc.getYaw());
+		temple.finishLocation = loc;
+	}
 
 	public static void removePlayers(World world)
 	{
@@ -785,6 +836,7 @@ public class TCUtils
 
 	public static boolean deleteTempWorld(World w)
 	{
+		debugMessage("try deleting World " + w.getName());
 		removePlayers(w);
 		if(w == null || !w.getPlayers().isEmpty())
 		{
@@ -795,6 +847,11 @@ public class TCUtils
 		for(Entity e : w.getEntities())
 		{
 			e.remove();
+		}
+		
+		for (Chunk chunk : w.getLoadedChunks())
+		{
+			w.unloadChunk(chunk);
 		}
 		
 		if(TempleCraft.catacombs != null)
@@ -811,17 +868,36 @@ public class TCUtils
 			}
 			else
 			{
-				TempleManager.server.unloadWorld(w, false);
+				TempleManager.server.unloadWorld(w, true);
 			}
 		}
 		else
 		{
-			TempleManager.server.unloadWorld(w, false);
+			TempleManager.server.unloadWorld(w, true);
+		}
+		
+		if(TempleManager.server.getWorld(w.getName()) != null)
+		{
+			debugMessage("error while unloading " + w.getName());
+			System.out.print("error while unloading " + w.getName());
+			return false;
+		}
+		else
+		{
+			System.out.println("[TempleCraft] World \""+w.getName()+"\" unloaded!");
 		}
 		
 		if(folder.exists())
 		{
-			deleteFolder(folder);
+			debugMessage("start deleting " + folder.getAbsolutePath());
+			if(!deleteFolder(folder))
+			{
+				debugMessage("error while deleting " + folder.getAbsolutePath());
+			}
+			else
+			{
+				System.out.println("[TempleCraft] World \""+w.getName()+"\" deleted!");
+			}
 		}
 		
 		return true;
@@ -838,26 +914,33 @@ public class TCUtils
 		}
 	}
 
-	private static void deleteFolder(File folder)
+	private static boolean deleteFolder(File folder)
 	{
+		boolean result = true;
 		try
 		{
-			for(File f : folder.listFiles())
-			{
-				if(f.isDirectory())
+	        if (folder.exists()) 
+	        {
+				if(folder.isDirectory())
 				{
-					deleteFolder(f);
+					for(File f : folder.listFiles())
+					{
+						result = result && deleteFolder(f);
+					}
 				}
-				else
-				{
-					f.delete();
-				}
-			}
-			folder.delete();
+				result = result && folder.delete();
+				return result;
+	        }
+	        else
+	        {
+	        	return false;
+	        }
 		}
 		catch(Exception e)
 		{
-			System.out.println(e.getMessage());
+			debugMessage("Error while deleting " + folder.getAbsolutePath() + " - " + e.getMessage());
+			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -1406,4 +1489,26 @@ public class TCUtils
 		}
 		return null;
 	}
+
+	public static void debugMessage(String message)
+	{
+		debugMessage(Thread.currentThread().getStackTrace()[2].getClassName() + " - " + Thread.currentThread().getStackTrace()[2].getMethodName() + " - " + Thread.currentThread().getStackTrace()[2].getLineNumber() + " - " + message, Level.INFO);
+	}
+	
+	public static void debugMessage(String message, Level loglevel)
+	{
+		if (TempleCraft.debugMode)
+		{
+			if(loglevel.equals(Level.INFO))
+			{
+				TempleCraft.debuglog.log(loglevel, message);
+			}
+			else
+			{
+				TempleCraft.debuglog.log(loglevel, Thread.currentThread().getStackTrace()[2].getClassName() + " - " + Thread.currentThread().getStackTrace()[2].getMethodName() + " - " + Thread.currentThread().getStackTrace()[2].getLineNumber() + " - " + message);
+			}
+		}
+	}
+	
+	
 }

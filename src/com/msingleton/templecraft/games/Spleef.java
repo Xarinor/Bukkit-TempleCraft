@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import com.msingleton.templecraft.TCUtils;
 import com.msingleton.templecraft.Temple;
 import com.msingleton.templecraft.util.MobArenaClasses;
 
@@ -33,6 +34,7 @@ public class Spleef extends Game
 	{	
 		super.playerJoin(p);
 		MobArenaClasses.clearInventory(p);
+		TCUtils.debugMessage("Player " + p.getName() + " joined Temple " + temple.templeName + ", Game " + gameName + "(" + gameType + ").");
 	}
 
 	public void startGame()
@@ -45,6 +47,7 @@ public class Spleef extends Game
 	{
 		try
 		{
+			TCUtils.debugMessage("end game");
 			gameTimer.cancel();
 			super.endGame();
 		}
@@ -65,6 +68,7 @@ public class Spleef extends Game
 		deadSet.clear();
 		aliveSet.addAll(playerSet);
 		tellAll("Round "+roundNum);
+		TCUtils.debugMessage("Started Round " + roundNum);
 	}
 
 	public void endRound()
@@ -79,6 +83,7 @@ public class Spleef extends Game
 		if(roundNum >= roundLim)
 		{
 			tellAll("Good game! Ending Spleef...");
+			TCUtils.debugMessage("Game end start waiting timer 2000");
 			TimerTask task = new TimerTask()
 			{
 				public void run()
@@ -99,6 +104,7 @@ public class Spleef extends Game
 
 	private void restorePlayingField()
 	{
+		TCUtils.debugMessage("restorePlayingField");
 		for(Location loc : brokenBlockMap.keySet())
 		{
 			String[] s = brokenBlockMap.get(loc).split(":");
