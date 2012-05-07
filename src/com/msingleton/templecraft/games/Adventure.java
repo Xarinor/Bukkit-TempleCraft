@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -65,7 +66,7 @@ public class Adventure extends Game
 	{
 		String[] Lines = sign.getLines();
 
-		if(!Lines[0].equals("[TempleCraft]") && !Lines[0].equals("[TC]") && !Lines[0].equals("[TCB]") && !Lines[0].equals("[TempleCraftM]") && !Lines[0].equals("[TCM]"))
+		if(!Lines[0].equals("[TempleCraft]") && !Lines[0].equals("[TC]") && !Lines[0].equals("[TCB]") && !Lines[0].equals("[TempleCraftM]") && !Lines[0].equals("[TCM]") && !Lines[0].equals("[TempleCraftML]") && !Lines[0].equals("[TCML]"))
 		{
 			return;
 		}
@@ -83,10 +84,11 @@ public class Adventure extends Game
 
 	public void hitEndBlock(Player p)
 	{
-
+		TCUtils.debugMessage("Player " + p.getName() + " hit EndBlock in Game " + gameName + "(" + gameType + ")");
 		TemplePlayer tp = TempleManager.templePlayerMap.get(p);
 		if (playerSet.contains(p))
 		{				
+			TCUtils.debugMessage("Player " + p.getName() + " contains PlayerSet.");
 			readySet.add(p);
 			rewardSet.add(p);
 			tp.rewards = rewards;
@@ -111,6 +113,10 @@ public class Adventure extends Game
 				tellPlayer(p, Translation.tr("game.readyToLeave"));
 				tp.currentCheckpoint = null;
 			}
+		}
+		else
+		{
+			TCUtils.debugMessage("Player " + p.getName() + " not contains PlayerSet but hit end block.", Level.WARNING);
 		}
 	}
 

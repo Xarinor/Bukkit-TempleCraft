@@ -21,7 +21,8 @@ import org.bukkit.generator.ChunkGenerator;
 import com.msingleton.templecraft.util.Translation;
 
 
-public class Temple {
+public class Temple 
+{
 	protected File config;
 
 	// Convenience variables.
@@ -39,6 +40,8 @@ public class Temple {
 	protected Set<String> ownerSet	= new HashSet<String>();
 	protected Set<String> accessorSet = new HashSet<String>();
 	protected Set<Player> editorSet   = new HashSet<Player>();
+
+	public Location finishLocation = null;
 
 	public static int mobSpawner = 7;
 	public static int diamondBlock = 57;
@@ -61,6 +64,25 @@ public class Temple {
 		editors		   = TCUtils.getString(config,"Temples."+name+".editors", "");
 		isSetup		   = TCUtils.getBoolean(config,"Temples."+name+".isSetup", false);
 		maxPlayersPerGame = TCUtils.getInt(config,"Temples."+name+".maxPlayersPerGame", -1);
+
+		try
+		{
+			World world = TempleManager.server.getWorld(TCUtils.getString(config, "Temples."+name+".finishLocation.world", ""));
+			if(world != null)
+			{
+				double x = TCUtils.getDouble(config, "Temples."+name+".finishLocation.x");
+				double y = TCUtils.getDouble(config, "Temples."+name+".finishLocation.y");
+				double z = TCUtils.getDouble(config, "Temples."+name+".finishLocation.z");
+				float pitch = (float) TCUtils.getDouble(config, "Temples."+name+".finishLocation.pitch");
+				float yaw = (float) TCUtils.getDouble(config, "Temples."+name+".finishLocation.yaw");
+				finishLocation = new Location(world, x, y, z, yaw, pitch);
+			}
+		}
+		catch (Exception e) 
+		{
+			System.out.print("[TempleCraft] Could not create Finish-Location.");
+			TCUtils.debugMessage("Could not create Finish-Location - " + e.getMessage());
+		}
 		isEnabled  = true;
 		ChunkGeneratorFile = TCRestore.getChunkGenerator(this);
 		env = Environment.NORMAL;
@@ -78,7 +100,7 @@ public class Temple {
 	public World loadTemple(String type)
 	{
 		World result = null;
-		
+
 		String worldName;
 		if(TempleManager.constantWorldNames)
 		{
@@ -117,7 +139,7 @@ public class Temple {
 		{
 			wc.environment(Environment.getEnvironment(TCUtils.getInt(TCUtils.getConfig("temples"),"Temples."+this.templeName+".environment", Environment.NORMAL.getId())));
 		}
-		
+
 		if(wt != null)
 		{
 			wc.type(wt);
@@ -135,7 +157,7 @@ public class Temple {
 				wc.generator(cg);
 			}
 		}
-		
+
 		// if the tcf file doesn't exist
 		if(TCRestore.loadTemple(worldName, this) || !tcffile.exists())
 		{
@@ -233,7 +255,16 @@ public class Temple {
 			{
 				File folder = new File("plugins/TempleCraft/SavedTemples/"+templeName);
 				folder.mkdir();
-				TCRestore.copyFile(ChunkGeneratorFile, destination);
+				//TCRestore.copyFile(ChunkGeneratorFile, destination);
+				try 
+				{
+					TCRestore.copyFiles(ChunkGeneratorFile, destination);
+				} 
+				catch (IOException e) 
+				{
+					TCUtils.debugMessage("could not copy chunkgenerator " + ChunkGeneratorFile.getAbsolutePath() + " to " + destination.getAbsolutePath() + "\n" + e.getMessage());
+					e.printStackTrace();
+				}
 			}
 		}
 

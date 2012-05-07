@@ -39,6 +39,7 @@ convertingComplete=Der Tempel wurde umgewandelt.
 templeDeleted=Der Tempel %s wurde vernichtet!
 templeRenamed=Du hast diesen Tempel mit dem Namen %s umbenannt in %s.
 templeMaxPlayersSet=%s: Max-Player auf %d gesetzt.
+templeFinishLocSet=%s: Finish Location wurde gestezt.
 maxTemplesOwned=Du kannst nicht mehr Tempel beherrschen!
 invalidInteger=Ungültiges Zahl ...
 incorrectArguments=Die Zahl der Argumente stimmen nicht.

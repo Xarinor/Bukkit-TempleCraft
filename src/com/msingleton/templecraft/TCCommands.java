@@ -1,5 +1,7 @@
 package com.msingleton.templecraft;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -7,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.msingleton.templecraft.games.Game;
@@ -445,6 +448,51 @@ public class TCCommands implements CommandExecutor
 			TCRestore.saveTemple(p.getWorld(), temple);
 
 			TempleManager.tellPlayer(p, Translation.tr("worldConverted",arg));
+			return true;
+		}
+		
+		if ((cmd.equals("finishloc") || cmd.equals("fl")) && TCPermissionHandler.hasPermission(p, "templecraft.edittemple"))
+		{
+			Temple temple = TCUtils.getTempleByName(arg);
+
+			if(temple == null)
+			{
+				TempleManager.tellPlayer(p, Translation.tr("templeDNE", arg));
+				return true;
+			}
+			
+			TCUtils.setFinishLocation(temple, p.getLocation());
+			TempleManager.tellPlayer(p, Translation.tr("templeFinishLocSet",arg));
+			return true;
+		}
+
+		if ((cmd.equals("textadd") || cmd.equals("ta")) && TCPermissionHandler.hasPermission(p, "templecraft.edittemple"))
+		{
+			try
+			{
+				File messageFile = TCUtils.getConfig("messages");
+				YamlConfiguration c = YamlConfiguration.loadConfiguration(messageFile);
+				String text = "";
+				for(int i = 2; i < args.length; i++)
+				{
+					text +=args[i] + " ";
+				}
+				c.set(arg, text);
+				try
+				{
+					c.save(messageFile);
+					TempleManager.tellPlayer(p, "Text added.");
+				}
+				catch (IOException e)
+				{
+					TempleManager.tellPlayer(p, "Could not perform command.");
+					e.printStackTrace();
+				}
+			}
+			catch (Exception e) 
+			{
+				TempleManager.tellPlayer(p, "Could not perform command.");
+			}
 			return true;
 		}
 

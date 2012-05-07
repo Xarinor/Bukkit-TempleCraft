@@ -182,7 +182,10 @@ public class TCDamageListener implements Listener
 				
 				if(cmob != null)
 				{
-					TempleCraft.TCScheduler.cancelTask(game.AbilityTaskIDs.get(cmob));
+					if(game.AbilityTaskIDs.containsKey(cmob))
+					{
+						TempleCraft.TCScheduler.cancelTask(game.AbilityTaskIDs.get(cmob));
+					}
 					game.customMobManager.RemoveMob(cmob);
 				}
 			}

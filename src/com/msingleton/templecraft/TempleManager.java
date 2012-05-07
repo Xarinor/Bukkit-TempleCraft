@@ -264,14 +264,21 @@ public class TempleManager
 			TCUtils.restorePlayerInventory(p);
 		}
 
-		if(locationMap.containsKey(p))
+		if(temple.finishLocation == null)
 		{
-			p.teleport(locationMap.get(p));
+			if(locationMap.containsKey(p))
+			{
+				p.teleport(locationMap.get(p));
+			}
+			else
+			{
+				String msg = "We have lost track of your origin. Please request assistance.";
+				TempleManager.tellPlayer(p, msg);
+			}
 		}
 		else
 		{
-			String msg = "We have lost track of your origin. Please request assistance.";
-			TempleManager.tellPlayer(p, msg);
+			p.teleport(temple.finishLocation);
 		}
 		locationMap.remove(p);
 

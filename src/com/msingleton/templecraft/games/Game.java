@@ -65,7 +65,8 @@ public class Game
 	public static ChatColor c1 = TempleCraft.c1;
 	public static ChatColor c2 = TempleCraft.c2;
 	public static ChatColor c3 = TempleCraft.c3;
-	
+
+	protected static File messageFile = null;
 
 	// Location variables for the Temple region.
 	public Location lobbyLoc = null;
@@ -108,7 +109,7 @@ public class Game
 
 	public Set<Integer> SpawnTaskIDs   = new HashSet<Integer>();
 	public Map<CustomMob,Integer> AbilityTaskIDs   = new HashMap<CustomMob,Integer>();
-	
+
 	public CustomMobManager customMobManager = new CustomMobManager();
 
 	public long startTime;
@@ -129,6 +130,7 @@ public class Game
 		coordLocSet   = temple.coordLocSet;
 		rejoinCost	= TempleManager.rejoinCost;
 		maxPlayers	= temple.maxPlayersPerGame;
+		messageFile	= TCUtils.getConfig("messages");
 	} 
 
 	/**
@@ -139,6 +141,7 @@ public class Game
 		isRunning = true;
 		startTime = System.currentTimeMillis();
 		convertSpawnpoints();
+		TCUtils.debugMessage("Game " + gameName + "(" + gameType + ") gestartet");
 		for(Player p : playerSet)
 		{
 			TemplePlayer tp = TempleManager.templePlayerMap.get(p);
@@ -163,13 +166,16 @@ public class Game
 		try
 		{
 			TempleManager.tellAll(Translation.tr("game.finished", gameType, temple.templeName));
+			TCUtils.debugMessage("Game " + gameName + "(" + gameType + ") beendet");
 			for(int id : SpawnTaskIDs)
 			{
+				TCUtils.debugMessage("Cancel SpawnTask " + id);
 				TempleCraft.TCScheduler.cancelTask(id);
 			}
 			SpawnTaskIDs.clear();
 			for(int id : AbilityTaskIDs.values())
 			{
+				TCUtils.debugMessage("Cancel AbilityTask " + id);
 				TempleCraft.TCScheduler.cancelTask(id);
 			}
 			AbilityTaskIDs.clear();
@@ -224,6 +230,7 @@ public class Game
 		consolidateRewards();
 		for(Player p : players)
 		{
+			TCUtils.debugMessage("Try to reward Player " + p.getName());
 			try
 			{
 				StringBuilder msg = new StringBuilder();
@@ -233,13 +240,15 @@ public class Game
 				{
 					if(item != null)
 					{
+						TCUtils.debugMessage("Add reward" +  item.getTypeId() + ":" + item.getData().getData() + " (" + item.getAmount() + ") to TempList for Player " + p.getName());
 						tempList.add(item);
 					}
 				}
-	
+
 				int size = tempList.size();
 				if(size == 0)
 				{
+					TCUtils.debugMessage("tempList.size == 0");
 					continue;
 				}
 				for(int i = 0; i<size; i++)
@@ -256,7 +265,18 @@ public class Game
 						{
 							msg.append(" "+Translation.tr("and")+" ");
 						}
+						
+						if(TCUtils.isTCWorld(p.getLocation().getWorld()))
+						{
+							if(TCUtils.hasPlayerInventory(p.getName()))
+							{
+								TCUtils.restorePlayerInventory(p);
+							}
+						}
+						
 						p.getInventory().addItem(item);
+						
+						TCUtils.debugMessage("Player " + p.getName() + " gets " + item.getTypeId() + ":" + item.getData().getData() + " (" + item.getAmount() + ") at Location " + p.getLocation().toString());
 					}
 				}
 				TempleManager.tellPlayer(p,Translation.tr("game.treasureReceived", msg.toString()));
@@ -315,7 +335,7 @@ public class Game
 			}
 		}
 	}
-	
+
 	protected void convertSpawnpoints()
 	{
 		for(Block b: getBlockSet(Material.WALL_SIGN.getId()))
@@ -442,7 +462,7 @@ public class Game
 				{
 					String[] split = Lines[1].split(":");
 					ct = EntityType.fromName(split[0]);
-	
+
 					if(ct == null)
 					{
 						System.out.println("[TempleCraft] Could not find EntityType \"" + split[0] + "\"");
@@ -486,7 +506,7 @@ public class Game
 					{
 						health = Integer.parseInt(split[0]);
 					}
-					
+
 					if(split.length > 1)
 					{
 						if(split[1].contains("-"))
@@ -498,7 +518,7 @@ public class Game
 							range = Integer.parseInt(split[1]);
 						}
 					}
-					
+
 					if(split.length > 2)
 					{
 						if(split[2].contains("-"))
@@ -520,7 +540,7 @@ public class Game
 				Location loc = new Location(b.getWorld(),b.getX()+.5,b.getY(),b.getZ()+.5);
 				mobSpawnpointSet.add(loc);
 				//mobSpawnpointMap.put(loc,new Pair<EntityType,Integer>(ct,range));
-	
+
 				MobSpawnProperties msp = new MobSpawnProperties();
 				msp.setEntityType(TCMobHandler.getRandomCreature());
 				msp.setAbilitys(Lines[3]);
@@ -535,15 +555,22 @@ public class Game
 				//LocHealthMap.put(loc, health);
 				b.setTypeId(0);
 			}
-			
+
 			return;	
 		}
-		
+
 		if(!Lines[0].equals("[TempleCraft]") && !Lines[0].equals("[TC]"))
 		{
 			if(Lines[0].equals("[TempleCraftM]") || Lines[0].equals("[TCM]"))
 			{
 				String[] newLines = {Lines[1]+Lines[2],Lines[3]};
+				chatMap.put(b.getLocation(), newLines);
+				b.setTypeId(0);
+			}
+			else if(Lines[0].equals("[TempleCraftML]") || Lines[0].equals("[TCML]"))
+			{
+				String[] newLines = {"",Lines[3]};
+				newLines[0] = getMessageFromFile(Lines[1]);
 				chatMap.put(b.getLocation(), newLines);
 				b.setTypeId(0);
 			}
@@ -676,7 +703,7 @@ public class Game
 			{
 				ct = EntityType.fromName(Lines[1]);
 			}
-			
+
 			if(ct == null)
 			{
 				return;
@@ -695,7 +722,7 @@ public class Game
 				{
 					range = Integer.parseInt(split[0]);
 				}
-				
+
 				if(split.length > 1)
 				{
 					if(split[1].contains("-"))
@@ -707,7 +734,7 @@ public class Game
 						time = Integer.parseInt(split[1]);
 					}
 				}
-				
+
 				if(split.length > 2)
 				{
 					if(split[2].contains("-"))
@@ -726,7 +753,7 @@ public class Game
 				time = 0;
 				count = 1;
 			}
-			
+
 			int health;
 			try
 			{
@@ -853,6 +880,7 @@ public class Game
 		tp.currentCheckpoint = null;
 		TempleManager.playerSet.add(p);
 		playerSet.add(p);
+		TCUtils.debugMessage("Player " + p.getName() + " joined Temple " + temple.templeName + ", Game " + gameName + "(" + gameType + ").");
 
 		if(world.getPlayers().isEmpty())
 		{
@@ -889,6 +917,8 @@ public class Game
 	public void playerReady(Player p)
 	{
 		readySet.add(p);
+
+		TCUtils.debugMessage("Player " + p.getName() + " is ready. Temple " + temple.templeName + ", Game " + gameName + "(" + gameType + ").");
 
 		if (readySet.equals(playerSet) && !isRunning)
 		{
@@ -929,7 +959,7 @@ public class Game
 		tp.tempSet.clear();
 		tp.roundDeaths++;
 
-		
+
 		for( LivingEntity tamedMob : tp.tamedMobSet)
 		{
 			if(!tamedMob.isDead())
@@ -1425,18 +1455,21 @@ public class Game
 				s = msg[0]+msg[1];
 			}
 
-			if(TCUtils.distance(loc, p.getLocation()) < range)
+			if(s.length() > 0)
 			{
-				if(msg[0].startsWith("/"))
+				if(TCUtils.distance(loc, p.getLocation()) < range)
 				{
-					tp.tempSet.add(s);
-					p.chat(s);
+					if(msg[0].startsWith("/"))
+					{
+						tp.tempSet.add(s);
+						p.chat(s);
+					}
+					else
+					{
+						p.sendMessage(c1+Translation.tr("game.message")+": "+c2+s);
+					}
+					tp.tempSet.add(loc);
 				}
-				else
-				{
-					p.sendMessage(c1+Translation.tr("game.message")+": "+c2+s);
-				}
-				tp.tempSet.add(loc);
 			}
 		}
 
@@ -1461,7 +1494,7 @@ public class Game
 
 	public void onEntityKilledByEntity(LivingEntity killed, Entity killer)
 	{
-		
+
 		if (killed instanceof Player)
 		{		
 			Player p = (Player) killed;
@@ -1486,5 +1519,18 @@ public class Game
 
 			monsterSet.remove(killed);
 		}
+	}
+
+	public String getMessageFromFile(String key)
+	{
+		YamlConfiguration c = YamlConfiguration.loadConfiguration(messageFile);
+
+		if(c.isSet(key))
+		{
+			return c.getString(key,"");
+		}
+
+		return "";
+		//return null;
 	}
 }

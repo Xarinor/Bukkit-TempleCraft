@@ -1,8 +1,15 @@
 package com.msingleton.templecraft;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import net.milkbowl.vault.economy.Economy;
@@ -42,6 +49,7 @@ public class TempleCraft extends JavaPlugin
 	/* Array of commands used to determine if a command belongs to TempleCraft
 	 * or Mean Admins. */
 	public Logger log;
+	public static Logger debuglog;
 	public List<String> ENABLED_COMMANDS;
 	public double newVersion;
     public double currentVersion;
@@ -59,6 +67,7 @@ public class TempleCraft extends JavaPlugin
 	public static ChatColor c1 = ChatColor.DARK_AQUA;
 	public static ChatColor c2 = ChatColor.WHITE;
 	public static ChatColor c3 = ChatColor.GREEN;
+	public static boolean debugMode = false;
 	
 	public void onEnable()
 	{	 	
@@ -123,10 +132,60 @@ public class TempleCraft extends JavaPlugin
 		pm.registerEvents(new TCInventoryListener(), this);
 
 		System.out.println(Translation.tr("enableMessage", pdfFile.getName(), pdfFile.getVersion()));
+		
+		debugMode = TCUtils.getBoolean(TCUtils.getConfig("config"), "settings.debug", false);
+		if(debugMode)
+		{
+			try 
+			{
+				new File("plugins/TempleCraft/debug").mkdir();
+				FileHandler fh = new FileHandler("plugins/TempleCraft/debug/debug.log", true);
+				//fh.setFormatter(new SimpleFormatter());
+				fh.setFormatter(new Formatter() {
+					public String format(LogRecord record) {
+						SimpleDateFormat sd = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+						String dateString = sd.format(new Date(record.getMillis())); 
+						String split[] = record.getMessage().split(" - ", 4);
+				        return dateString + " " + split[0] + " " + split[1] + " Line " + split[2] + "\n"
+				        		+ record.getLevel() + ": " + split[3] + "\n\n";
+					}
+				});
+				debuglog = Logger.getAnonymousLogger();
+				debuglog.setUseParentHandlers(false);
+				for(Handler h :debuglog.getHandlers())
+				{
+					debuglog.removeHandler(h);
+				}
+				debuglog.addHandler(fh);
+				System.out.println("[TempleCraft] DEBUG MODE enabled.");
+				String message = "Debug gestartet. Liste aller Plugins:\n";
+				for(Plugin pl : getServer().getPluginManager().getPlugins())
+				{
+					message += "- " + pl.getDescription().getName() + " v." + pl.getDescription().getVersion() + "\n";
+				}
+				TCUtils.debugMessage(message);
+			} 
+			catch (SecurityException e) 
+			{
+				debugMode = false;
+				e.printStackTrace();
+			} 
+			catch (IOException e) 
+			{
+				debugMode = false;
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void onDisable()
-	{	
+	{
+		TCUtils.debugMessage("Debug beendet.");
+		for(Handler h :debuglog.getHandlers())
+		{
+			debuglog.removeHandler(h);
+			h.close();
+		}
 		//permissionHandler = null;
 		TempleManager.SBManager.save();
 		TempleManager.removeAll();
@@ -162,7 +221,7 @@ public class TempleCraft extends JavaPlugin
 			System.out.println("[TempleCraft] Hooked into " + multiverse.getDescription().getName() + " Version "+ multiverse.getDescription().getVersion());
 		}
 	}
-	
+
 	private void setupCatacombs()
 	{
 		Plugin Cataplugin = this.getServer().getPluginManager().getPlugin("Catacombs");
@@ -175,7 +234,7 @@ public class TempleCraft extends JavaPlugin
 			System.out.println("[TempleCraft] Hooked into " + Cataplugin.getDescription().getName() + " Version "+ Cataplugin.getDescription().getVersion());
 		}
 	}
-	
+		
 	private Boolean setupPermissions()
 	{
 		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
