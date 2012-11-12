@@ -91,11 +91,6 @@ public class TCBlockListener implements Listener
 			return;
 		}
 
-		if (!game.isRunning)
-		{
-			cancel = false;
-		}
-		
 		if (TempleManager.breakable.contains(b.getTypeId()))
 		{
 			cancel = false;
@@ -103,7 +98,7 @@ public class TCBlockListener implements Listener
 
 		if (game.isRunning && TempleManager.playerSet.contains(event.getPlayer()))
 		{
-			
+
 			if(!game.breakableLocs.isEmpty())
 			{
 				for (Pair<Location, Set<Integer>> pr : game.breakableLocs)
@@ -121,43 +116,43 @@ public class TCBlockListener implements Listener
 								game.tempBlockSet.add(b.getRelative(0,1,0));
 							}
 
-							return;
+							cancel = false;
 						}
 					}
 				}
 			}
-						
+
 			if(!TempleManager.breakable.isEmpty())
 			{
 				if(TempleManager.breakable.contains(b.getTypeId()))
 				{
 					game.tempBlockSet.add(b);
 					Material type = b.getType();
-		
+
 					// Make sure to add the top parts of doors.
 					if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK)
 					{
 						game.tempBlockSet.add(b.getRelative(0,1,0));
 					}
-		
-					return;
+
+					cancel = false;
 				}
 			}
 			else
 			{			
 				game.tempBlockSet.add(b);
 				Material type = b.getType();
-	
+
 				// Make sure to add the top parts of doors.
 				if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK)
 				{
 					game.tempBlockSet.add(b.getRelative(0,1,0));
 				}
-	
+
 				return;
 			}
 		}
-		
+
 		if (game.tempBlockSet.remove(b))
 		{
 			return;
@@ -172,7 +167,7 @@ public class TCBlockListener implements Listener
 		{
 			b.setTypeId(0);
 		}
-		
+
 		event.setCancelled(true);
 	}
 
@@ -222,7 +217,7 @@ public class TCBlockListener implements Listener
 
 		if (game.isRunning && TempleManager.playerSet.contains(event.getPlayer()))
 		{
-			
+
 			if(!game.placeableLocs.isEmpty())
 			{
 				for (Pair<Location, Set<Integer>> pr : game.placeableLocs)
@@ -245,20 +240,20 @@ public class TCBlockListener implements Listener
 					}
 				}
 			}
-						
+
 			if(!TempleManager.placeable.isEmpty())
 			{
 				if(TempleManager.placeable.contains(b.getTypeId()))
 				{
 					game.tempBlockSet.add(b);
 					Material type = b.getType();
-		
+
 					// Make sure to add the top parts of doors.
 					if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK)
 					{
 						game.tempBlockSet.add(b.getRelative(0,1,0));
 					}
-		
+
 					return;
 				}
 			}
@@ -266,47 +261,16 @@ public class TCBlockListener implements Listener
 			{			
 				game.tempBlockSet.add(b);
 				Material type = b.getType();
-	
+
 				// Make sure to add the top parts of doors.
 				if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK)
 				{
 					game.tempBlockSet.add(b.getRelative(0,1,0));
 				}
-	
-				return;
-			}
-			if(!TempleManager.breakable.isEmpty())
-			{
-				if(TempleManager.breakable.contains(b.getTypeId()))
-				{
-					game.tempBlockSet.add(b);
-					Material type = b.getType();
-		
-					// Make sure to add the top parts of doors.
-					if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK)
-					{
-						game.tempBlockSet.add(b.getRelative(0,1,0));
-					}
-		
-					return;
-				}
-			}
-			else
-			{			
-				game.tempBlockSet.add(b);
-				Material type = b.getType();
-	
-				// Make sure to add the top parts of doors.
-				if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK)
-				{
-					game.tempBlockSet.add(b.getRelative(0,1,0));
-				}
-	
+
 				return;
 			}
 		}
-
-		
 
 		event.setCancelled(true);
 	}

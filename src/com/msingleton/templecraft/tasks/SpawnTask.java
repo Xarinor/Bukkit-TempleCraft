@@ -4,8 +4,9 @@ import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Creature;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
+//import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Slime;
 
 import com.msingleton.templecraft.TCUtils;
@@ -13,25 +14,28 @@ import com.msingleton.templecraft.TempleCraft;
 import com.msingleton.templecraft.TempleManager;
 import com.msingleton.templecraft.custommobs.CustomMob;
 import com.msingleton.templecraft.games.Game;
+import com.msingleton.templecraft.util.MobSpawnProperties;
 
 public class SpawnTask implements Runnable 
 {
 	public TempleCraft plugin;
 	public EntityType mob;
+	public MobSpawnProperties msp;
 	public int health;
 	public int count;
 	public Game game;
 	public Location loc;
 	public int size;
 
-	public SpawnTask(Game game, Location loc, EntityType mob, int size, int health, int maxCount, TempleCraft plugin){
+	public SpawnTask(Game game, Location loc, MobSpawnProperties msp, TempleCraft plugin){
 		this.plugin = plugin;   
-		this.mob = mob;
+		this.mob = msp.getEntityType();
 		this.game = game;
+		this.msp = msp;
 		this.loc = loc;
-		this.health = health;
-		this.count = maxCount;
-		this.size = size;
+		this.health = msp.getHealth();
+		this.count = msp.getCount();
+		this.size = msp.getSize();
 	}
 
 	public static int taskID;
@@ -51,7 +55,8 @@ public class SpawnTask implements Runnable
 			}
 			else
 			{
-				LivingEntity e = game.world.spawnCreature(loc,mob);
+				//LivingEntity e = game.world.spawnCreature(loc,mob);
+				Entity e = game.world.spawnEntity(loc,mob);
 				
 				if(e == null)
 					return;
@@ -63,6 +68,8 @@ public class SpawnTask implements Runnable
 				}
 				
 				CustomMob cmob = new CustomMob(e);
+
+				cmob.setSpawnProperties(msp);
 				
 				if(e instanceof Slime && size > 0)
 				{

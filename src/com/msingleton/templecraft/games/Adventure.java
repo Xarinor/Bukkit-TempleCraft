@@ -20,6 +20,7 @@ import com.msingleton.templecraft.Temple;
 import com.msingleton.templecraft.TempleCraft;
 import com.msingleton.templecraft.TempleManager;
 import com.msingleton.templecraft.TemplePlayer;
+//import com.msingleton.templecraft.custommobs.CustomMob;
 import com.msingleton.templecraft.util.MobArenaClasses;
 import com.msingleton.templecraft.util.Translation;
 
@@ -133,10 +134,16 @@ public class Adventure extends Game
 		Set<Location> tempLocs = new HashSet<Location>();
 		for(Location loc : mobSpawnpointMap.keySet())
 		{
-			if(p.getLocation().distance(loc) < mobSpawnpointMap.get(loc).getRange())
+			//--------------------------------------------------------
+			//Could not pass event PlayerMoveEvent : loc was being passed a null
+			if (loc != null)
 			{
-				tempLocs.add(loc);
-			}
+				if(p.getLocation().distance(loc) < mobSpawnpointMap.get(loc).getRange())
+				{
+					tempLocs.add(loc);
+				}
+		    }
+			//--------------------------------------------------------			
 		}
 
 		for(Location loc : tempLocs)
@@ -145,36 +152,50 @@ public class Adventure extends Game
 			{
 				TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc));
 				mobSpawnpointMap.remove(loc);
-				/*if(mobSpawnpointMap.get(loc).a.b.contains(":"))
-				{
-					String[] split = mobSpawnpointMap.get(loc).a.b.split(":");
-					if(split.length > 1)
-					{
-						//spawn continoues mobs
-						int count = Integer.parseInt(split[1]);
-						long time = Integer.parseInt(split[0]) * 20;
-
-						TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc).a.a.a, mobSpawnpointMap.get(loc).a.a.b, mobSpawnpointMap.get(loc).b.b.a, count, time);
-						mobSpawnpointMap.remove(loc);
-					}
-					else
-					{
-						TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc).a.a.a, mobSpawnpointMap.get(loc).a.a.b, mobSpawnpointMap.get(loc).b.b.a, mobSpawnpointMap.get(loc).b.b.b, mobSpawnpointMap.get(loc).a.b);
-						mobSpawnpointMap.remove(loc);
-					}
-				}
-				else
-				{
-					TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc).a.a.a, mobSpawnpointMap.get(loc).a.a.b, mobSpawnpointMap.get(loc).b.b.a, mobSpawnpointMap.get(loc).b.b.b, mobSpawnpointMap.get(loc).a.b);
-					mobSpawnpointMap.remove(loc);
-				}*/
+				//debug
+				//System.out.println("spawnmobs");
 			}
 			catch (Exception e) {
 				e.printStackTrace();
-				//TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc).a.a.a, mobSpawnpointMap.get(loc).a.a.b, mobSpawnpointMap.get(loc).b.b.a);
 				mobSpawnpointMap.remove(loc);
 			}
 		}
+
+		//I assume this is an attempt to respawn non-dead mobs after player death -Tim
+		//This is the source of the continuous spawn.  Commenting out for now -Tim
+		/*
+		Set<Location> tempLocs2 = new HashSet<Location>();
+		List<CustomMob> cmobs = customMobManager.getMobs();
+		for(Location loc : mobSpawnpointConstantMap.keySet())
+		{
+			if(p.getLocation().distance(loc) < mobSpawnpointConstantMap.get(loc).getRange())
+			{
+				if(!tempLocs.contains(loc))
+				{
+					for(CustomMob cm : cmobs)
+					{
+						if(!cm.isDead() && cm.isEntityDead())
+						{
+							tempLocs2.add(loc);
+						}
+					}
+				}
+			}
+		}		
+		
+		for(Location loc : tempLocs2)
+		{
+			try
+			{
+				TCMobHandler.SpawnMobs(this, loc, mobSpawnpointConstantMap.get(loc));				
+				//debug
+				//System.out.println("spawnmobs2");
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		} 
+		*/
 	}
 
 	public void onEntityKilledByEntity(LivingEntity killed, Entity killer)

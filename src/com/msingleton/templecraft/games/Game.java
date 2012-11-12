@@ -38,7 +38,7 @@ import com.msingleton.templecraft.TempleCraft;
 import com.msingleton.templecraft.TempleManager;
 import com.msingleton.templecraft.TemplePlayer;
 import com.msingleton.templecraft.custommobs.CustomMob;
-import com.msingleton.templecraft.custommobs.CustomMobManager;
+import com.msingleton.templecraft.custommobs.MobManager;
 import com.msingleton.templecraft.custommobs.CustomMobType;
 import com.msingleton.templecraft.custommobs.CustomMobUtils;
 import com.msingleton.templecraft.util.MobArenaClasses;
@@ -83,8 +83,8 @@ public class Game
 	public int saveAmount = 5;
 
 	// Contains Active Mob Spawnpoints and Creature Types
-	//public Map<Location,Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>> mobSpawnpointMap	 = new HashMap<Location,Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>>();
 	public Map<Location,MobSpawnProperties> mobSpawnpointMap	 = new HashMap<Location,MobSpawnProperties>();
+	public Map<Location,MobSpawnProperties> mobSpawnpointConstantMap	 = new HashMap<Location,MobSpawnProperties>();
 	public Map<Integer, Integer> mobGoldMap			= new HashMap<Integer, Integer>();
 	public Map<Location, Integer> checkpointMap		= new HashMap<Location, Integer>();
 	public Map<Location, String[]> chatMap			 = new HashMap<Location, String[]>();
@@ -92,11 +92,12 @@ public class Game
 	public Map<Location, Integer> lobbyLocMap		  = new HashMap<Location, Integer>();
 	public Map<Location, Integer> startLocMap		  = new HashMap<Location, Integer>();
 	public Map<Chunk, Entity[]> tempMobLoc		  = new HashMap<Chunk, Entity[]>();
-	//public Map<Location, Integer> LocHealthMap		  = new HashMap<Location, Integer>();
+	public Map<Player, Integer> playerDeathMap		  = new HashMap<Player, Integer>();
 
 	public Set<Player> playerSet		= new HashSet<Player>();
 	public Set<Player> readySet		 = new HashSet<Player>();
 	public Set<Player> deadSet		  = new HashSet<Player>();
+	public Set<Player> endSet		  = new HashSet<Player>();
 	public Set<Player> rewardSet		= new HashSet<Player>();
 	public Set<LivingEntity> monsterSet = new HashSet<LivingEntity>();
 
@@ -110,7 +111,9 @@ public class Game
 	public Set<Integer> SpawnTaskIDs   = new HashSet<Integer>();
 	public Map<CustomMob,Integer> AbilityTaskIDs   = new HashMap<CustomMob,Integer>();
 
-	public CustomMobManager customMobManager = new CustomMobManager();
+	public MobManager customMobManager = new MobManager();
+
+	public int maxdeaths = -1;
 
 	public long startTime;
 	public static int mobSpawner = 7;
@@ -131,6 +134,7 @@ public class Game
 		rejoinCost	= TempleManager.rejoinCost;
 		maxPlayers	= temple.maxPlayersPerGame;
 		messageFile	= TCUtils.getConfig("messages");
+		maxdeaths = temple.maxDeaths;
 	} 
 
 	/**
@@ -167,34 +171,67 @@ public class Game
 		{
 			TempleManager.tellAll(Translation.tr("game.finished", gameType, temple.templeName));
 			TCUtils.debugMessage("Game " + gameName + "(" + gameType + ") beendet");
-			for(int id : SpawnTaskIDs)
+			if(!SpawnTaskIDs.isEmpty())
 			{
-				TCUtils.debugMessage("Cancel SpawnTask " + id);
-				TempleCraft.TCScheduler.cancelTask(id);
+				for(int id : SpawnTaskIDs)
+				{
+					TCUtils.debugMessage("Cancel SpawnTask " + id);
+					TempleCraft.TCScheduler.cancelTask(id);
+				}
+				SpawnTaskIDs.clear();
 			}
-			SpawnTaskIDs.clear();
-			for(int id : AbilityTaskIDs.values())
+			if(!AbilityTaskIDs.isEmpty())
 			{
-				TCUtils.debugMessage("Cancel AbilityTask " + id);
-				TempleCraft.TCScheduler.cancelTask(id);
+				for(int id : AbilityTaskIDs.values())
+				{
+					TCUtils.debugMessage("Cancel AbilityTask " + id);
+					TempleCraft.TCScheduler.cancelTask(id);
+				}
+				AbilityTaskIDs.clear();
 			}
-			AbilityTaskIDs.clear();
+			mobSpawnpointMap.clear();
+			mobSpawnpointConstantMap.clear();
+			mobSpawnpointSet.clear();
+			customMobManager.clear();
 			tempMobLoc.clear();
 			isRunning = false;
 			isEnding = true;
 			readySet.clear();
 			playerSet.clear();
+			playerDeathMap.clear();
 			rewardPlayers(rewardSet);
+			//debug
+			//System.out.print("[TempleCraft] endgame-inside try");
 		}
 		catch (Exception e) {
 			System.out.println("[TempleCraft] Error while closing the temple.");
 			e.printStackTrace();
+			//debug
+			//System.out.print("[TempleCraft] endgame-threw exception");			
 		}
 		finally
 		{
 			TCUtils.removePlayers(world);
+			//debug
+			//System.out.print("[TempleCraft] endgame-after removeplayers");
+			while(!world.getPlayers().isEmpty())
+			{
+				TempleCraft.TCScheduler.scheduleSyncDelayedTask(TempleCraft.TCPlugin, new Runnable() {	
+					@Override
+					public void run() 
+					{
+					}
+				}, 20L);
+				TCUtils.removePlayers(world);
+			}
+			//debug
+			//System.out.print("[TempleCraft] endgame-while loop");
 			TempleManager.gameSet.remove(this);
+			//debug
+			//System.out.print("[TempleCraft] endgame-after templemanager");			
 			TCUtils.deleteTempWorld(world);
+			//debug
+			//System.out.print("[TempleCraft] endgame-after deletetempworld");			
 		}
 	}
 
@@ -265,17 +302,16 @@ public class Game
 						{
 							msg.append(" "+Translation.tr("and")+" ");
 						}
-						
-						if(TCUtils.isTCWorld(p.getLocation().getWorld()))
+
+						if(TCUtils.hasPlayerInventory(p.getName()))
 						{
-							if(TCUtils.hasPlayerInventory(p.getName()))
-							{
-								TCUtils.restorePlayerInventory(p);
-							}
+							TCUtils.addtoPlayerInventory(p, item);
 						}
-						
-						p.getInventory().addItem(item);
-						
+						else
+						{
+							p.getInventory().addItem(item);
+						}
+
 						TCUtils.debugMessage("Player " + p.getName() + " gets " + item.getTypeId() + ":" + item.getData().getData() + " (" + item.getAmount() + ") at Location " + p.getLocation().toString());
 					}
 				}
@@ -359,8 +395,9 @@ public class Game
 			mobSpawnpointSet.add(b.getLocation());
 			MobSpawnProperties msp = new MobSpawnProperties();
 			msp.setEntityType(TCMobHandler.getRandomCreature());
+			msp.setLocation(b.getLocation());
 			mobSpawnpointMap.put(b.getLocation(),msp);
-			//mobSpawnpointMap.put(b.getLocation(),new Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>(new Pair<Pair<EntityType,Integer>,String>(new Pair<EntityType,Integer>(TCMobHandler.getRandomCreature(),-1),"0:1"),new Pair<Integer,Pair<Integer,Integer>>(20,new Pair<Integer,Integer>(0,1))));
+			mobSpawnpointConstantMap.put(b.getLocation(),msp);
 			b.setTypeId(0);
 		}
 		for(Block b: getBlockSet(diamondBlock))
@@ -449,10 +486,24 @@ public class Game
 				msp.setHealth(cmt.getMaxhealth());
 				msp.setSize(cmt.getSize());
 				msp.setIsbossmob(true);
-				msp.setAbilities_random(cmt.getAbilities_random());
-				msp.setAbilities_rotation(cmt.getAbilities_rotation());
+				if(!cmt.getAbilities_random().isEmpty())
+				{
+					msp.setAbilities_random(cmt.getAbilities_random());
+				}
+				if(!cmt.getAbilities_rotation().isEmpty())
+				{
+					msp.setAbilities_rotation(cmt.getAbilities_rotation());
+				}
+				if(cmt.getAbilities_random().isEmpty() && cmt.getAbilities_rotation().isEmpty() && cmt.getOldabilitys() != null)
+				{
+					msp.setAbilitys(cmt.getOldabilitys());
+				}
 				mobSpawnpointMap.put(b.getLocation(),msp);
+				mobSpawnpointConstantMap.put(b.getLocation(),msp);
 				b.setTypeId(0);
+				
+				//debug
+				//System.out.println("Boss Created!");				
 			}
 			else
 			{
@@ -539,7 +590,6 @@ public class Game
 				}
 				Location loc = new Location(b.getWorld(),b.getX()+.5,b.getY(),b.getZ()+.5);
 				mobSpawnpointSet.add(loc);
-				//mobSpawnpointMap.put(loc,new Pair<EntityType,Integer>(ct,range));
 
 				MobSpawnProperties msp = new MobSpawnProperties();
 				msp.setEntityType(TCMobHandler.getRandomCreature());
@@ -550,10 +600,13 @@ public class Game
 				msp.setHealth(health);
 				msp.setSize(size);
 				msp.setIsbossmob(true);
+				msp.setLocation(b.getLocation());
 				mobSpawnpointMap.put(b.getLocation(),msp);
-				//mobSpawnpointMap.put(loc,new Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>(new Pair<Pair<EntityType,Integer>,String>(new Pair<EntityType,Integer>(ct,size),Lines[3]),new Pair<Integer,Pair<Integer,Integer>>(range,new Pair<Integer,Integer>(health,dmgmulti))));
-				//LocHealthMap.put(loc, health);
+				mobSpawnpointConstantMap.put(b.getLocation(),msp);
 				b.setTypeId(0);
+				
+				//debug
+				//System.out.println(ct.toString() + " Created!");
 			}
 
 			return;	
@@ -708,6 +761,9 @@ public class Game
 			{
 				return;
 			}
+			
+			/* Mob Spawnpoint (range:time:count)  */
+			//BUG: Continuous mob spawn
 			int range = 20;
 			long time = 0;
 			int count = 1;
@@ -731,7 +787,8 @@ public class Game
 					}
 					else
 					{
-						time = Integer.parseInt(split[1]);
+						//time = Integer.parseInt(split[1]);
+						time = Long.parseLong(split[1]);  //time is type long.
 					}
 				}
 
@@ -752,6 +809,8 @@ public class Game
 				range = 20;
 				time = 0;
 				count = 1;
+				//debug
+				//System.out.println("[TempleCraft] Mob spawnpoint error: " + e.getMessage());
 			}
 
 			int health;
@@ -773,13 +832,15 @@ public class Game
 			msp.setRange(range);
 			msp.setHealth(health);
 			msp.setSize(size);
-			msp.setTime(time);
+			msp.setTime(time * 20); //time is now set to server ticks (1 sec = 20 ticks) -Tim
 			msp.setCount(count);
 			mobSpawnpointMap.put(b.getLocation(),msp);
-			//mobSpawnpointMap.put(loc,new Pair<EntityType,Integer>(ct,range));
-			//mobSpawnpointMap.put(loc,new Pair<Pair<Pair<EntityType,Integer>,String>,Pair<Integer,Pair<Integer,Integer>>>(new Pair<Pair<EntityType,Integer>,String>(new Pair<EntityType,Integer>(ct,size),time_count),new Pair<Integer,Pair<Integer,Integer>>(range,new Pair<Integer,Integer>(health,dmgmulti))));
-			//LocHealthMap.put(loc, health);
+			mobSpawnpointConstantMap.put(b.getLocation(),msp);
 			b.setTypeId(0);
+						
+			//debug
+			//String s = String.valueOf(time);
+			//System.out.println(ct.toString() + " Created, time: " + s);			
 		}
 	}
 
@@ -959,6 +1020,7 @@ public class Game
 		tp.tempSet.clear();
 		tp.roundDeaths++;
 
+		playerDeathMap.put(p, tp.roundDeaths);
 
 		for( LivingEntity tamedMob : tp.tamedMobSet)
 		{
@@ -973,6 +1035,11 @@ public class Game
 		p.setFoodLevel(20);
 		p.setTotalExperience(0);
 		p.setFireTicks(0);
+
+		if(maxdeaths > -1 && tp.roundDeaths > maxdeaths)
+		{
+			TempleManager.playerLeave(p);
+		}
 	}
 
 	/**
@@ -1277,6 +1344,14 @@ public class Game
 			return;
 		}
 
+		if(maxdeaths > -1 &&
+				playerDeathMap.containsKey(p) &&
+				playerDeathMap.get(p) > maxdeaths)
+		{
+			tellPlayer(p, Translation.tr("game.tooMuchDeaths"));
+			return;
+		}
+
 		TemplePlayer tp = TempleManager.templePlayerMap.get(p);
 		if(!usingClasses || MobArenaClasses.classMap.containsKey(p))
 		{
@@ -1368,7 +1443,9 @@ public class Game
 
 	public void hitEndBlock(Player p)
 	{
+		TCUtils.debugMessage("Player " + p.getName() + "hit EndBlock");
 		TemplePlayer tp = TempleManager.templePlayerMap.get(p);
+		
 		if (playerSet.contains(p))
 		{				
 			readySet.add(p);

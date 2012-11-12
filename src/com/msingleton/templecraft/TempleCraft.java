@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-import net.steeleyes.catacombs.Catacombs;
 
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
@@ -33,10 +32,13 @@ import com.msingleton.templecraft.listeners.TCInventoryListener;
 import com.msingleton.templecraft.listeners.TCMonsterListener;
 import com.msingleton.templecraft.listeners.TCPlayerListener;
 import com.msingleton.templecraft.listeners.TCTeleportListener;
+import com.msingleton.templecraft.listeners.TCWorldListener;
 import com.msingleton.templecraft.util.MobArenaClasses;
 import com.msingleton.templecraft.util.Translation;
+import com.msingleton.templecraft.util.WorldManager;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVWorldManager;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 /**
  * TempleCraft
@@ -52,29 +54,30 @@ public class TempleCraft extends JavaPlugin
 	public static Logger debuglog;
 	public List<String> ENABLED_COMMANDS;
 	public double newVersion;
-    public double currentVersion;
+	public double currentVersion;
 	public String newVersionString;
-    public String currentVersionString;
+	public String currentVersionString;
 	public static BukkitScheduler TCScheduler = null;
 	public static TempleCraft TCPlugin = null;
 	public static Permission permission = null;
 	public static MVWorldManager MVWM = null;
-	public static Catacombs catacombs = null;
+	//public static Catacombs catacombs = null;
+	public static WorldGuardPlugin worldguard = null;
 	public static Economy economy = null;
-	public static CharacterManager heroManager;
+	public static CharacterManager heroManager = null;
 	public static String language;
 	public static String fileExtention = ".tcf";
 	public static ChatColor c1 = ChatColor.DARK_AQUA;
 	public static ChatColor c2 = ChatColor.WHITE;
 	public static ChatColor c3 = ChatColor.GREEN;
 	public static boolean debugMode = false;
-	
+
 	public void onEnable()
 	{	 	
 		PluginDescriptionFile pdfFile = this.getDescription();
-		
+
 		currentVersionString = pdfFile.getVersion();
-        currentVersion = TCUtils.convertVersion(currentVersionString);
+		currentVersion = TCUtils.convertVersion(currentVersionString);
 
 		log = getServer().getLogger();
 
@@ -86,53 +89,58 @@ public class TempleCraft extends JavaPlugin
 
 		TCScheduler = getServer().getScheduler();
 		TCPlugin = this;
-        // Schedule to check the version every 30 minutes for an update. This is to update the most recent 
-        // version so if an admin reconnects they will be warned about newer versions.
-        // Thanks Sleaker for the permission to use his updatecheck code from vault 
+		// Schedule to check the version every 30 minutes for an update. This is to update the most recent 
+		// version so if an admin reconnects they will be warned about newer versions.
+		// Thanks Sleaker for the permission to use his updatecheck code from vault 
 		this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    newVersionString = TCUtils.updateCheck(currentVersionString);
-                    currentVersion = TCUtils.convertVersion(currentVersionString);
-                    newVersion = TCUtils.convertVersion(newVersionString);
-                    if (newVersion > currentVersion) {
-                        log.warning("[" + getDescription().getName() + "] TempleCraft " + newVersionString + " is out! You are running: TempleCraft " + currentVersionString);
-                        log.warning("[" + getDescription().getName() + "] Update TempleCraft at: http://dev.bukkit.org/server-mods/templecraft-bootscreen");
-                    }
-                } catch (Exception e) {
-                	e.printStackTrace();
-                    // ignore exceptions
-                }
-            }
+			@Override
+			public void run() {
+				try {
+					newVersionString = TCUtils.updateCheck(currentVersionString);
+					currentVersion = TCUtils.convertVersion(currentVersionString);
+					newVersion = TCUtils.convertVersion(newVersionString);
+					if (newVersion > currentVersion) {
+						log.warning("[" + getDescription().getName() + "] TempleCraft " + newVersionString + " is out! You are running: TempleCraft " + currentVersionString);
+						log.warning("[" + getDescription().getName() + "] Update TempleCraft at: http://dev.bukkit.org/server-mods/templecraft-bootscreen");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					// ignore exceptions
+				}
+			}
 
-        }, 0, 432000);
+		}, 0, 432000);
 
 		setupTranslations();
 		setupPermissions();
 		setupEconomy();
 		setupHeroes();
 		setupMultiverse();
-		setupCatacombs();
+		//setupCatacombs();
+		setupWorldguard();
 
 		ENABLED_COMMANDS = TCUtils.getEnabledCommands();
 
 		// Bind the /tc and /tcraft commands to MACommands.
 		getCommand("tct").setExecutor(new TCCommands(this));
 
-		pm.registerEvents(new TCEnabledCommands(this), this);
-		pm.registerEvents(new TCPlayerListener(), this);
 		pm.registerEvents(new MobArenaClasses(this), this);
-		pm.registerEvents(new TCTeleportListener(), this);
-		pm.registerEvents(new TCDisconnectListener(this), this);
 		pm.registerEvents(new TCBlockListener(), this);
+		//pm.registerEvents(new TCChunkListener(), this);
 		pm.registerEvents(new TCDamageListener(), this);
-		pm.registerEvents(new TCMonsterListener(this), this);
+		pm.registerEvents(new TCDisconnectListener(this), this);
+		pm.registerEvents(new TCEnabledCommands(this), this);
 		pm.registerEvents(new TCInventoryListener(), this);
+		pm.registerEvents(new TCMonsterListener(this), this);
+		pm.registerEvents(new TCPlayerListener(), this);
+		pm.registerEvents(new TCTeleportListener(), this);
+		pm.registerEvents(new TCWorldListener(), this);
+
+		WorldManager.init();
 
 		System.out.println(Translation.tr("enableMessage", pdfFile.getName(), pdfFile.getVersion()));
-		
+
 		debugMode = TCUtils.getBoolean(TCUtils.getConfig("config"), "settings.debug", false);
 		if(debugMode)
 		{
@@ -145,9 +153,9 @@ public class TempleCraft extends JavaPlugin
 					public String format(LogRecord record) {
 						SimpleDateFormat sd = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 						String dateString = sd.format(new Date(record.getMillis())); 
-						String split[] = record.getMessage().split(" - ", 4);
-				        return dateString + " " + split[0] + " " + split[1] + " Line " + split[2] + "\n"
-				        		+ record.getLevel() + ": " + split[3] + "\n\n";
+						String split[] = record.getMessage().split("########", 4);
+						return dateString + " " + split[0] + " " + split[1] + " Line " + split[2] + "\n"
+						+ record.getLevel() + ": " + split[3] + "\n\n";
 					}
 				});
 				debuglog = Logger.getAnonymousLogger();
@@ -157,7 +165,7 @@ public class TempleCraft extends JavaPlugin
 					debuglog.removeHandler(h);
 				}
 				debuglog.addHandler(fh);
-				System.out.println("[TempleCraft] DEBUG MODE enabled.");
+				System.out.print("[TempleCraft] DEBUG MODE enabled.");
 				String message = "Debug gestartet. Liste aller Plugins:\n";
 				for(Plugin pl : getServer().getPluginManager().getPlugins())
 				{
@@ -176,21 +184,29 @@ public class TempleCraft extends JavaPlugin
 				e.printStackTrace();
 			}
 		}
+
+		TCUtils.deleteTempWorlds();
+		TCUtils.deleteTempWorldFolders();
 	}
 
 	public void onDisable()
 	{
 		TCUtils.debugMessage("Debug beendet.");
-		for(Handler h :debuglog.getHandlers())
-		{
-			debuglog.removeHandler(h);
-			h.close();
+		if(debuglog != null)
+		{		
+			for(Handler h :debuglog.getHandlers())
+			{
+				debuglog.removeHandler(h);
+				h.close();
+			}
 		}
 		//permissionHandler = null;
 		TempleManager.SBManager.save();
 		TempleManager.removeAll();
 		TCUtils.deleteTempWorlds();
 		TCUtils.cleanConfigFiles();
+
+		WorldManager.deinit();
 	}
 
 	private void setupTranslations()
@@ -199,6 +215,7 @@ public class TempleCraft extends JavaPlugin
 		language = TCUtils.getString(configFile, "settings.language", "en-US");
 		Translation.reload(new File(getDataFolder(), "templecraft-"+language+".csv"));
 
+		
 		if(Translation.getVersion()<1)
 		{
 			TCUtils.copyFromJarToDisk("templecraft-"+language+".csv", getDataFolder());
@@ -222,19 +239,26 @@ public class TempleCraft extends JavaPlugin
 		}
 	}
 
-	private void setupCatacombs()
+	/*private void setupCatacombs()
 	{
 		Plugin Cataplugin = this.getServer().getPluginManager().getPlugin("Catacombs");
-		if (Cataplugin == null)
+		if (Cataplugin != null)
 		{
-			return;
+			catacombs = (Catacombs) Cataplugin;
+			log.info("[TempleCraft] Hooked into " + Cataplugin.getDescription().getName() + " Version "+ Cataplugin.getDescription().getVersion());
 		}
-		else
+	}*/
+
+	private void setupWorldguard()
+	{
+		Plugin wgplugin = getServer().getPluginManager().getPlugin("WorldGuard");
+		if (wgplugin != null)
 		{
-			System.out.println("[TempleCraft] Hooked into " + Cataplugin.getDescription().getName() + " Version "+ Cataplugin.getDescription().getVersion());
+			worldguard = (WorldGuardPlugin) wgplugin;
+			System.out.print("[TempleCraft] Hooked into " + wgplugin.getDescription().getName() + " Version "+ wgplugin.getDescription().getVersion());
 		}
 	}
-		
+
 	private Boolean setupPermissions()
 	{
 		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);

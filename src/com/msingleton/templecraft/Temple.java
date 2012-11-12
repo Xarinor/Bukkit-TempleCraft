@@ -30,6 +30,7 @@ public class Temple
 	public boolean isSetup;
 	protected boolean isEnabled;
 	public int maxPlayersPerGame = -1;
+	public int maxDeaths = -1;
 	protected String owners;
 	protected String editors;
 	protected File ChunkGeneratorFile;
@@ -67,15 +68,19 @@ public class Temple
 
 		try
 		{
-			World world = TempleManager.server.getWorld(TCUtils.getString(config, "Temples."+name+".finishLocation.world", ""));
-			if(world != null)
+			String worldName = TCUtils.getString(config, "Temples."+name+".finishLocation.world", null);
+			if(worldName != null && worldName.length() > 0)
 			{
-				double x = TCUtils.getDouble(config, "Temples."+name+".finishLocation.x");
-				double y = TCUtils.getDouble(config, "Temples."+name+".finishLocation.y");
-				double z = TCUtils.getDouble(config, "Temples."+name+".finishLocation.z");
-				float pitch = (float) TCUtils.getDouble(config, "Temples."+name+".finishLocation.pitch");
-				float yaw = (float) TCUtils.getDouble(config, "Temples."+name+".finishLocation.yaw");
-				finishLocation = new Location(world, x, y, z, yaw, pitch);
+				World world = TempleManager.server.getWorld(worldName);
+				if(world != null)
+				{
+					double x = TCUtils.getDouble(config, "Temples."+name+".finishLocation.x");
+					double y = TCUtils.getDouble(config, "Temples."+name+".finishLocation.y");
+					double z = TCUtils.getDouble(config, "Temples."+name+".finishLocation.z");
+					float pitch = (float) TCUtils.getDouble(config, "Temples."+name+".finishLocation.pitch");
+					float yaw = (float) TCUtils.getDouble(config, "Temples."+name+".finishLocation.yaw");
+					finishLocation = new Location(world, x, y, z, yaw, pitch);
+				}
 			}
 		}
 		catch (Exception e) 
@@ -127,6 +132,25 @@ public class Temple
 			return null;
 		}
 
+		File worldFolder = new File(worldName);
+		if(worldFolder.exists())
+		{
+			if(!TCUtils.deleteFolder(worldFolder))
+			{
+				TCUtils.debugMessage("error while deleting " + worldFolder.getAbsolutePath());
+			}
+			else
+			{
+				TCUtils.debugMessage(worldFolder.getAbsolutePath() + " deleted.");
+				System.out.println("[TempleCraft] World " + worldName + " deleted!");
+			}
+		}
+
+		if(worldFolder.exists())
+		{
+			return null;
+		}
+
 		File tcffile = new File("plugins/TempleCraft/SavedTemples/"+templeName+TempleCraft.fileExtention);
 
 		WorldCreator wc = new WorldCreator(worldName);
@@ -169,11 +193,10 @@ public class Temple
 				{
 					TempleCraft.MVWM.addWorld(result.getName(), result.getEnvironment(), Long.toString(result.getSeed()), result.getWorldType(), false, null, true);
 				}
-				if(TempleCraft.catacombs != null)
+				/*if(TempleCraft.catacombs != null)
 				{
 					TempleCraft.catacombs.loadWorld(result.getName());
-				}
-				System.out.println("[TempleCraft] World \""+worldName+"\" Loaded!");
+				}*/				System.out.println("[TempleCraft] World \""+worldName+"\" Loaded!");
 			}
 			catch (Exception e) 
 			{
@@ -194,10 +217,10 @@ public class Temple
 			{
 				TempleCraft.MVWM.addWorld(result.getName(), result.getEnvironment(), Long.toString(result.getSeed()), result.getWorldType(), false, null, true);
 			}
-			if(TempleCraft.catacombs != null)
+			/*if(TempleCraft.catacombs != null)
 			{
 				TempleCraft.catacombs.loadWorld(result.getName());
-			}
+			}*/
 			TCRestore.loadTemple(new Location(result,0,0,0), this);
 		}
 		else

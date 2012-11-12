@@ -4,10 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Arrow;
+//import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.LivingEntity;
+//import org.bukkit.entity.Fireball;
+//import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -19,14 +19,14 @@ public enum CustomMobAbility
 {
 	ARROW("A")
 	{
-		public void run(Game game, LivingEntity customMob)
+		public void run(Game game, Entity customMob)
 		{
-			customMob.launchProjectile(Arrow.class);
+			//customMob.launchProjectile(Arrow.class);
 		}
 	},
 	FIREAURA("FA")
 	{
-		public void run(Game game, LivingEntity customMob)
+		public void run(Game game, Entity customMob)
 		{
 			for (Player p : getNearbyPlayers(game, customMob, 5))
 			{
@@ -36,9 +36,9 @@ public enum CustomMobAbility
 	},
 	FIREBALL("FB")
 	{
-		public void run(Game game, LivingEntity customMob)
+		public void run(Game game, Entity customMob)
 		{
-			LivingEntity target = TCUtils.getTarget(customMob);
+			Entity target = TCUtils.getTarget(customMob);
 
 			while(target == null || (target != null && target.equals(customMob)))
 			{
@@ -48,17 +48,20 @@ public enum CustomMobAbility
 			if(target != null && !target.equals(customMob))
 			{
 				//customMob.launchProjectile(Fireball.class);
+				
+				/*
 				Fireball fb = customMob.launchProjectile(Fireball.class);
 				fb.setBounce(false);
 				fb.setYield(2);
 				fb.setShooter(customMob);
 				fb.setDirection(target.getVelocity().add(target.getLocation().toVector().subtract(customMob.getLocation().toVector()).normalize().multiply(Integer.MAX_VALUE)));
+				*/
 			}
 		}
 	},
 	TELEPORTTOPLAYER("TTP")
 	{
-		public void run(Game game, LivingEntity customMob)
+		public void run(Game game, Entity customMob)
 		{
 			Player p = TCUtils.getNearbyRandomPlayer(customMob);
 			//Player p = TCUtils.getRandomPlayer(game);
@@ -74,9 +77,9 @@ public enum CustomMobAbility
 	},
 	THROWTARGET("TT")
     {
-        public void run(Game game, LivingEntity customMob)
+        public void run(Game game, Entity customMob)
         {
-            LivingEntity target = TCUtils.getTarget(customMob);
+            Entity target = TCUtils.getTarget(customMob);
             if (target == null) 
             {
             	return;
@@ -141,7 +144,7 @@ public enum CustomMobAbility
 	 * @param game The game the boss is in
 	 * @param boss The boss entity
 	 */
-	public abstract void run(Game game, LivingEntity customMob);
+	public abstract void run(Game game, Entity customMob);
 
 	/**
 	 * Get a list of nearby players

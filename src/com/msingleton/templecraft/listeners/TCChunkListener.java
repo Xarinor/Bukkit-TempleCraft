@@ -15,8 +15,7 @@ import com.msingleton.templecraft.games.Game;
 import com.msingleton.templecraft.tasks.AbilityTask;
 
 public class TCChunkListener implements Listener 
-{
-
+{	
 	@EventHandler
 	public void onChunkLoad(ChunkLoadEvent event)
 	{
@@ -24,13 +23,14 @@ public class TCChunkListener implements Listener
 		{
 			Game game = TCUtils.getGameByWorld(event.getWorld());
 			
-			if(game != null)
+			if(game != null && !game.tempMobLoc.isEmpty())
 			{
 				for(Entity e : game.tempMobLoc.get(event.getChunk()))
 				{
 					if(e instanceof LivingEntity)
 					{
-						LivingEntity le = event.getWorld().spawnCreature(e.getLocation(), e.getType());
+						//LivingEntity le = event.getWorld().spawnCreature(e.getLocation(), e.getType());
+						Entity le = event.getWorld().spawnEntity(e.getLocation(), e.getType());
 						
 						CustomMob cmold = game.customMobManager.getMob(e);
 						
@@ -41,6 +41,7 @@ public class TCChunkListener implements Listener
 							cmnew.setAbilitys(cmold.getAbilitys());
 							cmnew.setDMGMultiplikator(cmold.getDMGMultiplikator());
 							cmnew.setSize(cmold.getSize());
+							cmnew.setSpawnProperties(cmold.getSpawnProperties());
 
 							int id = TempleCraft.TCScheduler.scheduleAsyncRepeatingTask(TempleCraft.TCPlugin, new AbilityTask(game, cmnew), 100L, 100L);
 							AbilityTask.taskID = id;
@@ -70,15 +71,18 @@ public class TCChunkListener implements Listener
 			
 			if(game != null)
 			{
-				game.tempMobLoc.put(event.getChunk(), event.getChunk().getEntities());		
-				for(Entity e : event.getChunk().getEntities())
+				if(!game.isEnding)
 				{
-					CustomMob cmob = game.customMobManager.getMob(e);
-					
-					if(cmob != null)
+					game.tempMobLoc.put(event.getChunk(), event.getChunk().getEntities());		
+					for(Entity e : event.getChunk().getEntities())
 					{
-						TempleCraft.TCScheduler.cancelTask(game.AbilityTaskIDs.get(cmob));
-						game.AbilityTaskIDs.remove(cmob);
+						CustomMob cmob = game.customMobManager.getMob(e);
+						
+						if(cmob != null)
+						{
+							TempleCraft.TCScheduler.cancelTask(game.AbilityTaskIDs.get(cmob));
+							game.AbilityTaskIDs.remove(cmob);
+						}
 					}
 				}
 			}
