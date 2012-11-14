@@ -24,58 +24,75 @@ import com.msingleton.templecraft.TemplePlayer;
 import com.msingleton.templecraft.util.MobArenaClasses;
 import com.msingleton.templecraft.util.Translation;
 
-public class Adventure extends Game
-{
-	public Adventure(String name, Temple temple, World world)
-	{
+/**
+* Adventure.java
+* This work is dedicated to the public domain.
+* 
+* @author Xarinor
+* @author bootscreen
+* @author msingleton
+*/
+public class Adventure extends Game {
+	/**
+	 * Constructor
+	 * 
+	 * @param name	 -Adventure name
+	 * @param temple -Temple name
+	 * @param world	 -Temple world
+	 */
+	public Adventure(String name, Temple temple, World world) {
 		super(name, temple, world);
 		world.setPVP(false);
 	}
 
-	public void endGame()
-	{
+	/**
+	 * End this Adventure
+	 */
+	public void endGame() {
 		super.endGame();
 	}
 
-	public void playerDeath(Player p)
-	{
-		if(TempleCraft.economy != null)
-		{
+	/**
+	 * Player dies to the adventure
+	 * 
+	 * @param player
+	 */
+	public void playerDeath(Player player) {
+		if(TempleCraft.economy != null) {
 			String s = TempleCraft.economy.format(2.0);
 			String currencyName = s.substring(s.indexOf(" ") + 1);
 
-			if(TempleCraft.economy.has(p.getName(),rejoinCost))
-			{		
-				if(TempleCraft.economy != null && rejoinCost > 0)
-				{
-					TempleManager.tellPlayer(p, Translation.tr("adventure.rejoin1", rejoinCost, currencyName));
-					TempleManager.tellPlayer(p, Translation.tr("adventure.rejoin2"));
+			if(TempleCraft.economy.has(player.getName(),rejoinCost)) {		
+				if(TempleCraft.economy != null && rejoinCost > 0) {
+					TempleManager.tellPlayer(player, Translation.tr("adventure.rejoin1", rejoinCost, currencyName));
+					TempleManager.tellPlayer(player, Translation.tr("adventure.rejoin2"));
 				}
-			}
-			else
-			{
-				TempleManager.tellPlayer(p, Translation.tr("adventure.rejoinFail1", currencyName));
-				TempleManager.tellPlayer(p, Translation.tr("adventure.rejoinFail2"));
+			} else {
+				TempleManager.tellPlayer(player, Translation.tr("adventure.rejoinFail1", currencyName));
+				TempleManager.tellPlayer(player, Translation.tr("adventure.rejoinFail2"));
 			}
 		}
 		lobbyLoc.getChunk().load(true);
-		p.teleport(lobbyLoc);
-		super.playerDeath(p);
+		player.teleport(lobbyLoc);
+		super.playerDeath(player);
 	}
 
+	/**
+	 * Handle Templecraft signs in this Adventure
+	 * 
+	 * @param sign
+	 */
 	protected void handleSign(Sign sign)
 	{
 		String[] Lines = sign.getLines();
 
-		if(!Lines[0].equals("[TempleCraft]") && !Lines[0].equals("[TC]") && !Lines[0].equals("[TCB]") && !Lines[0].equals("[TempleCraftM]") && !Lines[0].equals("[TCM]") && !Lines[0].equals("[TempleCraftML]") && !Lines[0].equals("[TCML]"))
-		{
+		if(!Lines[0].equals("[TempleCraft]") && !Lines[0].equals("[TC]") && !Lines[0].equals("[TCB]") &&!Lines[0].equals("[TempleCraftM]") &&
+				!Lines[0].equals("[TCM]") && !Lines[0].equals("[TempleCraftML]") && !Lines[0].equals("[TCML]")) {
 			return;
 		}
 
-		if(Lines[1].toLowerCase().equals("classes"))
-		{
-			if(MobArenaClasses.enabled)
-			{
+		if(Lines[1].toLowerCase().equals("classes")) {
+			if(MobArenaClasses.enabled) {
 				usingClasses = true;
 				MobArenaClasses.generateClassSigns(sign);
 			}
@@ -83,79 +100,72 @@ public class Adventure extends Game
 		super.handleSign(sign);
 	}
 
-	public void hitEndBlock(Player p)
-	{
-		TCUtils.debugMessage("Player " + p.getName() + " hit EndBlock in Game " + gameName + "(" + gameType + ")");
-		TemplePlayer tp = TempleManager.templePlayerMap.get(p);
-		if (playerSet.contains(p))
-		{				
-			TCUtils.debugMessage("Player " + p.getName() + " contains PlayerSet.");
-			readySet.add(p);
-			rewardSet.add(p);
+	/**
+	 * End block hit
+	 * 
+	 * @param player
+	 */
+	public void hitEndBlock(Player player) {
+		TCUtils.debugMessage("Player " + player.getName() + " hit EndBlock in Game " + gameName + "(" + gameType + ")");
+		TemplePlayer tp = TempleManager.templePlayerMap.get(player);
+		if (playerSet.contains(player)) {				
+			TCUtils.debugMessage("Player " + player.getName() + " contains PlayerSet.");
+			readySet.add(player);
+			rewardSet.add(player);
 			tp.rewards = rewards;
 			int totalTime = (int)(System.currentTimeMillis()-startTime)/1000;
-			tellPlayer(p, Translation.tr("game.finishTime", ""+totalTime));
+			tellPlayer(player, Translation.tr("game.finishTime", ""+totalTime));
 
 			// Update ScoreBoards
 			List<String> scores = new ArrayList<String>();
-			scores.add(p.getName());
+			scores.add(player.getName());
 			scores.add(tp.roundMobsKilled + "");
 			scores.add(tp.roundGold + "");
 			scores.add(tp.roundDeaths + "");
 			scores.add(totalTime + "");
 			TempleManager.SBManager.updateScoreBoards(this, scores);
 
-			if(readySet.equals(playerSet))
-			{
+			if(readySet.equals(playerSet)) {
 				endGame();
-			}
-			else
-			{
-				tellPlayer(p, Translation.tr("game.readyToLeave"));
+			} else {
+				tellPlayer(player, Translation.tr("game.readyToLeave"));
 				tp.currentCheckpoint = null;
 			}
-		}
-		else
-		{
-			TCUtils.debugMessage("Player " + p.getName() + " not contains PlayerSet but hit end block.", Level.WARNING);
+		} else {
+			TCUtils.debugMessage("Player " + player.getName() + " not contains PlayerSet but hit end block.", Level.WARNING);
 		}
 	}
 
-	public void onPlayerMove(PlayerMoveEvent event)
-	{
+	/**
+	 * Player moving
+	 * 
+	 * @param event
+	 */
+	public void onPlayerMove(PlayerMoveEvent event) {
 		super.onPlayerMove(event);		
 		Player p = event.getPlayer();
 
-		if(!isRunning)
-		{
+		if(!isRunning) {
 			return;
 		}
 
 		Set<Location> tempLocs = new HashSet<Location>();
-		for(Location loc : mobSpawnpointMap.keySet())
-		{
-			//--------------------------------------------------------
+		for(Location loc : mobSpawnpointMap.keySet()) {
+			//TODO Check
 			//Could not pass event PlayerMoveEvent : loc was being passed a null
-			if (loc != null)
-			{
-				if(p.getLocation().distance(loc) < mobSpawnpointMap.get(loc).getRange())
-				{
+			if (loc != null) {
+				if(p.getLocation().distance(loc) < mobSpawnpointMap.get(loc).getRange()) {
 					tempLocs.add(loc);
 				}
 		    }
 			//--------------------------------------------------------			
 		}
 
-		for(Location loc : tempLocs)
-		{
-			try
-			{
+		for(Location loc : tempLocs) {
+			try {
 				TCMobHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc));
 				mobSpawnpointMap.remove(loc);
-				//debug
-				//System.out.println("spawnmobs");
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				mobSpawnpointMap.remove(loc);
 			}
@@ -163,19 +173,15 @@ public class Adventure extends Game
 
 		//I assume this is an attempt to respawn non-dead mobs after player death -Tim
 		//This is the source of the continuous spawn.  Commenting out for now -Tim
+		// Correct ;)  out for now - Xari
 		/*
 		Set<Location> tempLocs2 = new HashSet<Location>();
 		List<CustomMob> cmobs = customMobManager.getMobs();
-		for(Location loc : mobSpawnpointConstantMap.keySet())
-		{
-			if(p.getLocation().distance(loc) < mobSpawnpointConstantMap.get(loc).getRange())
-			{
-				if(!tempLocs.contains(loc))
-				{
-					for(CustomMob cm : cmobs)
-					{
-						if(!cm.isDead() && cm.isEntityDead())
-						{
+		for(Location loc : mobSpawnpointConstantMap.keySet()) {
+			if(p.getLocation().distance(loc) < mobSpawnpointConstantMap.get(loc).getRange()) {
+				if(!tempLocs.contains(loc)) {
+					for(CustomMob cm : cmobs) {
+						if(!cm.isDead() && cm.isEntityDead()) {
 							tempLocs2.add(loc);
 						}
 					}
@@ -183,10 +189,8 @@ public class Adventure extends Game
 			}
 		}		
 		
-		for(Location loc : tempLocs2)
-		{
-			try
-			{
+		for(Location loc : tempLocs2) {
+			try {
 				TCMobHandler.SpawnMobs(this, loc, mobSpawnpointConstantMap.get(loc));				
 				//debug
 				//System.out.println("spawnmobs2");
@@ -198,22 +202,24 @@ public class Adventure extends Game
 		*/
 	}
 
+	/**
+	 * Entity killer kills entity killed
+	 *
+	 * @param killed
+	 * @param killer
+	 */
 	public void onEntityKilledByEntity(LivingEntity killed, Entity killer)
 	{
 
 		super.onEntityKilledByEntity(killed, killer);
 		TCUtils.sendDeathMessage(this, killed, killer);
 
-		if(killer instanceof Player)
-		{
-			if(mobGoldMap != null && mobGoldMap.containsKey(killed.getEntityId()))
-			{
-				for(Player p : playerSet)
-				{
+		if(killer instanceof Player) {
+			if(mobGoldMap != null && mobGoldMap.containsKey(killed.getEntityId())) {
+				for(Player p : playerSet) {
 					int gold = mobGoldMap.get(killed.getEntityId())/playerSet.size();
 					TempleManager.templePlayerMap.get(p).roundGold += gold;
-					if(TempleCraft.economy != null)
-					{
+					if(TempleCraft.economy != null) {
 						TempleCraft.economy.depositPlayer(p.getName(), gold);
 					}
 				}

@@ -15,6 +15,7 @@ import com.msingleton.templecraft.TCUtils;
 import com.msingleton.templecraft.Temple;
 import com.msingleton.templecraft.util.MobArenaClasses;
 
+//TODO JavaDoc
 public class Spleef extends Game
 {
 	public Map<Location,String> brokenBlockMap = new HashMap<Location,String>();

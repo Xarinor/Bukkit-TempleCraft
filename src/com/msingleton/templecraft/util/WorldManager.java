@@ -1,5 +1,7 @@
 package com.msingleton.templecraft.util;
 
+// TODO CHECK IF UP TO DATE! Maybe use MV?
+
 /* 
 	This JavaFile WorldManager.java stands under the MIT-License and 
 	was part of the project MyWorld from bergerkiller (http://dev.bukkit.org/profiles/bergerkiller):
@@ -58,17 +60,14 @@ import com.msingleton.templecraft.TempleCraft;
 //import com.bergerkiller.bukkit.mw.Tag.Type;
 
 @SuppressWarnings("rawtypes")
-public class WorldManager
-{
+public class WorldManager {
 	private static HashMap regionfiles;
 	private static Field rafField;
 	
-	public static boolean init()
-	{
+	public static boolean init() {
     	TempleCraft.TCPlugin.log.info("[TempleCraft] Try to init WorldManager!");
     	TCUtils.debugMessage("Try to init WorldManager.");
-		try 
-		{
+		try {
         	Field a = net.minecraft.server.RegionFileCache.class.getDeclaredField("a");
         	a.setAccessible(true);
 			regionfiles = (HashMap) a.get(null);
@@ -79,9 +78,7 @@ public class WorldManager
         	TCUtils.debugMessage("Successfully bound variable to region file cache.");
 			TCUtils.debugMessage("File references to unloaded worlds will be cleared!");
 			return true;
-		} 
-		catch (Throwable t)
-		{
+		} catch (Throwable t) {
 			TempleCraft.TCPlugin.log.warning("[TempleCraft] Failed to bind to region file cache.");
 			TempleCraft.TCPlugin.log.warning("[TempleCraft] Files will stay referenced after being unloaded!");
 			TCUtils.debugMessage("Failed to bind to region file cache.", Level.WARNING);
@@ -91,57 +88,51 @@ public class WorldManager
 		}
 	}
 	
-	public static void deinit()
-	{
+	public static void deinit() {
 		regionfiles = null;
 		rafField = null;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static boolean clearWorldReference(World world) 
-	{
+	public static boolean clearWorldReference(World world) {
 		init();
 		String worldname = world.getName();
 		TempleCraft.TCPlugin.log.info("[TempleCraft] try to remove world reference for '" + worldname + "'!");
 		TCUtils.debugMessage("[TempleCraft] try to remove world reference for '" + worldname + "'!");
-		if (regionfiles == null)
-		{
-			//debug
-			//System.out.println("clearWorldReference - regionfiles is null");
+		if (regionfiles == null) {
+			if(TempleCraft.debugMode = true){
+				System.out.println("clearWorldReference - regionfiles is null");
+			}
 			return false;
 		}
-		if (rafField == null) 
-		{
-			//debug
-			//System.out.println("clearWorldReference - raffield is null");
+		if (rafField == null) {
+			if(TempleCraft.debugMode = true) {
+				System.out.println("clearWorldReference - raffield is null");
+			}
 			return false;
 		}
 		ArrayList<Object> removedKeys = new ArrayList<Object>();
 		
-		//debug
-		System.out.println("[TempleCraft] clearWorldReference - before regionfiles.entrySet loop");
-		try
-		{
-			for (Object o : regionfiles.entrySet()) 
-			{
+		if(TempleCraft.debugMode = true) {
+			System.out.println("[TempleCraft] clearWorldReference - before regionfiles.entrySet loop");
+		}
+		
+		try {
+			for (Object o : regionfiles.entrySet()) {
 				Map.Entry e = (Map.Entry) o;
 				File f = (File) e.getKey();
-				if (f.toString().startsWith("." + File.separator + worldname)) 
-				{
+				if (f.toString().startsWith("." + File.separator + worldname)) {
 					SoftReference ref = (SoftReference) e.getValue();
-					try 
-					{
+					try {
 						RegionFile file = (RegionFile) ref.get();
-						if (file != null)
-						{
+						if (file != null) {
 							RandomAccessFile raf = (RandomAccessFile) rafField.get(file);
-							//TODO: problem with java.io.IOException: Stream Closed 
+							//TODO Problem with java.io.IOException: Stream Closed 
 							raf.close();														
 							removedKeys.add(f);
 						}
 					}
-					catch (Exception ex) 
-					{
+					catch (Exception ex) {
 						TempleCraft.TCPlugin.log.warning("[TempleCraft] Exception while removing world reference for '" + worldname + "'!");
 						TCUtils.debugMessage("Exception while removing world reference for '" + worldname + "'!\n" + ex.getMessage(), Level.WARNING);
 						ex.printStackTrace();
@@ -149,31 +140,31 @@ public class WorldManager
 				}
 			}
 		} 
-		catch (Exception ex)
-		{ 
+		catch (Exception ex) { 
 			TempleCraft.TCPlugin.log.warning("[TempleCraft] Exception while removing world reference for '" + worldname + "'!");
 			TCUtils.debugMessage("Exception while removing world reference for '" + worldname + "'!\n" + ex.getMessage(), Level.WARNING);
 			ex.printStackTrace();
 		}
 		
-		//debug
-		System.out.println("[TempleCraft] clearWorldReference - before regionfiles.remove loop");
+		if(TempleCraft.debugMode = true) {
+			System.out.println("[TempleCraft] clearWorldReference - before regionfiles.remove loop");
+		}
 		
-		for (Object key : removedKeys)
-		{
+		for (Object key : removedKeys) {
 			regionfiles.remove(key);
 		}
 		
-		//debug
-		System.out.println("[TempleCraft] clearWorldReference - before spout try catch");
+		if(TempleCraft.debugMode = true) {
+			System.out.println("[TempleCraft] clearWorldReference - before spout try catch");
+		}
+		
 		
 		//Spout
-		try 
-		{
-			if (Bukkit.getServer().getPluginManager().isPluginEnabled("Spout")) 
-			{
+		try {
+			if (Bukkit.getServer().getPluginManager().isPluginEnabled("Spout")) {
 				TempleCraft.TCPlugin.log.info("[TempleCraft] try to remove spout reference for '" + worldname + "'!");
 				//Close the friggin' meta streams!
+				// Haha sure thing! I like it -Xari
 				SimpleChunkDataManager manager = (SimpleChunkDataManager) SpoutManager.getChunkDataManager();
 				Field chunkstore = SimpleChunkDataManager.class.getDeclaredField("chunkStore");
 				chunkstore.setAccessible(true);
@@ -184,22 +175,18 @@ public class WorldManager
 				regionFiles = (HashMap<UUID, HashMap<Long, SimpleRegionFile>>) regionfilesspout.get(store);
 				//operate on region files
 				HashMap<Long, SimpleRegionFile> data = regionFiles.remove(world.getUID());
-				if (data != null) 
-				{
+				if (data != null) {
 					//close streams...
-					for (SimpleRegionFile file : data.values()) 
-					{
+					for (SimpleRegionFile file : data.values()) {
 						file.close();
 					}
 				}
 			}
 		}
-		catch (Exception e) 
-		{
+		catch (Exception e) {
 			TCUtils.debugMessage("Exception while removing Spout world reference for '" + world.getName() + "'!\n" + e.getMessage(), Level.WARNING);
 			e.printStackTrace();
 		}
-		
 		return true;
 	}
 }

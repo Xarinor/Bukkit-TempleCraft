@@ -129,7 +129,7 @@ public class TCDamageListener implements Listener
 
 				if(cmob != null && !cmob.isDead())
 				{
-					cmob.damage(event.getDamage(), entity);
+					cmob.damage(event.getDamage(), (LivingEntity) entity);
 					event.setDamage(0);
 				}
 			}

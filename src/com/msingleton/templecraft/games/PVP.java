@@ -16,6 +16,7 @@ import com.msingleton.templecraft.TemplePlayer;
 import com.msingleton.templecraft.util.MobArenaClasses;
 import com.msingleton.templecraft.util.Translation;
 
+//TODO JavaDoc
 public class PVP extends Game
 {
 	public Set<Player> aliveSet = new HashSet<Player>();

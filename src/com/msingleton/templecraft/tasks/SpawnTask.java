@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 //import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Slime;
 
@@ -67,7 +68,7 @@ public class SpawnTask implements Runnable
 					game.mobGoldMap.put(e.getEntityId(), r.nextInt(TempleManager.mobGoldRan)+TempleManager.mobGoldMin);
 				}
 				
-				CustomMob cmob = new CustomMob(e);
+				CustomMob cmob = new CustomMob((LivingEntity) e);
 
 				cmob.setSpawnProperties(msp);
 				

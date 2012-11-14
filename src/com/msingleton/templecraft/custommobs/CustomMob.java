@@ -3,17 +3,23 @@ package com.msingleton.templecraft.custommobs;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.entity.Entity;
-//import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.LivingEntity;
 
 import com.msingleton.templecraft.TCUtils;
 import com.msingleton.templecraft.util.MobSpawnProperties;
 import com.msingleton.templecraft.util.Pair;
 
-
+/**
+* CustomMob.java
+* This work is dedicated to the public domain.
+* 
+* @author Xarinor
+* @author bootscreen
+* @author msingleton
+*/
 public class CustomMob{
 
-	private Entity entity;
+	private LivingEntity livingEntity;
 	private List<CustomMobAbility> abilitys = new ArrayList<CustomMobAbility>();
 	private boolean dead = false;
 	private int health = 0;
@@ -24,108 +30,173 @@ public class CustomMob{
 	private List<Pair<CustomMobAbility,Integer>> abilities_rotation = new ArrayList<Pair<CustomMobAbility,Integer>>();
 	private MobSpawnProperties spawnProperties = null;
 
-	public CustomMob(Entity entity) 
-	{
-		this.entity = entity;
+	/**
+	 * Constructor
+	 * 
+	 * @param entity -Mob
+	 */
+	public CustomMob(LivingEntity entity) {
+		this.livingEntity = entity;
 	}
 	
-	public void remove()
-	{
-		this.entity.remove();
+	/**
+	 * Remove this CustomMob
+	 */
+	public void remove() {
+		this.livingEntity.remove();
 	}
 
-	public boolean isEntityDead() 
-	{
-		return entity.isDead();
+	/**
+	 * Return if living CustomMob is dead
+	 * TODO Check
+	 * @return
+	 */
+	public boolean isMobDead() {
+		return livingEntity.isDead();
 	}
 	
-	public boolean isDead() 
-	{
+	/**
+	 * Return if CustomMob is dead
+	 * TODO Check
+	 * 
+	 * @return
+	 */
+	public boolean isDead() {
 		return dead;
 	}
 
-	public void setDead(boolean dead) 
-	{
+	/**
+	 * Sets this CustomMob to dead
+	 * 
+	 * @param dead -boolean dead or not
+	 */
+	public void setDead(boolean dead) {
 		this.dead = dead;
 	}
 
-	public void setHealth(int health) 
-	{
+	/**
+	 * Sets this CustomMobs health pool to an amount
+	 * 
+	 * @param health -Health amount
+	 */
+	public void setHealth(int health) {
 		this.health = health;
 		this.maxhealth = health;
 	}
 
-	public int getHealth() 
-	{
+	/**
+	 * Get current health of this CustomMob
+	 * @return
+	 */
+	public int getHealth() {
 		return health;
 	}
 
-	public int getMaxHealth() 
-	{
+	/**
+	 * Get maximum health of this CustomMob
+	 * @return
+	 */
+	public int getMaxHealth() {
 		return maxhealth;
 	}
 
-	public void setDMGMultiplikator(int dmgmulti) 
-	{
+	/**
+	 * Sets this CustomMobs dmg-multiplier
+	 * @param dmgmulti
+	 */
+	public void setDMGMultiplikator(int dmgmulti) {
 		this.dmgmulti = dmgmulti;
 	}
 
-	public int getDMGMultiplikator() 
-	{
+	/**
+	 * Gets the dmg multiplier back
+	 * 
+	 * @return
+	 */
+	public int getDMGMultiplikator() {
 		return dmgmulti;
 	}
 
-	public void setSize(int size) 
-	{
+	/**
+	 * Sets the size of this CustomMob
+	 * 
+	 * @param size
+	 */
+	public void setSize(int size) {
 		this.size = size;
 	}
 
-	public int getSize() 
-	{
+	/**
+	 * Gets the size of this CustomMob
+	 * 
+	 * @param size
+	 */
+	public int getSize() {
 		return size;
 	}
 
-	public void damage(int value, Entity damager) 
-	{
-		if(!entity.equals(damager))
-		{
+	/**
+	 * Damages this CustomMob
+	 * 
+	 * @param value		-damage to be done
+	 * @param damager	-damage source
+	 */
+	public void damage(int value, LivingEntity damager) {
+		if(!livingEntity.equals(damager)) {
 			health -= value;
-			if (health <= 0) 
-			{
+			if (health <= 0) {
 				this.dead = true;
-				//entity.damage(entity.getMaxHealth());				
+				livingEntity.damage(livingEntity.getMaxHealth());				
 			}
 		}
 	}
 
-	public Entity getEntity()
-	{
-		return this.entity;
+	/**
+	 * Gets this as LivingEntity
+	 * 
+	 * TODO Add nonliving?
+	 * 
+	 * @return
+	 */
+	public LivingEntity getLivingEntity() {
+		return this.livingEntity;
 	}
 
-	public List<CustomMobAbility> getAbilitys()
-	{
+	/**
+	 * Gets the abilities of this CustomMob
+	 * @return
+	 */
+	public List<CustomMobAbility> getAbilitys() {
 		return this.abilitys;
 	}
 
-	public void setAbilitys(List<CustomMobAbility> abilitys)
-	{
-		if(abilitys != null)
-		{
+	/**
+	 * Sets this CustomMobs abilities
+	 * @param abilitys
+	 */
+	public void setAbilitys(List<CustomMobAbility> abilitys) {
+		if(abilitys != null) {
 			this.abilitys = abilitys;
 		}
 	}
 
-	public void addAbility(CustomMobAbility ability)
-	{
-		if(ability != null)
-		{
+	/**
+	 * Adds a ability
+	 * 
+	 * @param ability
+	 */
+	public void addAbility(CustomMobAbility ability) {
+		if(ability != null) {
 			this.abilitys.add(ability);
 		}
 	}
 
-	public void addAbilitysfromString(String abilitys)
-	{
+	/**
+	 * Adds abilities from a string
+	 * 
+	 * @param abilitys
+	 */
+	public void addAbilitysfromString(String abilitys) {
 		String[] ability_split = abilitys.split(",");
 		for(String ability : ability_split)
 		{
@@ -133,39 +204,66 @@ public class CustomMob{
 		}
 	}
 
-	public Entity getTarget()
-	{
-		return TCUtils.getTarget(this.entity);
+	/**
+	 * Gets the target of this CustomMob
+	 * 
+	 * @return
+	 */
+	public LivingEntity getTarget() {
+		return (LivingEntity) TCUtils.getTarget(this.livingEntity);
 	}
 
-	public List<Pair<CustomMobAbility,Integer>> getAbilities_rotation() 
-	{
+	/**
+	 * Gets the ability-rotation
+	 * 
+	 * @return
+	 */
+	public List<Pair<CustomMobAbility,Integer>> getAbilities_rotation() {
 		return abilities_rotation;
 	}
 
-	public void setAbilities_rotation(List<Pair<CustomMobAbility,Integer>> abilities_rotation) 
-	{
+	/**
+	 * Sets the ability-rotation
+	 * 
+	 * @param abilities_rotation
+	 */
+	public void setAbilities_rotation(List<Pair<CustomMobAbility,Integer>> abilities_rotation) {
 		this.abilities_rotation = abilities_rotation;
 	}
 
-	public List<Pair<CustomMobAbility,Integer>> getAbilities_random()
-	{
+	/**
+	 * get random
+	 * 
+	 * @return
+	 */
+	public List<Pair<CustomMobAbility,Integer>> getAbilities_random() {
 		return abilities_random;
 	}
 
-	public void setAbilities_random(List<Pair<CustomMobAbility,Integer>> abilities_random) 
-	{
+	/**
+	 * set random
+	 * 
+	 * @param abilities_random
+	 */
+	public void setAbilities_random(List<Pair<CustomMobAbility,Integer>> abilities_random) {
 		this.abilities_random = abilities_random;
 	}
 
-	public MobSpawnProperties getSpawnProperties() 
-	{
+	/**
+	 * gets the spawn properties of this CustomMob
+	 * 
+	 * @return
+	 */
+	public MobSpawnProperties getSpawnProperties() {
 		return spawnProperties;
 	}
 	
-
-	public void setSpawnProperties(MobSpawnProperties spawnProperties)
-	{
+	/**
+	 * Sets the spawn properties
+	 * 
+	 * @param spawnProperties
+	 */
+	public void setSpawnProperties(MobSpawnProperties spawnProperties) {
 		this.spawnProperties = spawnProperties;
 	}
 }

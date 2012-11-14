@@ -5,12 +5,21 @@ import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+//TODO implement LivingEntity again
+//import org.bukkit.entity.LivingEntity;
 
 import com.msingleton.templecraft.custommobs.CustomMobAbility;
 import com.msingleton.templecraft.games.Game;
 
-public class MobSpawnProperties 
-{
+/**
+* MobSpawnProperties.java
+* This work is dedicated to the public domain.
+* 
+* @author Xarinor
+* @author bootscreen
+* @author msingleton
+*/
+public class MobSpawnProperties {
 	protected Game game;
 	protected Location loc;
 	protected EntityType mob;
@@ -25,8 +34,10 @@ public class MobSpawnProperties
 	protected List<Pair<CustomMobAbility,Integer>> abilities_random = new ArrayList<Pair<CustomMobAbility,Integer>>();
 	protected List<Pair<CustomMobAbility,Integer>> abilities_rotation = new ArrayList<Pair<CustomMobAbility,Integer>>();
 
-	public MobSpawnProperties()
-	{
+	/**
+	 * Constructor
+	 */
+	public MobSpawnProperties() {
 		game = null;
 		loc = null;
 		mob = null;
@@ -42,113 +53,93 @@ public class MobSpawnProperties
 		abilities_rotation.clear();
 	}
 
-	public void setGame(Game game)
-	{
+	/* GETTER AND SETTER */
+	
+	public void setGame(Game game) {
 		this.game = game;
 	}
 
-	public Game getGame()
-	{
+	public Game getGame() {
 		return game;
 	}
 
-	public void setLocation(Location loc)
-	{
+	public void setLocation(Location loc) {
 		this.loc = loc;
 	}
 
-	public Location getLocation()
-	{
+	public Location getLocation() {
 		return loc;
 	}
 
-	public void setEntityType(EntityType mob)
-	{
+	public void setEntityType(EntityType mob) {
 		this.mob = mob;
 	}
 
-	public EntityType getEntityType()
-	{
+	public EntityType getEntityType() {
 		return mob;
 	}
-
-	public void setSize(int size)
-	{
+	
+	public void setSize(int size) {
 		this.size = size;
 	}
 
-	public int getSize()
-	{
+	public int getSize() {
 		return size;
 	}
 
-	public void setRange(int range)
-	{
+	public void setRange(int range) {
 		this.range = range;
 	}
 
-	public int getRange()
-	{
+	public int getRange() {
 		return range;
 	}
 
-	public void setHealth(int health)
-	{
+	public void setHealth(int health) {
 		this.health = health;
 	}
 
-	public int getHealth()
-	{
+	public int getHealth() {
 		return health;
 	}
 
-	public void setDMGMulti(int dmgmulti)
-	{
+	public void setDMGMulti(int dmgmulti) {
 		this.dmgmulti = dmgmulti;
 	}
 
-	public int getDMGMulti()
-	{
+	public int getDMGMulti() {
 		return dmgmulti;
 	}
 
-	public void setAbilitys(String abilitys)
-	{
+	public void setAbilitys(String abilitys) {
 		this.abilitys = abilitys;
 	}
 
-	public String getAbilitys()
-	{
+	public String getAbilitys() {
 		return abilitys;
 	}
 
-	public void setCount(int count)
-	{
+	public void setCount(int count) {
 		this.count = count;
 	}
 
-	public int getCount()
-	{
+	public int getCount() {
 		return count;
 	}
 
-	public void setTime(long time)
-	{
+	public void setTime(long time) {
 		this.time = time;
 	}
 
-	public long getTime()
-	{
+	public long getTime() {
 		return time;
 	}
-
-	public boolean isIsbossmob() 
-	{
+	
+	public boolean isIsbossmob() {
 		return isbossmob;
 	}
 
-	public void setIsbossmob(boolean isbossmob)
-	{
+	public void setIsbossmob(boolean isbossmob) {
 		this.isbossmob = isbossmob;
 	}
 

@@ -38,7 +38,7 @@ public class AbilityTask implements Runnable
 	{
 		try
 		{
-			if(!game.isRunning || custommob.getEntity().isDead() || custommob.getHealth() <= 0)
+			if(!game.isRunning || custommob.getLivingEntity().isDead() || custommob.getHealth() <= 0)
 			{
 				TempleCraft.TCScheduler.cancelTask(taskID);
 				game.AbilityTaskIDs.remove(custommob);
@@ -50,11 +50,11 @@ public class AbilityTask implements Runnable
 					Random random = new Random();
 					int index = random.nextInt(abilitys.size());
 					CustomMobAbility cma = abilitys.get(index);
-					cma.run(game,custommob.getEntity());
+					cma.run(game,custommob.getLivingEntity());
 				}
 				else if(ability != null)
 				{
-					ability.run(game,custommob.getEntity());
+					ability.run(game,custommob.getLivingEntity());
 				}
 			}
 		}

@@ -41,15 +41,15 @@ import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 /**
- * TempleCraft
- *
- * @author bootscreen
- * @author msingleton
- */
-public class TempleCraft extends JavaPlugin
-{
-	/* Array of commands used to determine if a command belongs to TempleCraft
-	 * or Mean Admins. */
+* TempleCraft.java
+* This work is dedicated to the public domain.
+* 
+* @author Xarinor
+* @author bootscreen
+* @author msingleton
+*/
+public class TempleCraft extends JavaPlugin {
+	
 	public Logger log;
 	public static Logger debuglog;
 	public List<String> ENABLED_COMMANDS;
@@ -61,6 +61,7 @@ public class TempleCraft extends JavaPlugin
 	public static TempleCraft TCPlugin = null;
 	public static Permission permission = null;
 	public static MVWorldManager MVWM = null;
+	// TODO Check if this remains correct
 	//public static Catacombs catacombs = null;
 	public static WorldGuardPlugin worldguard = null;
 	public static Economy economy = null;
@@ -70,10 +71,12 @@ public class TempleCraft extends JavaPlugin
 	public static ChatColor c1 = ChatColor.DARK_AQUA;
 	public static ChatColor c2 = ChatColor.WHITE;
 	public static ChatColor c3 = ChatColor.GREEN;
-	public static boolean debugMode = false;
+	public static boolean debugMode = true;
 
-	public void onEnable()
-	{	 	
+	/**
+	 * When TempleCraft gets activated: ..
+	 */
+	public void onEnable() {	 	
 		PluginDescriptionFile pdfFile = this.getDescription();
 
 		currentVersionString = pdfFile.getVersion();
@@ -89,6 +92,7 @@ public class TempleCraft extends JavaPlugin
 
 		TCScheduler = getServer().getScheduler();
 		TCPlugin = this;
+		
 		// Schedule to check the version every 30 minutes for an update. This is to update the most recent 
 		// version so if an admin reconnects they will be warned about newer versions.
 		// Thanks Sleaker for the permission to use his updatecheck code from vault 
@@ -106,7 +110,6 @@ public class TempleCraft extends JavaPlugin
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					// ignore exceptions
 				}
 			}
 
@@ -117,16 +120,19 @@ public class TempleCraft extends JavaPlugin
 		setupEconomy();
 		setupHeroes();
 		setupMultiverse();
+		//TODO Check
 		//setupCatacombs();
 		setupWorldguard();
 
+		//Load all commands that are allowed in config
 		ENABLED_COMMANDS = TCUtils.getEnabledCommands();
 
-		// Bind the /tc and /tcraft commands to MACommands.
+		// Bind the /tct and /templecraft commands to MACommands.
 		getCommand("tct").setExecutor(new TCCommands(this));
 
 		pm.registerEvents(new MobArenaClasses(this), this);
 		pm.registerEvents(new TCBlockListener(), this);
+		// TODO Test
 		//pm.registerEvents(new TCChunkListener(), this);
 		pm.registerEvents(new TCDamageListener(), this);
 		pm.registerEvents(new TCDisconnectListener(this), this);
@@ -142,13 +148,10 @@ public class TempleCraft extends JavaPlugin
 		System.out.println(Translation.tr("enableMessage", pdfFile.getName(), pdfFile.getVersion()));
 
 		debugMode = TCUtils.getBoolean(TCUtils.getConfig("config"), "settings.debug", false);
-		if(debugMode)
-		{
-			try 
-			{
+		if(debugMode) {
+			try {
 				new File("plugins/TempleCraft/debug").mkdir();
 				FileHandler fh = new FileHandler("plugins/TempleCraft/debug/debug.log", true);
-				//fh.setFormatter(new SimpleFormatter());
 				fh.setFormatter(new Formatter() {
 					public String format(LogRecord record) {
 						SimpleDateFormat sd = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
@@ -157,49 +160,45 @@ public class TempleCraft extends JavaPlugin
 						return dateString + " " + split[0] + " " + split[1] + " Line " + split[2] + "\n"
 						+ record.getLevel() + ": " + split[3] + "\n\n";
 					}
-				});
+				} );
 				debuglog = Logger.getAnonymousLogger();
 				debuglog.setUseParentHandlers(false);
-				for(Handler h :debuglog.getHandlers())
-				{
+				for(Handler h :debuglog.getHandlers()) {
 					debuglog.removeHandler(h);
 				}
 				debuglog.addHandler(fh);
 				System.out.print("[TempleCraft] DEBUG MODE enabled.");
-				String message = "Debug gestartet. Liste aller Plugins:\n";
-				for(Plugin pl : getServer().getPluginManager().getPlugins())
-				{
+				String message = "Debugging started. Plugins:\n";
+				for(Plugin pl : getServer().getPluginManager().getPlugins()) {
 					message += "- " + pl.getDescription().getName() + " v." + pl.getDescription().getVersion() + "\n";
 				}
 				TCUtils.debugMessage(message);
 			} 
-			catch (SecurityException e) 
-			{
+			catch (SecurityException e) {
 				debugMode = false;
 				e.printStackTrace();
 			} 
-			catch (IOException e) 
-			{
+			catch (IOException e) {
 				debugMode = false;
 				e.printStackTrace();
 			}
 		}
-
 		TCUtils.deleteTempWorlds();
 		TCUtils.deleteTempWorldFolders();
 	}
 
-	public void onDisable()
-	{
-		TCUtils.debugMessage("Debug beendet.");
-		if(debuglog != null)
-		{		
-			for(Handler h :debuglog.getHandlers())
-			{
+	/**
+	 * When templecraft gets deactivated: ..
+	 */
+	public void onDisable() {
+		TCUtils.debugMessage("End of World!.");
+		if(debuglog != null) {		
+			for(Handler h :debuglog.getHandlers()) {
 				debuglog.removeHandler(h);
 				h.close();
 			}
 		}
+		// TODO Check
 		//permissionHandler = null;
 		TempleManager.SBManager.save();
 		TempleManager.removeAll();
@@ -209,36 +208,39 @@ public class TempleCraft extends JavaPlugin
 		WorldManager.deinit();
 	}
 
-	private void setupTranslations()
-	{			
+	/**
+	 * Setting up the language handling
+	 */
+	private void setupTranslations() {			
 		File configFile = TCUtils.getConfig("config");
 		language = TCUtils.getString(configFile, "settings.language", "en-US");
 		Translation.reload(new File(getDataFolder(), "templecraft-"+language+".csv"));
 
-		
-		if(Translation.getVersion()<1)
-		{
+		if(Translation.getVersion()<1) {
 			TCUtils.copyFromJarToDisk("templecraft-"+language+".csv", getDataFolder());
 			log.log(Level.INFO, "[TempleCraft] copied new translation file for "+language+" to disk.");
 			Translation.reload(new File(getDataFolder(), "templecraft-"+language+".csv"));
 		}
 	}
 
-	private void setupMultiverse()
-	{
+	/**
+	 * Setting up Multiverse support
+	 * 
+	 * TODO Maybe migrate over to Multiverse for base
+	 */
+	private void setupMultiverse() {
 		Plugin multiverse = this.getServer().getPluginManager().getPlugin("Multiverse-Core");
-		if (multiverse == null)
-		{
+		if (multiverse == null) {
 			return;
 		}
 
 		MVWM = ((MultiverseCore) multiverse).getMVWorldManager();
-		if(MVWM != null)
-		{
+		if(MVWM != null) {
 			System.out.println("[TempleCraft] Hooked into " + multiverse.getDescription().getName() + " Version "+ multiverse.getDescription().getVersion());
 		}
 	}
 
+	//TODO Check
 	/*private void setupCatacombs()
 	{
 		Plugin Cataplugin = this.getServer().getPluginManager().getPlugin("Catacombs");
@@ -249,54 +251,66 @@ public class TempleCraft extends JavaPlugin
 		}
 	}*/
 
-	private void setupWorldguard()
-	{
+	/**
+	 * Setting up WorldGuard support
+	 */
+	private void setupWorldguard() {
 		Plugin wgplugin = getServer().getPluginManager().getPlugin("WorldGuard");
-		if (wgplugin != null)
-		{
+		if (wgplugin != null) {
 			worldguard = (WorldGuardPlugin) wgplugin;
 			System.out.print("[TempleCraft] Hooked into " + wgplugin.getDescription().getName() + " Version "+ wgplugin.getDescription().getVersion());
 		}
 	}
 
-	private Boolean setupPermissions()
-	{
+	/**
+	 * Setting up VAULT
+	 * 
+	 * @return -Permission
+	 */
+	private Boolean setupPermissions() {
 		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-		if (permissionProvider != null)
-		{
+		if (permissionProvider != null) {
 			permission = permissionProvider.getProvider();
 		}
 		return (permission != null);
 	}
 
-	private Boolean setupEconomy()
-	{
+	/**
+	 * Setting up the Economy
+	 * 
+	 * @return -Economy
+	 */
+	private Boolean setupEconomy() {
 		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-		if (economyProvider != null)
-		{
+		if (economyProvider != null) {
 			economy = economyProvider.getProvider();
 		}
-
 		return (economy != null);
 	}
 
-	private void setupHeroes()
-	{
+	/**
+	 * Setting up Heroes
+	 * 
+	 * TODO Check for changes.. Testing!
+	 */
+	private void setupHeroes() {
 		Plugin heroes = this.getServer().getPluginManager().getPlugin("Heroes");
-		if (heroes == null)
-		{
+		if (heroes == null) {
 			return;
 		}
 
 		heroManager = ((Heroes) heroes).getCharacterManager();
-		if(heroManager != null)
-		{
+		if(heroManager != null) {
 			System.out.println("[TempleCraft] Hooked into Heroes");
 		}
 	}
 
-	public File getPluginFile()
-	{
+	/**
+	 * Getting the pluginfile
+	 * 
+	 * @return -File
+	 */
+	public File getPluginFile() {
 		return getFile();
 	}
 }

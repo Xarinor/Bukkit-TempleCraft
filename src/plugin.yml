@@ -1,10 +1,10 @@
 name: TempleCraft
-author: Bootscreen
-authors: [Mike Singleton]
+author: Xarinor
+authors: [Bootscreen,Mike Singleton,Timirvin]
 main: com.msingleton.templecraft.TempleCraft
 depend: [Vault]
 softdepend: [Heroes,Multiverse-Core,WorldGuard]
-version: 0.45.5 x1
+version: 0.45.6
 dev-url: http://dev.bukkit.org/server-mods/templecraft-bootscreen/
 
 commands:

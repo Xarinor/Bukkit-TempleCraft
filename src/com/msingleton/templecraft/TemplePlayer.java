@@ -17,8 +17,16 @@ import com.msingleton.templecraft.games.Game;
 import com.msingleton.templecraft.listeners.TCPlayerListener;
 import com.msingleton.templecraft.util.Translation;
 
-public class TemplePlayer
-{
+/**
+* TemplePlayer.java
+* This work is dedicated to the public domain.
+* 
+* @author Xarinor
+* @author bootscreen
+* @author msingleton
+*/
+public class TemplePlayer {
+	
 	public Set<Object> tempSet = new HashSet<Object>();
 	public List<ItemStack> rewards = new ArrayList<ItemStack>();
 	public int roundMobsKilled;
@@ -39,34 +47,36 @@ public class TemplePlayer
 	public Game currentGame;
 	public Set<LivingEntity> tamedMobSet = new HashSet<LivingEntity>();
 
-	public TemplePlayer()
-	{
-	}
+	public TemplePlayer() {}
 
-	public TemplePlayer(Player p)
-	{
-		name		 = p.getName();
+	/**
+	 * Constructor
+	 * 
+	 * @param player
+	 */
+	public TemplePlayer(Player player) {
+		name		 = player.getName();
 		ownedTemples = getOwnedTemples();
 		team		 = -1;
 		canAutoTele  = false;
 		resetRoundStats();
 	}
 
-	private int getOwnedTemples()
-	{
+	/**
+	 * Get all owned temples of that TemplePlayer
+	 * @return
+	 */
+	private int getOwnedTemples() {
 		int ownedTemples = 0;
-		for(Temple temple : TempleManager.templeSet)
-		{
-			if(temple.owners.contains(name.toLowerCase()))
-			{
+		for(Temple temple : TempleManager.templeSet) {
+			if(temple.owners.contains(name.toLowerCase())) {
 				ownedTemples++;
 			}
 		}
 		return ownedTemples;
 	}
 
-	/*protected void displayStats()
-{
+	/*protected void displayStats() {
 		//TO DO: this
 		player.sendMessage("----TempleCraft Stats----");
 		player.sendMessage(ChatColor.BLUE+"Mobs Killed: "+ChatColor.WHITE+roundMobsKilled);
@@ -75,53 +85,46 @@ public class TemplePlayer
 		resetRoundStats();
 	}*/
 
-	public void resetRoundStats()
-	{
+	/**
+	 * resets Stats for this TemplePlayer
+	 */
+	public void resetRoundStats() {
 		roundGold		   = 0;
 		roundMobsKilled	 = 0;
 		roundPlayersKilled  = 0;
 		roundDeaths		 = 0;
 	}
 
-	public void startEnterTimer(final Player p)
+	/**
+	 * Starts the enter timer for player
+	 * @param player
+	 */
+	public void startEnterTimer(final Player player)
 	{
-		final TemplePlayer tp = TempleManager.templePlayerMap.get(p);
+		final TemplePlayer tp = TempleManager.templePlayerMap.get(player);
 		
-		try
-		{
+		try {
 			count = Integer.parseInt(tp.sensedSign.getLine(3));
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			count = 5;
 		}
 		
-		if(count == 0)
-		{
-			try 
-			{
+		if(count == 0) {
+			try {
 				Thread.sleep(1000);
-			} 
-			catch (InterruptedException e) 
-			{
+			} catch (InterruptedException e) {
 			}
-			TCPlayerListener.handleSignClicked(p,tp.sensedSign);
+			TCPlayerListener.handleSignClicked(player,tp.sensedSign);
 			tp.sensedSign = null;
 			tp.canAutoTele = false;
-		}
-		else
-		{
-			counter = new TimerTask() //ToDo: check timer task
-			{
-				public void run()
-				{
-					if(count <= 3 && count > 0)
-					{
-						TempleManager.tellPlayer(p, Translation.tr("enteringTemple",count));
-					}
-					else if(count <= 0)
-					{
-						TCPlayerListener.handleSignClicked(p,tp.sensedSign);
+		} else {
+			//TODO check timer task
+			counter = new TimerTask()  {
+				public void run() {
+					if(count <= 3 && count > 0) {
+						TempleManager.tellPlayer(player, Translation.tr("enteringTemple",count));
+					} else if(count <= 0) {
+						TCPlayerListener.handleSignClicked(player,tp.sensedSign);
 						tp.sensedSign = null;
 						tp.canAutoTele = false;
 						cancel();
@@ -134,17 +137,21 @@ public class TemplePlayer
 		}
 	}
 
-	public void stopEnterTimer()
-	{
-		if(counter != null)
-		{
+	/**
+	 * Stops the enter timer
+	 */
+	public void stopEnterTimer() {
+		if(counter != null) {
 			counter.cancel();
 		}
 	}
 
-	public void resetEnterTimer(Player p)
-	{
+	/**
+	 * Resets the enter timer to full
+	 * @param player
+	 */
+	public void resetEnterTimer(Player player) {
 		stopEnterTimer();
-		startEnterTimer(p);
+		startEnterTimer(player);
 	}
 }

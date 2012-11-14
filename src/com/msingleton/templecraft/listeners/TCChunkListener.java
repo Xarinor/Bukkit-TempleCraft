@@ -36,7 +36,7 @@ public class TCChunkListener implements Listener
 						
 						if(cmold != null)
 						{
-							CustomMob cmnew = new CustomMob(le);
+							CustomMob cmnew = new CustomMob((LivingEntity) le);
 							cmnew.setHealth(cmold.getMaxHealth());
 							cmnew.setAbilitys(cmold.getAbilitys());
 							cmnew.setDMGMultiplikator(cmold.getDMGMultiplikator());

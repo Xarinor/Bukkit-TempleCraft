@@ -1,9 +1,21 @@
 package com.msingleton.templecraft.games;
 
-public interface GameInterface
-{
-	
+/**
+* GameInterface.java
+* This work is dedicated to the public domain.
+* 
+* @author Xarinor
+* @author bootscreen
+* @author msingleton
+*/
+public interface GameInterface {
+	/**
+	 * Start game
+	 */
 	abstract void startGame();
 
+	/**
+	 * End game
+	 */
 	abstract void endGame();
 }

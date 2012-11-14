@@ -12,6 +12,7 @@ import com.msingleton.templecraft.TemplePlayer;
 import com.msingleton.templecraft.util.Pair;
 import com.msingleton.templecraft.util.Translation;
 
+//TODO JavaDoc
 public class Race extends Game
 {
 

@@ -15,67 +15,77 @@ import org.bukkit.entity.Player;
 import com.msingleton.templecraft.games.Game;
 import com.msingleton.templecraft.util.Translation;
 
-public class TCCommands implements CommandExecutor
-{
+/**
+* TCCommands.java
+* This work is dedicated to the public domain.
+* 
+* @author Xarinor
+* @author bootscreen
+* @author msingleton
+*/
+public class TCCommands implements CommandExecutor {
 	private TempleCraft plugin;
 
-	public TCCommands(TempleCraft instance)
-	{
+	/**
+	 * @param instance
+	 */
+	public TCCommands(TempleCraft instance) {
 		plugin = instance;
 	}
+	
 	/**
 	 * Handles all command parsing.
 	 * Unrecognized commands return false, giving the sender a list of
 	 * valid commands (from plugin.yml).
+	 * 
+	 * TODO Return Error Message?
+	 * 
+	 * @param sender		-User
+	 * @param command		-Used command
+	 * @param commandLabel	-Label
+	 * @param args			-additional arguments
 	 */
-	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args)
-	{	   
-		if (args.length == 1 && args[0].equals("checkupdates"))
-		{
+	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {	   
+		if (args.length == 1 && args[0].equals("checkupdates")) {
 			try {
-				if ((sender == null) || !(sender instanceof Player))
-				{
+				// If console
+				if ((sender == null) || !(sender instanceof Player)) {
 					plugin.newVersionString = TCUtils.updateCheck(plugin.currentVersionString);
 					plugin.currentVersion = TCUtils.convertVersion(plugin.currentVersionString);
 					plugin.newVersion = TCUtils.convertVersion(plugin.newVersionString);
 					if (plugin.newVersion > plugin.currentVersion) {
 						plugin.log.warning("[" + plugin.getDescription().getName() + "] Version " + plugin.newVersionString + " is out! You are running " + plugin.currentVersionString);
 						plugin.log.warning("[" + plugin.getDescription().getName() + "] Update TempleCraft at: http://dev.bukkit.org/server-mods/templecraft-bootscreen");
-					}
-					else
-					{
-						plugin.log.info("[" + plugin.getDescription().getName() + "] You have the newest Version.");
+					} else {
+						plugin.log.info("[" + plugin.getDescription().getName() + "] TempleCraft is up to date! Yay :)");
 					}
 				}
-				else
-				{
+				// If user
+				else {
 					Player p = (Player) sender;
-					if(TCPermissionHandler.hasPermission(p, "templecraft.checkupdates"))
-					{
+					if(TCPermissionHandler.hasPermission(p, "templecraft.checkupdates")) {
 						plugin.newVersionString = TCUtils.updateCheck(plugin.currentVersionString);
 						plugin.currentVersion = TCUtils.convertVersion(plugin.currentVersionString);
 						plugin.newVersion = TCUtils.convertVersion(plugin.newVersionString);
 						if (plugin.newVersion > plugin.currentVersion) {
 							p.sendMessage("[" + plugin.getDescription().getName() + "] Version " + plugin.newVersionString + " is out! You are running " + plugin.currentVersionString);
 							p.sendMessage("[" + plugin.getDescription().getName() + "] Update TempleCraft at: http://dev.bukkit.org/server-mods/templecraft-bootscreen");
-						}
-						else
-						{
-							p.sendMessage("[" + plugin.getDescription().getName() + "] You have the newest Version.");
+						} else {
+							p.sendMessage("[" + plugin.getDescription().getName() + "] TempleCraft is up to date! Yay :)");
 						}
 					}
 				}
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				e.printStackTrace();
-				// Ignore exceptions
 			}
 			return true;
 		}
 
 		// Only accept commands from players.
-		if ((sender == null) || !(sender instanceof Player))
-		{
-			plugin.log.warning("[TempleCraft] Only players can use these commands, silly.");
+		//TODO Check if useful.....
+		if ((sender == null) || !(sender instanceof Player)) {
+			plugin.log.warning("[Xarinor]: You should try this ingame! ;)");
 			return true;
 		}
 
@@ -84,58 +94,46 @@ public class TCCommands implements CommandExecutor
 
 		/* If more than one argument, must be an advanced command.
 		 * Only allow operators to access these commands. */
-		if (args.length > 1)
-		{
-			if(advancedCommands(p, args))
-			{
+		if (args.length > 1) {
+			if(advancedCommands(p, args)) {
 				return true;
 			}
 		}
 
 		// If not exactly one argument, must be an invalid command.
-		if (args.length == 1)
-		{
-			if(basicCommands(p, args[0].toLowerCase()))
-			{
+		if (args.length == 1) {
+			if(basicCommands(p, args[0].toLowerCase())) {
 				return true;
-			}
-			else
-			{
-				try
-				{
+			} else {
+				try {
 					TCPermissionHandler.sendResponse(p,Integer.parseInt(args[0]));
 					return true;
 				}
-				catch(Exception e)
-				{};
+				catch(Exception e) {};
 			}
 		}
-
 		TCPermissionHandler.sendResponse(p,1);
 		return true;
 	}
 
 	/**
 	 * Handles basic commands.
+	 * 
+	 * @param p		-User
+	 * @param cmd	-Used command
 	 */
-	private boolean basicCommands(Player p, String cmd)
-	{   
+	private boolean basicCommands(Player p, String cmd) {   
 
-		if(cmd.equals("version"))
-		{
+		if(cmd.equals("version")) {
 			TempleManager.tellPlayer(p,"[TempleCraft] Version " + plugin.getDescription().getVersion());
-			
 			return true;
 		}
 		
 		TemplePlayer tp = TempleManager.templePlayerMap.get(p);
 
-		if((cmd.equals("join") || cmd.equals("j")) && TCPermissionHandler.hasPermission(p, "templecraft.join"))
-		{
-			for(Game game : TempleManager.gameSet)
-			{
-				if(!game.isRunning)
-				{
+		if((cmd.equals("join") || cmd.equals("j")) && TCPermissionHandler.hasPermission(p, "templecraft.join")) {
+			for(Game game : TempleManager.gameSet) {
+				if(!game.isRunning) {
 					game.playerJoin(p);
 					return true;
 				}
@@ -144,18 +142,15 @@ public class TCCommands implements CommandExecutor
 			return true;
 		}
 
-		if ((cmd.equals("leave") || cmd.equals("l")) && TCPermissionHandler.hasPermission(p, "templecraft.leave"))
-		{
+		if ((cmd.equals("leave") || cmd.equals("l")) && TCPermissionHandler.hasPermission(p, "templecraft.leave")) {
 			TempleManager.playerLeave(p);
 			return true;
 		}
 		
-		if ((cmd.equals("closeall") || cmd.equals("ca")) && TCPermissionHandler.hasPermission(p, "templecraft.forceend"))
-		{
+		if ((cmd.equals("closeall") || cmd.equals("ca")) && TCPermissionHandler.hasPermission(p, "templecraft.forceend")) {
 			TempleManager.removeAll();
 			TempleCraft.TCScheduler.cancelTasks(plugin);
-			for(Game game : TempleManager.gameSet)
-			{
+			for(Game game : TempleManager.gameSet) {
 				game.AbilityTaskIDs.clear();
 				game.SpawnTaskIDs.clear();
 				game.endGame();
@@ -164,57 +159,42 @@ public class TCCommands implements CommandExecutor
 			return true;
 		}
 
-		if (cmd.equals("save"))
-		{
+		if (cmd.equals("save")) {
 			Temple temple = tp.currentTemple;
 
-			if(temple == null || !TCUtils.isTCEditWorld(p.getWorld()))
-			{
+			if(temple == null || !TCUtils.isTCEditWorld(p.getWorld())) {
 				TempleManager.tellPlayer(p, Translation.tr("saveFail"));
 				return true;
 			}
 
-			if(TCPermissionHandler.hasPermission(p, "templecraft.savetemple"))
-			{
-				if(TCUtils.isTCEditWorld(p.getWorld()))
-				{
+			if(TCPermissionHandler.hasPermission(p, "templecraft.savetemple")) {
+				if(TCUtils.isTCEditWorld(p.getWorld())) {
 					temple.saveTemple(p.getWorld(), p);
 				}
 			}
 			return true;
 		}
 
-		if ((cmd.equals("playerlist") || cmd.equals("plist")) && TCPermissionHandler.hasPermission(p, "templecraft.playerlist"))
-		{
-			if(TempleManager.playerSet.contains(p))
-			{
+		if ((cmd.equals("playerlist") || cmd.equals("plist")) && TCPermissionHandler.hasPermission(p, "templecraft.playerlist")) {
+			if(TempleManager.playerSet.contains(p)) {
 				tp.currentGame.playerList(p);
-			}
-			else
-			{
+			} else {
 				TempleManager.playerList(p);
 			}
 			return true;
 		}
 
-		if ((cmd.equals("gamelist") || cmd.equals("glist")) && TCPermissionHandler.hasPermission(p, "templecraft.playerlist"))
-		{
-			if(TempleManager.gameSet.isEmpty())
-			{
+		if ((cmd.equals("gamelist") || cmd.equals("glist")) && TCPermissionHandler.hasPermission(p, "templecraft.playerlist")) {
+			if(TempleManager.gameSet.isEmpty()) {
 				TempleManager.tellPlayer(p,Translation.tr("noGamesAvailable"));
 				return true;
 			}
 			p.sendMessage(ChatColor.GREEN+"Game List:");
-			for(Game game : TempleManager.gameSet)
-			{
-				if(game != null)
-				{
-					if(game.isRunning)
-					{
+			for(Game game : TempleManager.gameSet) {
+				if(game != null) {
+					if(game.isRunning) {
 						p.sendMessage(Translation.tr("gameInProgress",game.gameName));
-					}
-					else
-					{
+					} else {
 						p.sendMessage(Translation.tr("gameInLobby",game.gameName));
 					}
 				}
@@ -222,10 +202,8 @@ public class TCCommands implements CommandExecutor
 			return true;
 		}
 
-		if ((cmd.equals("templelist") || cmd.equals("tlist")) && TCPermissionHandler.hasPermission(p, "templecraft.templelist"))
-		{
-			if(TempleManager.templeSet.isEmpty())
-			{
+		if ((cmd.equals("templelist") || cmd.equals("tlist")) && TCPermissionHandler.hasPermission(p, "templecraft.templelist")) {
+			if(TempleManager.templeSet.isEmpty()) {
 				TempleManager.tellPlayer(p,Translation.tr("noTemplesAvailable"));
 				return true;
 			}
@@ -233,37 +211,26 @@ public class TCCommands implements CommandExecutor
 			ArrayList<String> list = new ArrayList<String>();
 
 			Iterator<Temple> it = TempleManager.templeSet.iterator();
-			while(it.hasNext())
-			{
+			while(it.hasNext()) {
 				Temple temple = it.next();
 				StringBuilder line = new StringBuilder();
-				if(temple != null)
-				{
-					if(temple.isSetup)
-					{
+				if(temple != null) {
+					if(temple.isSetup) {
 						line.append(Translation.tr("templeListSetup",temple.templeName));
-					} 
-					else 
-					{
+					}  else {
 						line.append(Translation.tr("templeListNotSetup",temple.templeName));
 					}
 					int startLeng = line.length();
-					while(line.length()<55-startLeng)
-					{
+					while(line.length()<55-startLeng) {
 						line.append(" ");
 					}
 				}
-				if(it.hasNext())
-				{
+				if(it.hasNext()) {
 					temple = it.next();
-					if(temple != null)
-					{
-						if(temple.isSetup)
-						{
+					if(temple != null) {
+						if(temple.isSetup) {
 							line.append(Translation.tr("templeListSetup",temple.templeName));
-						} 
-						else 
-						{
+						} else {
 							line.append(Translation.tr("templeListNotSetup",temple.templeName));
 						}
 					}
@@ -271,35 +238,27 @@ public class TCCommands implements CommandExecutor
 				list.add(line.toString());
 			}
 
-			for(String s : list)
-			{
+			for(String s : list) {
 				p.sendMessage(s);
 			}
 			return true;
 		}
 
-		if ((cmd.equals("ready") || cmd.equals("notready"))  && TCPermissionHandler.hasPermission(p, "templecraft.ready"))
-		{
+		if ((cmd.equals("ready") || cmd.equals("notready"))  && TCPermissionHandler.hasPermission(p, "templecraft.ready")) {
 			Game game = tp.currentGame;
-			if(game != null && game.playerSet.contains(p))
-			{
+			if(game != null && game.playerSet.contains(p)) {
 				game.notReadyList(p);
-			}
-			else
-			{
+			} else {
 				TempleManager.notReadyList(p);
 			}
 			return true;
 		}
 
-		if (cmd.equals("converttemples") && TCPermissionHandler.hasPermission(p, "templecraft.converttemples"))
-		{
-			for(Temple temple : TempleManager.templeSet)
-			{
+		if (cmd.equals("converttemples") && TCPermissionHandler.hasPermission(p, "templecraft.converttemples")) {
+			for(Temple temple : TempleManager.templeSet) {
 				TempleManager.tellPlayer(p, Translation.tr("convertingTemple", temple.templeName));
 				TCUtils.convertTemple(p, temple);
 			}
-
 			TempleManager.tellPlayer(p, Translation.tr("convertingComplete"));
 			return true;
 		}
@@ -307,40 +266,39 @@ public class TCCommands implements CommandExecutor
 		return false;
 	}
 
-	private boolean advancedCommands(Player p, String[] args)
-	{		
+	/**
+	 * Handles advanced commands.
+	 * 
+	 * @param p		-User
+	 * @param args	-Additional parameter
+	 * @return
+	 */
+	private boolean advancedCommands(Player p, String[] args) {		
 		//Room commands
 		String cmd = args[0].toLowerCase();
 		String arg = args[1].toLowerCase();	
 
 		TemplePlayer tp = TempleManager.templePlayerMap.get(p);
 
-		if (cmd.equals("new") && TCPermissionHandler.hasPermission(p, "templecraft.newtemple"))
-		{
+		if (cmd.equals("new") && TCPermissionHandler.hasPermission(p, "templecraft.newtemple")) {
 			TempleManager.tellPlayer(p, Translation.tr("newTemple", arg));
-			if(args.length == 2)
-			{
+			if(args.length == 2) {
 				TCUtils.newTemple(p, arg, null, true);
-			}
-			else if(args.length == 3)
-			{
+			} else if(args.length == 3) {
 				TCUtils.newTemple(p, arg, args[2].toLowerCase(), true);
 			}
 			return true;
 		}
 
-		if (cmd.equals("newgame") && TCPermissionHandler.hasPermission(p, "templecraft.newgame"))
-		{
+		if (cmd.equals("newgame") && TCPermissionHandler.hasPermission(p, "templecraft.newgame")) {
 			TCUtils.newGameCommand(p, args);
 			return true;
 		}
 
-		if (cmd.equals("delete") && TCPermissionHandler.hasPermission(p, "templecraft.deletetemple"))
-		{
+		if (cmd.equals("delete") && TCPermissionHandler.hasPermission(p, "templecraft.deletetemple")) {
 			Temple temple = TCUtils.getTempleByName(arg);
 
-			if(temple == null)
-			{
+			if(temple == null) {
 				TempleManager.tellPlayer(p, Translation.tr("templeDNE", arg));
 				return true;
 			}
@@ -350,41 +308,30 @@ public class TCCommands implements CommandExecutor
 			return true;
 		}
 
-		if (cmd.equals("rename") && TCPermissionHandler.hasPermission(p, "templecraft.renametemple"))
-		{
+		if (cmd.equals("rename") && TCPermissionHandler.hasPermission(p, "templecraft.renametemple")) {
 			Temple temple;
 			String result;
-			if(args.length == 2)
-			{
+			if(args.length == 2) {
 				temple = tp.currentTemple;
 				result = arg;
-				if(temple == null)
-				{
+				if(temple == null) {
 					TempleManager.tellPlayer(p, Translation.tr("mustBeEditing"));
 					return true;
 				}
-			} 
-			else if(args.length == 3)
-			{
+			} else if(args.length == 3) {
 				temple = TCUtils.getTempleByName(arg);
 				result = args[2];
-				if(temple == null)
-				{
+				if(temple == null) {
 					TempleManager.tellPlayer(p, Translation.tr("templeDNE", arg));
 					return true;
 				}
-			} 
-			else 
-			{
+			} else {
 				return true;
 			}
 			Temple newtemple = TCUtils.getTempleByName(result);
-			if(newtemple == null)
-			{
+			if(newtemple == null) {
 				TCUtils.renameTemple(temple, arg);
-			}
-			else
-			{
+			} else {
 				TempleManager.tellPlayer(p, Translation.tr("templeAE", result));
 				return true;
 			}
@@ -392,56 +339,42 @@ public class TCCommands implements CommandExecutor
 			return true;
 		}
 
-		if (cmd.equals("setmaxplayers") && TCPermissionHandler.hasPermission(p, "templecraft.setmaxplayers"))
-		{
+		if (cmd.equals("setmaxplayers") && TCPermissionHandler.hasPermission(p, "templecraft.setmaxplayers")) {
 			Temple temple;
 			String number;
-			if(args.length == 2)
-			{
+			if(args.length == 2) {
 				temple = tp.currentTemple;
 				number = arg;
-			} 
-			else if(args.length == 3)
-			{
+			} else if(args.length == 3) {
 				temple = TCUtils.getTempleByName(arg);
 				number = args[2];
-			} 
-			else 
-			{
+			} else {
 				return true;
 			}
-			if(temple == null)
-			{
+			if(temple == null) {
 				TempleManager.tellPlayer(p, Translation.tr("templeDNE", arg));
 				return true;
 			}
-			try
-			{
+			try {
 				int value = Integer.parseInt(number);
 				TCUtils.setTempleMaxPlayers(temple, value);
 				TempleManager.tellPlayer(p, Translation.tr("templeMaxPlayersSet",temple.templeName, value));
 			}
-			catch(Exception e)
-			{
+			catch(Exception e) {
 				TempleManager.tellPlayer(p, Translation.tr("invalidInteger"));
 			}
 			return true;
 		}
 
-		if (cmd.equals("worldtotemple") && TCPermissionHandler.hasPermission(p, "templecraft.worldtotemple"))
-		{
-			if(TCUtils.getTempleByName(arg) != null)
-			{
+		if (cmd.equals("worldtotemple") && TCPermissionHandler.hasPermission(p, "templecraft.worldtotemple")) {
+			if(TCUtils.getTempleByName(arg) != null) {
 				TempleManager.tellPlayer(p, Translation.tr("templeAE"));
 				return true;
 			}
 
-			if(args.length == 2)
-			{
+			if(args.length == 2) {
 				TCUtils.newTemple(p, arg, null, false);
-			}
-			else if(args.length == 3)
-			{
+			} else if(args.length == 3) {
 				TCUtils.newTemple(p, arg, args[2].toLowerCase(), false);
 			}
 
@@ -451,51 +384,41 @@ public class TCCommands implements CommandExecutor
 			TempleManager.tellPlayer(p, Translation.tr("worldConverted",arg));
 			return true;
 		}
-		
-		if ((cmd.equals("finishloc") || cmd.equals("fl")) && TCPermissionHandler.hasPermission(p, "templecraft.edittemple"))
-		{
+		//TODO Check if save together with other information (Bosses,Temples)((maybe?))(((or not..)))
+		if ((cmd.equals("finishloc") || cmd.equals("fl")) && TCPermissionHandler.hasPermission(p, "templecraft.edittemple")) {
 			Temple temple = tp.currentTemple;
 
-			if(temple != null)
-			{
+			if(temple != null) {
 				TempleManager.tellPlayer(p, Translation.tr("mustNotBeEditing"));
 				return true;
 			}
-			
 			temple = TCUtils.getTempleByName(arg);
 
-			if(temple == null)
-			{
+			if(temple == null) {
 				TempleManager.tellPlayer(p, Translation.tr("templeDNE", arg));
 				return true;
 			}
 
-			if(args.length == 3 && (args[2].equals("delete") || args[2].equals("del")))
-			{
+			if(args.length == 3 && (args[2].equals("delete") || args[2].equals("del"))) {
 				TCUtils.setFinishLocation(temple, null);
 				TempleManager.tellPlayer(p, Translation.tr("templeFinishLocDel",arg));
-			}
-			else
-			{
+			} else {
 				TCUtils.setFinishLocation(temple, p.getLocation());
 				TempleManager.tellPlayer(p, Translation.tr("templeFinishLocSet",arg));
 			}
 			return true;
 		}
 		
-		if ((cmd.equals("setmaxdeaths") || cmd.equals("smd")) && TCPermissionHandler.hasPermission(p, "templecraft.edittemple"))
-		{
+		if ((cmd.equals("setmaxdeaths") || cmd.equals("smd")) && TCPermissionHandler.hasPermission(p, "templecraft.edittemple")) {
 			Temple temple = tp.currentTemple;
 
-			if(temple == null)
-			{
+			if(temple == null) {
 				TempleManager.tellPlayer(p, Translation.tr("mustBeEditing"));
 				return true;
 			}
 
 			int maxdeaths = -1;
-			try
-			{
+			try {
 				maxdeaths = Integer.parseInt(arg);
 			}
 			catch (Exception e) {}
@@ -506,69 +429,55 @@ public class TCCommands implements CommandExecutor
 			return true;
 		}
 
-		if ((cmd.equals("textadd") || cmd.equals("ta")) && TCPermissionHandler.hasPermission(p, "templecraft.edittemple"))
-		{
-			try
-			{
+		//TODO Same as above. same file?
+		if ((cmd.equals("textadd") || cmd.equals("ta")) && TCPermissionHandler.hasPermission(p, "templecraft.edittemple")) {
+			try {
 				File messageFile = TCUtils.getConfig("messages");
 				YamlConfiguration c = YamlConfiguration.loadConfiguration(messageFile);
 				String text = "";
-				for(int i = 2; i < args.length; i++)
-				{
+				for(int i = 2; i < args.length; i++) {
 					text +=args[i] + " ";
 				}
 				c.set(arg, text);
-				try
-				{
+				try {
 					c.save(messageFile);
 					TempleManager.tellPlayer(p, Translation.tr("textadded"));
 				}
-				catch (IOException e)
-				{
+				catch (IOException e) {
 					TempleManager.tellPlayer(p, Translation.tr("commandnotperformed"));
 					e.printStackTrace();
 				}
 			}
-			catch (Exception e) 
-			{
+			catch (Exception e) {
 				TempleManager.tellPlayer(p, Translation.tr("commandnotperformed"));
 			}
 			return true;
 		}
-		if ((cmd.equals("textremove") || cmd.equals("tr")) && TCPermissionHandler.hasPermission(p, "templecraft.edittemple"))
-		{
-			try
-			{
+		//TODO Same again, 3rd time
+		if ((cmd.equals("textremove") || cmd.equals("tr")) && TCPermissionHandler.hasPermission(p, "templecraft.edittemple")) {
+			try {
 				File messageFile = TCUtils.getConfig("messages");
 				YamlConfiguration c = YamlConfiguration.loadConfiguration(messageFile);
-				if(c.contains(arg))
-				{
+				if(c.contains(arg)) {
 					c.set(arg, null);
-					try
-					{
+					try {
 						c.save(messageFile);
 						TempleManager.tellPlayer(p, Translation.tr("textremoved"));
-					}
-					catch (IOException e)
-					{
+					} catch (IOException e) {
 						TempleManager.tellPlayer(p, Translation.tr("commandnotperformed"));
 						e.printStackTrace();
 					}
 				}
-			}
-			catch (Exception e) 
-			{
+			} catch (Exception e) {
 				TempleManager.tellPlayer(p, Translation.tr("commandnotperformed"));
 			}
 			return true;
 		}
 
-		if (cmd.equals("edit") && TCPermissionHandler.hasPermission(p, "templecraft.edittemple"))
-		{			
+		if (cmd.equals("edit") && TCPermissionHandler.hasPermission(p, "templecraft.edittemple")) {			
 			Temple temple = TCUtils.getTempleByName(arg);
 
-			if(temple == null)
-			{
+			if(temple == null) {
 				TempleManager.tellPlayer(p, Translation.tr("templeDNE", arg));
 				return true;
 			}
@@ -578,69 +487,54 @@ public class TCCommands implements CommandExecutor
 			return true;
 		}
 
-		if (cmd.equals("add") && TCPermissionHandler.hasPermission(p, "templecraft.addplayer"))
-		{			
+		if (cmd.equals("add") && TCPermissionHandler.hasPermission(p, "templecraft.addplayer")) {			
 			Temple temple = tp.currentTemple;
 
-			if(temple == null || !temple.editorSet.contains(p))
-			{
+			if(temple == null || !temple.editorSet.contains(p)) {
 				TempleManager.tellPlayer(p, Translation.tr("mustBeEditing"));
 				return true;
 			}
 
-			if(!temple.ownerSet.contains(p.getName()) && !TCPermissionHandler.hasPermission(p, "templecraft.editall"))
-			{
+			if(!temple.ownerSet.contains(p.getName()) && !TCPermissionHandler.hasPermission(p, "templecraft.editall")) {
 				TempleManager.tellPlayer(p, Translation.tr("mustBeOwner"));
 				return true;
 			}
 
 			String playerName = null;
-			for(Player player : TempleManager.server.getOnlinePlayers())
-			{
-				if(player.getName().toLowerCase().startsWith(arg))
-				{
+			for(Player player : TempleManager.server.getOnlinePlayers()) {
+				if(player.getName().toLowerCase().startsWith(arg)) {
 					playerName = player.getName();
 					break;
 				}
 			}
 
-			if(playerName == null)
-			{
+			if(playerName == null) {
 				TempleManager.tellPlayer(p, Translation.tr("playerNotFound"));
-			} 
-			else
-			{
-				if(temple.addEditor(playerName))
-				{
+			} else {
+				if(temple.addEditor(playerName)) {
 					TempleManager.tellPlayer(p, Translation.tr("playerAdded", playerName, temple.templeName));
-				}
-				else
-				{
+				} else {
 					TempleManager.tellPlayer(p, Translation.tr("playerAlreadyAdded", playerName));
 				}
 			}
 			return true;
 		}
 
-		if (cmd.equals("remove") && TCPermissionHandler.hasPermission(p, "templecraft.removeplayer"))
-		{			
+		if (cmd.equals("remove") && TCPermissionHandler.hasPermission(p, "templecraft.removeplayer")) {			
 			Temple temple = tp.currentTemple;
 
-			if(temple == null || !temple.editorSet.contains(p))
-			{
+			if(temple == null || !temple.editorSet.contains(p)) {
 				TempleManager.tellPlayer(p, Translation.tr("mustBeEditing"));
 				return true;
 			}
 
-			if(!temple.ownerSet.contains(p.getName()) && !TCPermissionHandler.hasPermission(p, "templecraft.editall"))
-			{
+			if(!temple.ownerSet.contains(p.getName()) && !TCPermissionHandler.hasPermission(p, "templecraft.editall")) {
 				TempleManager.tellPlayer(p, Translation.tr("mustBeOwner"));
 				return true;
 			}
 
 			String playerName = null;
-			for(Player player : TempleManager.server.getOnlinePlayers())
-			{
+			for(Player player : TempleManager.server.getOnlinePlayers()) {
 				if(player.getName().toLowerCase().startsWith(arg))
 				{
 					playerName = player.getName();
@@ -648,42 +542,31 @@ public class TCCommands implements CommandExecutor
 				}
 			}
 
-			if(playerName == null)
-			{
+			if(playerName == null) {
 				TempleManager.tellPlayer(p, Translation.tr("playerNotFound"));
-			} 
-			else 
-			{
-				if(temple.removeEditor(playerName))
-				{
+			} else {
+				if(temple.removeEditor(playerName)) {
 					TempleManager.tellPlayer(p, Translation.tr("playerRemoved", playerName, temple.templeName));
-				}
-				else
-				{
+				} else {
 					TempleManager.tellPlayer(p, Translation.tr("playerAlreadyRemoved", playerName, temple.templeName));
 				}
 			}
 			return true;
 		}
 
-		if (cmd.equals("findsigblocks") && TCPermissionHandler.hasPermission(p, "templecraft.findsigblocks"))
-		{
-			try
-			{
+		if (cmd.equals("findsigblocks") && TCPermissionHandler.hasPermission(p, "templecraft.findsigblocks")) {
+			try {
 				int radius = Integer.parseInt(arg);
 				Temple temple = tp.currentTemple;
 
-				if(temple == null)
-				{
+				if(temple == null) {
 					TempleManager.tellPlayer(p, Translation.tr("mustBeEditing"));
 					return true;
 				}
 
 				TCUtils.getSignificantBlocks(p, radius);
 				return true;
-			} 
-			catch(Exception e)
-			{
+			} catch(Exception e) {
 				TempleManager.tellPlayer(p, Translation.tr("invalidInteger"));
 				return true;
 			}
@@ -696,31 +579,25 @@ public class TCCommands implements CommandExecutor
 		String gamename = args[1].toLowerCase();
 		Game game = TCUtils.getGameByName(gamename);
 
-		if(game == null)
-		{
+		if(game == null) {
 			TempleManager.tellPlayer(p, Translation.tr("gameDNE", gamename));
 			return true;
 		}
 
-		if ((cmd.equals("join") || cmd.equals("j")) && TCPermissionHandler.hasPermission(p, "templecraft.join"))
-		{
+		if ((cmd.equals("join") || cmd.equals("j")) && TCPermissionHandler.hasPermission(p, "templecraft.join")) {
 			game.playerJoin(p);
 			return true;
 		}
 
-		// tc forcestart <game>
-		if (cmd.equals("forcestart") && TCPermissionHandler.hasPermission(p, "templecraft.forcestart"))
-		{
+		if (cmd.equals("forcestart") && TCPermissionHandler.hasPermission(p, "templecraft.forcestart")) {
 			game.forceStart(p);
 			return true;
 		}		
 
-		if (cmd.equals("forceend") && TCPermissionHandler.hasPermission(p, "templecraft.forceend"))
-		{
+		if (cmd.equals("forceend") && TCPermissionHandler.hasPermission(p, "templecraft.forceend")) {
 			game.forceEnd(p);
 			return true;
 		}
-
 		return false;
 	}
 }
