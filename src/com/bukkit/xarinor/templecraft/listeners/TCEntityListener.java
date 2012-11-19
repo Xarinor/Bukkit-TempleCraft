@@ -1,16 +1,8 @@
 package com.bukkit.xarinor.templecraft.listeners;
 
-//import java.util.Arrays;
-//import java.util.HashMap;
-//import java.util.HashSet;
-//import java.util.Set;
-
 import org.bukkit.Location;
-//import org.bukkit.Material;
-//import org.bukkit.block.Block;
-//import org.bukkit.entity.Creature;
-//import org.bukkit.entity.Entity;
-//import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,15 +12,12 @@ import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
-//import org.bukkit.inventory.ItemStack;
 
 import com.bukkit.xarinor.templecraft.TCUtils;
 import com.bukkit.xarinor.templecraft.TempleCraft;
 import com.bukkit.xarinor.templecraft.TempleManager;
-//import com.bukkit.xarinor.templecraft.games.Adventure;
 import com.bukkit.xarinor.templecraft.games.Arena;
 import com.bukkit.xarinor.templecraft.games.Game;
-//import com.bukkit.xarinor.templecraft.util.Pair;
 
 /**
 * TCEntityListener.java
@@ -65,11 +54,16 @@ public class TCEntityListener implements Listener {
 		if (game == null) {
 			return;
 		}
-		//TODO Better config
-		if(TempleManager.dropBlocks) {
-			return;
+		Entity e = event.getEntity();
+		if (e.getType().equals(EntityType.PRIMED_TNT)) {
+			if(TempleManager.dropBlocks) {
+				return;
+			} else {
+				event.setYield(0);
+				return;
+			}
 		}
-		// Removes all blocks from the list of destroyed objects.
+		// Ignore the destruction
 		event.blockList().clear();
 	}
 
