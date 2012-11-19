@@ -167,8 +167,7 @@ public class TCPlayerListener implements Listener {
 		if (b.getTypeId() == 42 && game.lobbyLocMap.containsKey(b.getLocation())) {
 			game.hitStartBlock(p,game.lobbyLocMap.get(b.getLocation()));
 			// End Blocks
-		}
-		else if (!game.deadSet.contains(p) && b.getTypeId() == 42 && game.rewardLocMap.containsKey(b.getLocation())) {
+		} else if (!game.deadSet.contains(p) && b.getTypeId() == 42 && game.rewardLocMap.containsKey(b.getLocation())) {
 			game.hitRewardBlock(p,game.rewardLocMap.remove(b.getLocation()));
 			return;
 		} else if (!game.deadSet.contains(p) && b.getTypeId() == 41 && game.endLocSet.contains(b.getLocation())) {

@@ -103,6 +103,9 @@ game.checkpoint=Checkpoint Reached
 game.tooMuchDeaths=Sorry but you died too much.
 game.hitendblock=You hit the End-Block. The game needs %d Seconds to register it, so be careful ;)
 game.alreadyhitendblock=You already hit the End-Block. so be careful ;)
+game.tpsavedloc=You have returned to the temple entrance.
+game.tpfinishloc=You have found the exit of this temple!
+
 
 and=and
 game.message=Message

@@ -254,17 +254,26 @@ public class TempleManager {
 		if(TCUtils.hasPlayerInventory(p.getName())) {
 			TCUtils.restorePlayerInventory(p);
 		}
-
-		if(temple.finishLocation == null) {
-			if(locationMap.containsKey(p)) {
-				p.teleport(locationMap.get(p));
+		
+		if(game != null) {
+			String msg;
+			if(game.endSet.contains(p)) {
+				if(temple.finishLocation == null) {
+					p.teleport(locationMap.get(p));
+					msg = Translation.tr("game.tpsavedloc");
+				} else {
+					p.teleport(temple.finishLocation);
+					msg = Translation.tr("game.tpfinishloc");
+				}
 			} else {
-				String msg = "We have lost track of your origin. Please request assistance.";
-				TempleManager.tellPlayer(p, msg);
+				p.teleport(locationMap.get(p));
+				msg = Translation.tr("game.tpsavedloc");
 			}
+			TempleManager.tellPlayer(p, msg);
 		} else {
-			p.teleport(temple.finishLocation);
+			p.teleport(locationMap.get(p));
 		}
+
 		locationMap.remove(p);
 
 		if(temple.editorSet.remove(p)) {

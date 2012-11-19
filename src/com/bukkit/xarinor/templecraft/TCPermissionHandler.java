@@ -42,7 +42,7 @@ public class TCPermissionHandler {
 		c1+"/tct worldtotemple <temple>"+c2+" - Save current World as a temple.",
 		c1+"/tct textadd <shortname> <text>"+c2+"	 - Add text for a [TCML] sign.",
 		c1+"/tct textdel <shortname>"+c2+"	 - Remove long text of a [TCML] sign.",
-		c1+"/tct finishloc [del]"+c2+"	 - Set the finish-location to your current position (must be out of temple), or delete the location with [del].",
+		c1+"/tct finishloc <temple> [del]"+c2+"	 - Set the finish-location to your current position (must be out of temple), or delete the location with [del].",
 		c1+"/tct add <player>"+c2+"	 - Allow a player to edit your temple.",
 		c1+"/tct remove <player>"+c2+" - Disallow a player to edit your temple.",
 		c1+"/tct setmaxplayers <integer>"+c2+" - Set max players per game.",

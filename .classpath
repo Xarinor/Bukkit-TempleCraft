@@ -2,16 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Xarinor/workspace/Bukkit-TempleCraft/api/Catacomb_2.6.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Xarinor/workspace/Bukkit-TempleCraft/api/craftbukkit-1.4.2-R0.2.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://jd.bukkit.org/apidocs/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Xarinor/workspace/Bukkit-TempleCraft/api/Heroes.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Xarinor/workspace/Bukkit-TempleCraft/api/Multiverse-Core-2.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Xarinor/workspace/Bukkit-TempleCraft/api/Vault_1.2.19.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Xarinor/workspace/Bukkit-TempleCraft/api/WorldGuard.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Xarinor/workspace/Bukkit-TempleCraft/api/SpoutPlugin.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Xarinor/workspace/Bukkit-TempleCraft-Old/api/Catacomb_2.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Xarinor/workspace/Bukkit-TempleCraft-Old/api/craftbukkit-1.4.2-R0.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Xarinor/workspace/Bukkit-TempleCraft-Old/api/Heroes.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Xarinor/workspace/Bukkit-TempleCraft-Old/api/Multiverse-Core-2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Xarinor/workspace/Bukkit-TempleCraft-Old/api/SpoutPlugin.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Xarinor/workspace/Bukkit-TempleCraft-Old/api/Vault_1.2.19.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Xarinor/workspace/Bukkit-TempleCraft-Old/api/WorldGuard.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

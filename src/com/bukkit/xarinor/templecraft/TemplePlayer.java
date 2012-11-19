@@ -76,15 +76,6 @@ public class TemplePlayer {
 		return ownedTemples;
 	}
 
-	/*protected void displayStats() {
-		//TO DO: this
-		player.sendMessage("----TempleCraft Stats----");
-		player.sendMessage(ChatColor.BLUE+"Mobs Killed: "+ChatColor.WHITE+roundMobsKilled);
-		player.sendMessage(ChatColor.GOLD+"Gold Collected: "+ChatColor.WHITE+roundGold);
-		player.sendMessage(ChatColor.DARK_RED+"Deaths: "+ChatColor.WHITE+roundDeaths);
-		resetRoundStats();
-	}*/
-
 	/**
 	 * resets Stats for this TemplePlayer
 	 */
@@ -121,6 +112,10 @@ public class TemplePlayer {
 			//TODO check timer task
 			counter = new TimerTask()  {
 				public void run() {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+					}
 					if(count <= 3 && count > 0) {
 						TempleManager.tellPlayer(player, Translation.tr("enteringTemple",count));
 					} else if(count <= 0) {
