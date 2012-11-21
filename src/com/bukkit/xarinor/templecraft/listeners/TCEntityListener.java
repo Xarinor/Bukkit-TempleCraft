@@ -55,6 +55,9 @@ public class TCEntityListener implements Listener {
 			return;
 		}
 		Entity e = event.getEntity();
+		if(e == null) {
+			return;
+		}
 		if (e.getType().equals(EntityType.PRIMED_TNT)) {
 			if(TempleManager.dropBlocks) {
 				return;

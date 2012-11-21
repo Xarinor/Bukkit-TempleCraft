@@ -1248,10 +1248,11 @@ public class Game {
 				}
 
 				if(!usingClasses) {
-					if(TCUtils.hasPlayerInventory(player.getName())) {
-						TCUtils.restorePlayerInventory(player);
-					}
-					TCUtils.keepPlayerInventory(player);
+					//TODO Check / Test
+//					if(TCUtils.hasPlayerInventory(player.getName())) {
+//						TCUtils.restorePlayerInventory(player);
+//					}
+//					TCUtils.keepPlayerInventory(player);
 					TCUtils.restoreHealth(player);
 				}
 

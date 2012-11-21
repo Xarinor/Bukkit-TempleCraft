@@ -116,7 +116,8 @@ public class TemplePlayer {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 					}
-					if(count <= 3 && count > 0) {
+					//TODO check -> if(count <= 3 && count > 0) {
+					if(count > 0) {
 						TempleManager.tellPlayer(player, Translation.tr("enteringTemple",count));
 					} else if(count <= 0) {
 						TCPlayerListener.handleSignClicked(player,tp.sensedSign);

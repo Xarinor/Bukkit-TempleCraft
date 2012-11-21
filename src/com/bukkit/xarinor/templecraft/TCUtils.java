@@ -33,8 +33,6 @@ import org.bukkit.World.Environment;
 import org.bukkit.WorldType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-//TODO Mimimimi
-//import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EnderDragon;
@@ -524,12 +522,50 @@ public class TCUtils {
 		Object[] array = game.playerSet.toArray();
 		return (Player) array[random.nextInt(array.length)];
 	}
-
+	
+	/**
+	 * Turns the current set of players near an entity into an array
+	 * 
+	 * @param entity - The entity where nearby players get picked
+	 * @return -Players
+	 */
+	public static List<Player> getNearbyPlayers(Entity entity) {
+		
+		List<Player> result = new ArrayList<Player>();
+		List<Entity> entity_list = entity.getNearbyEntities(20, 20, 20);
+		for(Entity e : entity_list) {
+			if(e instanceof Player) {
+				result.add((Player) e);
+			}
+		}
+		return result;
+	}
+	/**
+	 * Turns the current set of players near an entity into an array
+	 * This is with added range to the process
+	 * 
+	 * @param entity - The entity where nearby players get picked
+	 * @param radius - The radius to get players in
+	 * @return -Players
+	 */
+	public static List<Player> getNearbyPlayers(Entity entity, int range) {
+		
+		List<Player> result = new ArrayList<Player>();
+		List<Entity> entity_list = entity.getNearbyEntities(range, range, range);
+		for(Entity e : entity_list) {
+			if(e instanceof Player) {
+				result.add((Player) e);
+			}
+		}
+		return result;
+	}
+	
 	/**
 	 * Turns the current set of players near an entity into an array, and grabs a random
 	 * element out of it.
 	 * 
 	 * @param entity -The entity a near player should be picked from
+	 * @return -Player
 	 */
 	public static Player getNearbyRandomPlayer(Entity entity) {
 		Random random = new Random();
@@ -548,7 +584,7 @@ public class TCUtils {
 		}
 		return p;
 	}
-
+	
 	/* TEMPLE EDIT METHODS */
 
 	/**
