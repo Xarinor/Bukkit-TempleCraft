@@ -1,9 +1,9 @@
 package com.bukkit.xarinor.templecraft.custommobs;
 
 import java.io.File;
-import java.util.HashMap;
+//import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+//import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -33,7 +33,7 @@ public class CustomMobUtils {
 		configFile	= TCUtils.getConfig("bosses");
 		if(configFile.exists()) {
 			custommobnames = getBossNames();
-			if(custommobnames != null && !custommobnames.isEmpty()) {
+			if(custommobnames != null) {
 				custommobs  = getBosses(configFile, "bosses.");
 			}
 		}
@@ -49,23 +49,11 @@ public class CustomMobUtils {
 	{
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 
-		if(!config.isSet("bosses")) {
-			try {
-				config.set("bosses.testBoss.Spawning.MobType", "Zombie");
-				config.set("bosses.testBoss.Spawning.DMGMultiplicator", 3);
-				config.set("bosses.testBoss.Spawning.MaxHealth", 200);
-				config.set("bosses.testBoss.Spawning.Size", 0);
-				config.set("bosses.testBoss.Spawning.Count", 1);
-				config.set("bosses.testBoss.Spawning.SpawnRange", 5);
-				config.set("bosses.testBoss.Spawning.Abilities", "");
-				config.save(configFile);
-			} 
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
+		if(config.isSet("bosses")) {
+			return config.getConfigurationSection("bosses").getKeys(false);
+		} else {
+			return null;
 		}
-		return config.getConfigurationSection("bosses").getKeys(false);
 	}
 
 	/**
@@ -81,10 +69,6 @@ public class CustomMobUtils {
 		YamlConfiguration c = YamlConfiguration.loadConfiguration(configFile);
 
 		Set<CustomMobType> result = new HashSet<CustomMobType>();
-		//List<String> abilities_random_string			  = new ArrayList<String>();
-		//List<String> abilities_rotation_string			  = new ArrayList<String>();
-		Map<String, Object> abilities_random_set			  = new HashMap<String, Object>();
-		Map<String, Object> abilities_rotation_set			  = new HashMap<String, Object>();
 		for (String s : custommobnames) {
 			CustomMobType cmt = new CustomMobType();
 			try {
@@ -95,23 +79,7 @@ public class CustomMobUtils {
 				cmt.setSize(c.getInt(path + s + ".Spawning.Size", 0));
 				cmt.setCount(c.getInt(path + s + ".Spawning.Count", 1));
 				cmt.setRange(c.getInt(path + s + ".Spawning.SpawnRange", 1));
-				cmt.setOldabilitys(c.getString(path + s + ".Abilities", null));
-				if(c.isSet(path + s + ".Rotation")) {
-					abilities_rotation_set = c.getConfigurationSection(path + s + ".Rotation").getValues(false);
-					for(String ability : abilities_rotation_set.keySet()) {
-						if(CustomMobAbility.fromString(ability) != null) {
-							cmt.addAbilities_rotation(CustomMobAbility.fromString(ability), Integer.parseInt(abilities_rotation_set.get(ability).toString()));
-						}
-					}
-				}
-				if(c.isSet(path + s + ".Random")) {
-					abilities_random_set = c.getConfigurationSection(path + s +".Random").getValues(false);
-					for(String ability : abilities_random_set.keySet()) {
-						if(CustomMobAbility.fromString(ability) != null) {
-							cmt.addAbilities_random(CustomMobAbility.fromString(ability), Integer.parseInt(abilities_random_set.get(ability).toString()));
-						}
-					}
-				}
+				cmt.setAbilitys(c.getString(path + s + ".Spawning.Abilities", null));
 				result.add(cmt);
 			} catch (Exception e) {
 				e.printStackTrace();

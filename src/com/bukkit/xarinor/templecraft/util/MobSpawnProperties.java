@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
-//TODO implement LivingEntity again
-//import org.bukkit.entity.LivingEntity;
 
 import com.bukkit.xarinor.templecraft.custommobs.CustomMobAbility;
 import com.bukkit.xarinor.templecraft.games.Game;
@@ -250,7 +248,7 @@ public class MobSpawnProperties {
 	public void setIsbossmob(boolean isbossmob) {
 		this.isbossmob = isbossmob;
 	}
-
+	
 	/**
 	 * Gets abilities_random
 	 * 

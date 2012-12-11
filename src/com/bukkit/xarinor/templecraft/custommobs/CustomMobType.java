@@ -1,11 +1,6 @@
 package com.bukkit.xarinor.templecraft.custommobs;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.entity.EntityType;
-
-import com.bukkit.xarinor.templecraft.util.Pair;
 
 /**
 * CustomMobType.java
@@ -24,9 +19,7 @@ public class CustomMobType {
 	private int range = 20;
 	private int size = 0;
 	private String name = "";
-	private String oldabilitys = "";
-	private List<Pair<CustomMobAbility,Integer>> abilities_random = new ArrayList<Pair<CustomMobAbility,Integer>>();
-	private List<Pair<CustomMobAbility,Integer>> abilities_rotation = new ArrayList<Pair<CustomMobAbility,Integer>>();
+	private String abilitys;
 
 	/**
 	 * Get the base mob type
@@ -80,7 +73,7 @@ public class CustomMobType {
 	public void setDmgmulti(int dmgmulti) {
 		this.dmgmulti = dmgmulti;
 	}
-
+	
 	/**
 	 * Get number of mobs
 	 * 
@@ -154,76 +147,17 @@ public class CustomMobType {
 	}
 
 	/**
-	 * Get old abilities
-	 * 
-	 * @return
+	 * Get mob abilities
+	 * @return 
 	 */
-	public String getOldabilitys() {
-		return oldabilitys;
-	}
-
-	/**
-	 * Set old abilities
-	 * 
-	 * @param oldabilitys
-	 */
-	public void setOldabilitys(String oldabilitys) {
-		this.oldabilitys = oldabilitys;
-	}
-
-	/**
-	 * Get ability roatation
-	 * 
-	 * @return
-	 */
-	public List<Pair<CustomMobAbility,Integer>> getAbilities_rotation() {
-		return abilities_rotation;
-	}
-
-	/**
-	 * Set random abilities
-	 * 
-	 * @return
-	 */
-	public List<Pair<CustomMobAbility,Integer>> getAbilities_random() {
-		return abilities_random;
-	}
-
-	/**
-	 * Set random abilities
-	 * 
-	 * @param abilities_random
-	 */
-	public void setAbilities_random(List<Pair<CustomMobAbility,Integer>> abilities_random) {
-		this.abilities_random = abilities_random;
+	public String getAbilitys() {
+		return abilitys;
 	}
 	
 	/**
-	 * Add random abilities
-	 * 
-	 * @param cma	-Ability
-	 * @param i		-no.
+	 * Set mob abilities
 	 */
-	public void addAbilities_random(CustomMobAbility cma, int i) {
-		this.abilities_random.add(new Pair<CustomMobAbility,Integer>(cma, i));
-	}
-
-	/**
-	 * Set ability rotation
-	 * 
-	 * @param abilities_rotation
-	 */
-	public void setAbilities_rotation(List<Pair<CustomMobAbility,Integer>> abilities_rotation) {
-		this.abilities_rotation = abilities_rotation;
-	}
-
-	/**
-	 * add ability to rotation
-	 * 
-	 * @param cma	-Ability
-	 * @param i		-no.
-	 */
-	public void addAbilities_rotation(CustomMobAbility cma, int i) {
-		this.abilities_rotation.add(new Pair<CustomMobAbility,Integer>(cma, i));
+	public void setAbilitys(String a) {
+		this.abilitys = a;
 	}
 }

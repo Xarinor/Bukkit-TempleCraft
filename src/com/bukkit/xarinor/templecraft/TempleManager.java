@@ -45,6 +45,7 @@ public class TempleManager {
 	public static boolean constantWorldNames;
 	public static boolean manageInventory;
 	public static boolean allowunsafeEnchantments;
+	public static boolean useheroes;
 
 	// Colors
 	public static ChatColor c1 = TempleCraft.c1;
@@ -104,14 +105,15 @@ public class TempleManager {
 			maxEditWorlds			= TCUtils.getInt(config, "settings.maxeditworlds", 2);
 			maxTemplesPerPerson		= TCUtils.getInt(config, "settings.maxtemplesperperson", 1);
 			rejoinCost				= TCUtils.getInt(config, "settings.rejoincost", 0);
-			breakableMats			= TCUtils.getString(config, "settings.breakablemats", "31,37,38,39,40,46,82");
-			placeableMats			= TCUtils.getString(config, "settings.placeablemats", "31,37,38,39,40,46,82");
-			goldPerMob				= TCUtils.getString(config, "settings.goldpermob", "50-100");
+			breakableMats			= TCUtils.getString(config, "settings.breakablemats", "46,82");
+			placeableMats			= TCUtils.getString(config, "settings.placeablemats", "31,37,38,39,40");
+			goldPerMob				= TCUtils.getString(config, "settings.goldpermob", "5-10");
 			dropBlocks				= TCUtils.getBoolean(config, "settings.dropblocks", false);
 			constantWorldNames		= TCUtils.getBoolean(config, "settings.constantworldnames", false);
 			manageInventory			= TCUtils.getBoolean(config, "settings.manageinventory", true);
 			allowunsafeEnchantments	= TCUtils.getBoolean(config, "settings.allowunsafeenchantments", false);
 			checkUpdates			= TCUtils.getBoolean(config, "settings.updatenotification", true);
+			useheroes				= TCUtils.getBoolean(config, "settings.useheroes", false);
 			
 			loadMisc();
 			loadTemplePlayers();
@@ -220,6 +222,32 @@ public class TempleManager {
 			}
 		}
 	}
+	
+	/**
+	 * Removes all unused game and edit worlds
+	 * TODO: Add code for editworld deletion from below.. 
+	 */
+	public static void clean() {
+		try {
+			for(Game game : gameSet) {
+				if (game.playerSet.size() < 1) {
+					game.AbilityTaskIDs.clear();
+					game.SpawnTaskIDs.clear();
+					game.endGame();
+				}
+			}
+			for (Temple temple : templeSet) {
+				if(temple.editorSet.isEmpty() && templeEditMap.containsKey(temple.templeName)) {
+					TCUtils.deleteTempWorld(templeEditMap.remove(temple.templeName));
+				}
+			}
+			TCUtils.deleteUnusedTempWorlds();
+			plugin.log.info("[" + plugin.getDescription().getName() + "] Done.");
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Attempts to remove a player from the Temple session.
@@ -227,7 +255,6 @@ public class TempleManager {
 	 * is removed from all the sets and maps.
 	 * 
 	 * @param p -User leaving
-	 * TODO tp finishloc only if endblock
 	 */
 	public static void playerLeave(Player p) {		
 		TemplePlayer tp = templePlayerMap.get(p);
@@ -297,7 +324,7 @@ public class TempleManager {
 			}
 		}
 	}
-
+	
 	/* MISC METHODS */
 
 	/**
@@ -309,7 +336,7 @@ public class TempleManager {
 		File cgFolder = new File("plugins/TempleCraft/ChunkGenerators");
 		if(!cgFolder.exists()) {
 			cgFolder.mkdir();
-			//TCUtils.copyFromJarToDisk("Flat1.jar", cgFolder);
+			TCUtils.copyFromJarToDisk("Flat1.jar", cgFolder);
 		}
 
 		// Handles getting mob gold drop amount from config

@@ -63,7 +63,6 @@ public class MobManager {
 	 */
 	public CustomMob getMob(Entity entity) {
 		for (CustomMob cm : this.CustomMobs) {
-			//TODO living
 			if (cm.getEntity() == entity) {
 				return cm;
 			}

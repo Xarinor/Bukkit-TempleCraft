@@ -2,8 +2,12 @@ package com.bukkit.xarinor.templecraft.games;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+//import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+//import java.util.Set;
 import java.util.logging.Level;
 
 import org.bukkit.Location;
@@ -21,6 +25,7 @@ import com.bukkit.xarinor.templecraft.TempleCraft;
 import com.bukkit.xarinor.templecraft.TempleManager;
 import com.bukkit.xarinor.templecraft.TemplePlayer;
 import com.bukkit.xarinor.templecraft.util.MobArenaClasses;
+import com.bukkit.xarinor.templecraft.util.MobSpawnProperties;
 import com.bukkit.xarinor.templecraft.util.Translation;
 //import com.bukkit.xarinor.templecraft.custommobs.CustomMob;
 
@@ -149,15 +154,36 @@ public class Adventure extends Game {
 			return;
 		}
 
+//		// TODO
+//		// Huge testing as unexpected .remove() could crash servers.
+//		Iterator<Map.Entry<Location,MobSpawnProperties>> entries = mobSpawnpointMap.entrySet().iterator();
+//		while (entries.hasNext()) {
+//			Map.Entry<Location, MobSpawnProperties> entry = entries.next();
+//			Location loc = entry.getKey();
+//			//MobSpawnProperties value = entry.getValue();
+//			if (loc != null) {
+//				if(p.getLocation().distance(loc) < mobSpawnpointMap.get(loc).getRange()) {
+//					
+//					try {
+//						TCEntityHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc));
+//						mobSpawnpointMap.remove(loc);
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//						mobSpawnpointMap.remove(loc);
+//					}
+//				}
+//			}
+//		}
+//		
+		
 		Set<Location> tempLocs = new HashSet<Location>();
 		for(Location loc : mobSpawnpointMap.keySet()) {
-			//TODO Check
-			//Could not pass event PlayerMoveEvent : loc was being passed a null
 			if (loc != null) {
 				if(p.getLocation().distance(loc) < mobSpawnpointMap.get(loc).getRange()) {
 					tempLocs.add(loc);
 				}
 		    }
+			// Haha got it finally ...  fail-fast iterator -Xari
 			//--------------------------------------------------------			
 		}
 
@@ -170,36 +196,6 @@ public class Adventure extends Game {
 				mobSpawnpointMap.remove(loc);
 			}
 		}
-
-		//I assume this is an attempt to respawn non-dead mobs after player death -Tim
-		//This is the source of the continuous spawn.  Commenting out for now -Tim
-		// Correct ;)  out for now - Xari
-		/*
-		Set<Location> tempLocs2 = new HashSet<Location>();
-		List<CustomMob> cmobs = customMobManager.getMobs();
-		for(Location loc : mobSpawnpointConstantMap.keySet()) {
-			if(p.getLocation().distance(loc) < mobSpawnpointConstantMap.get(loc).getRange()) {
-				if(!tempLocs.contains(loc)) {
-					for(CustomMob cm : cmobs) {
-						if(!cm.isDead() && cm.isEntityDead()) {
-							tempLocs2.add(loc);
-						}
-					}
-				}
-			}
-		}		
-		
-		for(Location loc : tempLocs2) {
-			try {
-				TCEntityHandler.SpawnMobs(this, loc, mobSpawnpointConstantMap.get(loc));				
-				//debug
-				//System.out.println("spawnmobs2");
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		} 
-		*/
 	}
 
 	/**

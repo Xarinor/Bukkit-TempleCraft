@@ -1,134 +1,134 @@
-version=1;
-enableMessage=[%s] Version %s wurde aktiviert.;
-diableMessage=[%s] Version %s wurde deaktiviert.;
-notEnabled=TempleCraft ist nicht aktiviert. Bitte aktiviert es und versuche es erneut.;
-permissionsFound=Benutze %s als Permissions-Plugin.;
-permissionsUnavailable=Permissions-System wurde nicht gefunden, benutze OP-Rechte.;
-comandDisabled=Du kannst diesen Befehl nicht im Tempel benutzen!;
+version=1
+enableMessage=[%s] Version %s wurde aktiviert.
+diableMessage=[%s] Version %s wurde deaktiviert.
+notEnabled=TempleCraft ist nicht aktiviert. Bitte aktiviert es und versuche es erneut.
+permissionsFound=Benutze %s als Permissions-Plugin.
+permissionsUnavailable=Permissions-System wurde nicht gefunden, benutze OP-Rechte.
+comandDisabled=Du kannst diesen Befehl nicht im Tempel benutzen!
+
+joinFail=Derzeit laufen alle Tempel oder sind deaktiviert! Versuche es später noch einmal.
+mustBeEditing=Du musst im Bearbeitungsmodus sein um diesen Befehl nutzen zu können.
+mustNotBeEditing=Du darfst nicht im Bearbeitungsmodus sein um diesen Befehl nutzen zu können.
+mustBeOwner=Nur der Eigentümer von diesem Tempel kann diesen Befehl benutzen.
+mustLeaveTemple=Verlasse bitte diesen Tempel bevor du einen neuen erstellst.
+
+nameFail=Für den Namen des Tempels kannst du nur Buchstaben und Zahlen verwenden.
+saveFail=Du bearbeitest gerade keinen Tempel.
+noTemplesAvailable=Es sind keine Tempel verfügbar.
+noGamesAvailable=Es sind keine Spiele verfügbar.
+gameInProgress=%s: [RED]In Arbeit
+gameInLobby=%s: [GREEN]In der Lobby
+
+editTempleFail=Zur Zeit kann kein Tempel bearbeitet werden.
+newTemple=Zur Zeit werden %s neue Tempel gebaut.
+templeSave=Tempel wird abgespeichert... 
+templeSaved=Tempel wurde abgespeichert.
+preparingTemple=Arbeite am Tempel %s... 
+templeList=[GREEN]Liste aller Tempel:
+templeAE=Diese Tempel %s existieren.
+templeDNE=Der Tempel %s existiert nicht.
+templesEmpty=Im Moment ist niemand in diesen Tempel.
+templeFull=In den Tempel %s passt niemand mehr rein.
+templeListSetup=[WHITE]%s: [GREEN]eingerichtet.
+templeListNotSetup=[WHITE]%s: [RED]noch nicht eingerichtet.
+templeNowSetup=%s [DARK_GREEN]wird gerade eingerichtet.
+templeNoLongerSetup=%s [DARK_RED]gibt es nicht mehr oder ist aufgegeben worden.
+templeNotSetup=%s sind [DARK_RED]noch nicht errichtet.
+templeInUse=Der Tempel %s kann jetzt betreten werden.
+convertingTemple=Umwandlung des Tempels in Arbeit %s...
+convertingComplete=Der Tempel wurde umgewandelt.
+templeDeleted=Der Tempel %s wurde vernichtet!
+templeRenamed=Du hast diesen Tempel mit dem Namen %s umbenannt in %s.
+templeMaxPlayersSet=%s: Max-Player auf %d gesetzt.
+templemaxDeathsSet=%s: Max-Tode auf %d gesetzt.
+textadded=%s: Text hinzugefuegt.
+textremoved=%s: Text geloescht.
+templeFinishLocSet=%s: Finish Location wurde gestezt.
+templeFinishLocDel=%s: Finish Location wurde geloescht.
+maxTemplesOwned=Du kannst nicht mehr Tempel beherrschen!
+invalidInteger=Ungültiges Zahl ...
+incorrectArguments=Die Zahl der Argumente stimmen nicht.
+
+newGame=Mögen die Spiele beginnen... 
+newGameFail=Zur Zeit kann kein neues Spiel beginnen.
+gameDNE=Es gibt kein Spiel mit dem Namen %s.
+modeDNE=Mode %s existiert nicht.
+
+checkForUpdatesFail=Konnte keine Verbindung zum TempleCraft thread aufnehmen.
+upToDate=Deine Version von TempleCraft ist die aktuellste!
+notUpToDate=Es ist eine neue TempleCraft-Version vorhanden!
+
+killMessage=%s [RED]tötete [WHITE]%s
+
+worldConverted=Zum Tempel umgewandelte Welt %s
 ;
-joinFail=Derzeit laufen alle Tempel oder sind deaktiviert! Versuche es später noch einmal.;
-mustBeEditing=Du musst im Bearbeitungsmodus sein um diesen Befehl nutzen zu können.;
-mustNotBeEditing=Du darfst nicht im Bearbeitungsmodus sein um diesen Befehl nutzen zu können.;
-mustBeOwner=Nur der Eigentümer von diesem Tempel kann diesen Befehl benutzen.;
-mustLeaveTemple=Verlasse bitte diesen Tempel bevor du einen neuen erstellst.;
-;
-nameFail=Für den Namen des Tempels kannst du nur Buchstaben und Zahlen verwenden.;
-saveFail=Du bearbeitest gerade keinen Tempel.;
-noTemplesAvailable=Es sind keine Tempel verfügbar.;
-noGamesAvailable=Es sind keine Spiele verfügbar.;
-gameInProgress=%s: [RED]In Arbeit;
-gameInLobby=%s: [GREEN]In der Lobby;
-;
-editTempleFail=Zur Zeit kann kein Tempel bearbeitet werden.;
-newTemple=Zur Zeit werden %s neue Tempel gebaut.;
-templeSave=Tempel wird abgespeichert... ;
-templeSaved=Tempel wurde abgespeichert.;
-preparingTemple=Arbeite am Tempel %s... ;
-templeList=[GREEN]Liste aller Tempel:;
-templeAE=Diese Tempel %s existieren.;
-templeDNE=Der Tempel %s existiert nicht.;
-templesEmpty=Im Moment ist niemand in diesen Tempel.;
-templeFull=In den Tempel %s passt niemand mehr rein.;
-templeListSetup=[WHITE]%s: [GREEN]eingerichtet.;
-templeListNotSetup=[WHITE]%s: [RED]noch nicht eingerichtet.;
-templeNowSetup=%s [DARK_GREEN]wird gerade eingerichtet.;
-templeNoLongerSetup=%s [DARK_RED]gibt es nicht mehr oder ist aufgegeben worden.;
-templeNotSetup=%s sind [DARK_RED]noch nicht errichtet.;
-templeInUse=Der Tempel %s kann jetzt betreten werden.;
-convertingTemple=Umwandlung des Tempels in Arbeit %s...;
-convertingComplete=Der Tempel wurde umgewandelt.;
-templeDeleted=Der Tempel %s wurde vernichtet!;
-templeRenamed=Du hast diesen Tempel mit dem Namen %s umbenannt in %s.;
-templeMaxPlayersSet=%s: Max-Player auf %d gesetzt.;
-templemaxDeathsSet=%s: Max-Tode auf %d gesetzt.;
-textadded=%s: Text hinzugefuegt.;
-textremoved=%s: Text geloescht.;
-templeFinishLocSet=%s: Finish Location wurde gestezt.;
-templeFinishLocDel=%s: Finish Location wurde geloescht.;
-maxTemplesOwned=Du kannst nicht mehr Tempel beherrschen!;
-invalidInteger=Ungültiges Zahl ...;
-incorrectArguments=Die Zahl der Argumente stimmen nicht.;
-;
-newGame=Mögen die Spiele beginnen... ;
-newGameFail=Zur Zeit kann kein neues Spiel beginnen.;
-gameDNE=Es gibt kein Spiel mit dem Namen %s.;
-modeDNE=Mode %s existiert nicht.;
-;
-checkForUpdatesFail=Konnte keine Verbindung zum TempleCraft thread aufnehmen.;
-upToDate=Deine Version von TempleCraft ist die aktuellste!;
-notUpToDate=Es ist eine neue TempleCraft-Version vorhanden!;
-;
-killMessage=%s [RED]tötete [WHITE]%s;
-;
-worldConverted=Zum Tempel umgewandelte Welt %s;
-;
-playerNotFound=Spieler nicht gefunden. Wo ist er nur?;
-playerAdded=%s zu %s hinzugefügt.;
-playerAlreadyAdded=%s hat bereits Zugang zu diesem Tempel.;
-playerRemoved=%s von %s entfernt.;
-playerAlreadyRemoved=%s hat keinen Zugang zu %s.;
-cantEdit=Du hast keine Berechtigung diesen Tempel zu verändern.;
-;
-adventure.rejoin1=Das Weiterspielen kostet dich [GOLD]%d %s.;
-"adventure.rejoin2=Oder schreibe ""/tct leave"" und beginne wieder von vorne!";
-adventure.rejoinFail1=Du hast nicht genug %s um weiterzumachen.;
-"adventure.rejoinFail2=Du willst gehen? Dann Schreibe ""/tct leave"" um den Tempel zu verlassen..";
-;
-game.created=Das neue Spiel %s ist erstellt.;
-game.start=Es geht los!;
-game.finished=%s ist beendet in %s;
-game.finishTime=Das Spiel dauerte %s Sekunden!;
-game.ready=Du bist bereit!;
-game.readyToLeave=Du bist bereit zu gehen!;
-game.team=DU kannst dich %s Team anschliessen.;
-game.alreadyPlaying=Du spielst bereits in einem anderen Tempel!;
-game.alreadyPlayingSame=Du bist gerade am Spielen!;
-game.inProgress=Das Spiel %s wird gerade gespielt.;
-game.allInProgress=Alle verfügbaren Spiele sind gerade ohne freie Plätze, oder können nicht bespielt werden.;
-game.isFull=Das Spiel %s hat keine freien Plätze mehr. Sorry.;
-game.everyoneReady=Alle sind bereit in %s.;
-game.join=Du bist beim Spiel %s. Viel Spass!;
-game.plist=[GRAY]Spielen in %s: [WHITE]%s ;
-game.rlist=[GRAY]Sind nicht bereit in %s: [WHITE]%s ;
-game.forceStartFail=Es sind keine Spieler da und deshalb kannst du mich nicht zwingen das Spiel zu beginnen.;
-game.forcedStart=Du zwingst mich ein Spiel zu beginnen. Na Gut.;
-game.forcedEnd=Endlich. Dein von die erzwungenes Spiel endet.;
-game.transaction=[GOLD]%d %s [WHITE]wurde von deinem Konto abgezogen.;
-game.pickAClass=Du musst deinen Klasse aussuchen!;
-game.emptyTreasureFound=%s hat einen leere Schatzblock gefunden! So ein Pech....;
+playerNotFound=Spieler nicht gefunden. Wo ist er nur?
+playerAdded=%s zu %s hinzugefügt.
+playerAlreadyAdded=%s hat bereits Zugang zu diesem Tempel.
+playerRemoved=%s von %s entfernt.
+playerAlreadyRemoved=%s hat keinen Zugang zu %s.
+cantEdit=Du hast keine Berechtigung diesen Tempel zu verändern.
+
+adventure.rejoin1=Das Weiterspielen kostet dich [GOLD]%d %s.
+"adventure.rejoin2=Oder schreibe ""/tct leave"" und beginne wieder von vorne!"
+adventure.rejoinFail1=Du hast nicht genug %s um weiterzumachen.
+"adventure.rejoinFail2=Du willst gehen? Dann Schreibe ""/tct leave"" um den Tempel zu verlassen.."
+
+game.created=Das neue Spiel %s ist erstellt.
+game.start=Es geht los!
+game.finished=%s ist beendet in %s
+game.finishTime=Das Spiel dauerte %s Sekunden!
+game.ready=Du bist bereit!
+game.readyToLeave=Du bist bereit zu gehen!
+game.team=DU kannst dich %s Team anschliessen.
+game.alreadyPlaying=Du spielst bereits in einem anderen Tempel!
+game.alreadyPlayingSame=Du bist gerade am Spielen!
+game.inProgress=Das Spiel %s wird gerade gespielt.
+game.allInProgress=Alle verfügbaren Spiele sind gerade ohne freie Plätze, oder können nicht bespielt werden.
+game.isFull=Das Spiel %s hat keine freien Plätze mehr. Sorry.
+game.everyoneReady=Alle sind bereit in %s.
+game.join=Du bist beim Spiel %s. Viel Spass!
+game.plist=[GRAY]Spielen in %s: [WHITE]%s 
+game.rlist=[GRAY]Sind nicht bereit in %s: [WHITE]%s 
+game.forceStartFail=Es sind keine Spieler da und deshalb kannst du mich nicht zwingen das Spiel zu beginnen.
+game.forcedStart=Du zwingst mich ein Spiel zu beginnen. Na Gut.
+game.forcedEnd=Endlich. Dein von die erzwungenes Spiel endet.
+game.transaction=[GOLD]%d %s [WHITE]wurde von deinem Konto abgezogen.
+game.pickAClass=Du musst deinen Klasse aussuchen!
+game.emptyTreasureFound=%s hat einen leere Schatzblock gefunden! So ein Pech....
 game.treasureFound=%s hat einen Schatzblock gefunden!;
-game.treasureMessage=Du bekommst %s, wenn du den Tempel erfolgreich beendest!;
-game.treasureReceived=Du hast %s für die Erforschung des Tempels erhalten!;
-game.checkpoint=Checkpoint erreicht.;
-game.tooMuchDeaths=Du bist leider zu oft in diesem Spiel gestorben.;
+game.treasureMessage=Du bekommst %s, wenn du den Tempel erfolgreich beendest!
+game.treasureReceived=Du hast die im Tempel gefundenen Gegenstände erhalten!
+game.checkpoint=Checkpoint erreicht.
+game.tooMuchDeaths=Du bist leider zu oft in diesem Spiel gestorben.
 game.hitendblock=Du hast den End-Block berührt. Das Spiel braucht %d Sekunden um dies zu registrieren, sei also vorsichtig ;)
 game.alreadyhitendblock=Du hast den End-Block bereits berührt. Sei also weiterhin vorsichtig ;)
-game.tpsavedloc=Du hast den Tempel durch den Eingang verlassen.;
-game.tpfinishloc=Du hast den Ausgang dieses Tempels entdeckt!;
-;
-and=und;
-game.message=Nachricht;
-;
-race.personalHighscore=Du bist besser als zuvor!;
-race.overallHighscore=Du bist besser als alle anderen!;
-race.seconds=Sekunden;
-;
-blockListener.cantBreakSB=Du hast nicht die Berechtigung die TCScoreBoards zu löschen.;
-blockListener.cantBreakSBB=Dieser Block ist geschützt durch das ScoreBoard %s;
-blockListener.cantPlaceEntrance=Du hast nicht die Berechtigung Eingänge für Tempel zu setzen..;
-;
-playerListener.entranceFound=DU hast einen Eingang zu einem Tempel gefunden!! Sammle deine Kräfte, denn jetzt geht es los!;
-playerListener.denyHelmet=Du darfst deinen Helm nicht entfernen.;
-enteringTemple=Du betrittst den Tempel in %d... ;
-;
-"teleportListener.deny=Du kannst den Tempel nicht verlassen! Wenn du unbedingt willst, dann schreibe ""/tct leave"" und gerate in Vergessenheit wie so viele schon vor dir...";
-teleportListener.deny2=Du kannst dich nicht in einen laufenden Tempel teleportieren.;
-;
-classes.selectClass=Schlag das jeweilige Schild um dein Klasse zu wählen.;
-classes.classChosen=Du hast %s als deine Klasse ausgewählt!;
-;
-findingSigBlocks=wichtig Blöcke gefunden von %s to %s... ;
-foundSigBlocks=Schon gefundene %d %s;
-done=erledigt.;
-;
-pvp.win=%s [WHITE]hat gewonnen!!!;
+game.tpsavedloc=Du hast den Tempel durch den Eingang verlassen.
+game.tpfinishloc=Du hast den Ausgang dieses Tempels entdeckt!
+
+and=und
+game.message=Nachricht
+
+race.personalHighscore=Du bist besser als zuvor!
+race.overallHighscore=Du bist besser als alle anderen!
+race.seconds=Sekunden
+
+blockListener.cantBreakSB=Du hast nicht die Berechtigung die TCScoreBoards zu löschen.
+blockListener.cantBreakSBB=Dieser Block ist geschützt durch das ScoreBoard %s
+blockListener.cantPlaceEntrance=Du hast nicht die Berechtigung Eingänge für Tempel zu setzen..
+
+playerListener.entranceFound=DU hast einen Eingang zu einem Tempel gefunden!! Sammle deine Kräfte, denn jetzt geht es los!
+playerListener.denyHelmet=Du darfst deinen Helm nicht entfernen.
+enteringTemple=Du betrittst den Tempel in %d... 
+
+teleportListener.deny=Du kannst den Tempel nicht verlassen! Wenn du unbedingt willst, dann schreibe /tct leave und gerate in Vergessenheit wie so viele schon vor dir...
+teleportListener.deny2=Du kannst dich nicht in einen laufenden Tempel teleportieren.
+
+classes.selectClass=Schlag das jeweilige Schild um dein Klasse zu wählen.
+classes.classChosen=Du hast %s als deine Klasse ausgewählt!
+
+findingSigBlocks=wichtig Blöcke gefunden von %s to %s... 
+foundSigBlocks=Schon gefundene %d %s
+done=erledigt.
+
+pvp.win=%s [WHITE]hat gewonnen!!!

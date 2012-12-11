@@ -91,7 +91,7 @@ public class SpawnTask implements Runnable {
 				
 				if(health > 0) {
 					cmob.setHealth(health);
-					game.customMobManager.AddMob(cmob);
+					game.mobManager.AddMob(cmob);
 				}
 				
 				if(!(e instanceof Creature)) {

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.entity.Entity;
-//import org.bukkit.entity.LivingEntity;
 
 import com.bukkit.xarinor.templecraft.TCUtils;
 import com.bukkit.xarinor.templecraft.util.MobSpawnProperties;
@@ -14,8 +13,6 @@ import com.bukkit.xarinor.templecraft.util.Pair;
 * CustomMob.java
 * This work is dedicated to the public domain.
 * 
-* TODO living!
-* 
 * @author Xarinor
 * @author bootscreen
 * @author msingleton
@@ -23,7 +20,6 @@ import com.bukkit.xarinor.templecraft.util.Pair;
 public class CustomMob{
 
 	private Entity entity;
-	//private LivingEntity livingEntity;
 	private List<CustomMobAbility> abilitys = new ArrayList<CustomMobAbility>();
 	private boolean dead = false;
 	private int health = 0;
@@ -155,7 +151,7 @@ public class CustomMob{
 			}
 		}
 	}
-
+	
 	/**
 	 * Gets this as LivingEntity
 	 * 
@@ -208,7 +204,7 @@ public class CustomMob{
 			addAbility(CustomMobAbility.fromShortName(ability));
 		}
 	}
-
+	
 	/**
 	 * Gets the target of this CustomMob
 	 * 

@@ -230,7 +230,6 @@ public class Temple {
 	 * @param world	 -Temple world
 	 * @param player -User
 	 */
-	//TODO Problems in 1.4.2 :(
 	protected void saveTemple(World world, Player player) {
 		TempleManager.tellPlayer(player, Translation.tr("templeSave"));
 		TCRestore.saveTemple(world, this);

@@ -964,35 +964,8 @@ public class TCUtils {
 		String worldname = world.getName();
 		//TODO: optimze -.-
 		System.out.println("[TempleCraft] Attempting to delete World " + world.getName());
-		world.save();
-		
+		world.save();	
 		removePlayers(world);
-		
-		/*
-		for(Entity e : world.getEntities()) {
-			e.remove();
-		}
-		TODO Check if loaded Chunks do not prevent world deletion each patch
-		for (Chunk chunk : world.getLoadedChunks())
-		{
-			//world.unloadChunk(chunk);
-			world.unloadChunk(chunk.getX(), chunk.getZ(), false, false);
-		}
-		//debug
-		System.out.println("[TempleCraft] after unloadChunk");		
-					
-		if(world == null || !world.getPlayers().isEmpty())
-		{
-			System.out.println("[TempleCraft] world==null or isempty=false");
-			//return false;
-		}		
-		*/
-		
-		/*
-		if(TempleCraft.catacombs != null)
-		{
-			TempleCraft.catacombs.unloadWorld(worldname);
-		}*/
 
 		/* Multiverse */
 		if(TempleCraft.MVWM != null) {
@@ -1008,23 +981,6 @@ public class TCUtils {
 					System.out.println("[TempleCraft] MVWM delete Execption: " + ex.getMessage());
 				}
 				
-				//TODO Check MV integration
-				/*
-				try 
-				{				
-					if(TempleManager.server.unloadWorld(world, true) == true)
-					{
-						System.out.println("[TempleCraft] World \""+worldname+"\" unloaded!");
-					} else {
-						System.out.println("[TempleCraft] World \""+worldname+"\" NOT unloaded!");
-					}
-
-				} 
-				catch (Exception e) 
-				{
-					System.out.println("[TempleCraft] Error during server unloadworld " + worldname);
-				}
-				*/
 			} else {
 				try {
 					if(TempleManager.server.unloadWorld(world, true) == true) {
@@ -1070,13 +1026,27 @@ public class TCUtils {
 
 	/**
 	 * Delete all loaded temporary worlds
-	 * (Unused temples)
 	 */
 	public static void deleteTempWorlds() {
 		for(World w : TempleManager.server.getWorlds()) {
 			if(TCUtils.isTCWorld(w)) {
 				System.out.print(w.getName() + " is a TempleCraft World. Trying to delete it!");
 				deleteTempWorld(w);
+			}
+		}
+	}
+	
+	/**
+	 * Delete all loaded temporary worlds with no players
+	 * (Unused temples)
+	 */
+	public static void deleteUnusedTempWorlds() {
+		for(World w : TempleManager.server.getWorlds()) {
+			if(TCUtils.isTCWorld(w)) {
+				if (w.getPlayers().size() < 1) {
+					System.out.print(w.getName() + " is a a unused TempleCraft World. Trying to delete it!");
+					deleteTempWorld(w);
+				}
 			}
 		}
 	}

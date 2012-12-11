@@ -72,6 +72,7 @@ public class TempleCraft extends JavaPlugin {
 	public static ChatColor c2 = ChatColor.WHITE;
 	public static ChatColor c3 = ChatColor.GREEN;
 	public static boolean debugMode = false;
+	public static boolean heroes = false;
 
 	/**
 	 * When TempleCraft gets activated: ..
@@ -96,7 +97,7 @@ public class TempleCraft extends JavaPlugin {
 		// Schedule to check the version every 30 minutes for an update. This is to update the most recent 
 		// version so if an admin reconnects they will be warned about newer versions.
 		// Thanks Sleaker for the permission to use his updatecheck code from vault 
-		this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
+		this.getServer().getScheduler().runTaskTimerAsynchronously(this, new Runnable() {
 
 			@Override
 			public void run() {
@@ -118,16 +119,18 @@ public class TempleCraft extends JavaPlugin {
 		setupTranslations();
 		setupPermissions();
 		setupEconomy();
-		setupHeroes();
 		setupMultiverse();
-		//TODO Check
-		//setupCatacombs();
 		setupWorldguard();
-
+		
+		heroes = TCUtils.getBoolean(TCUtils.getConfig("config"), "settings.useheroes", false);
+		if (heroes == true) {
+			setupHeroes();
+		}
+		
 		//Load all commands that are allowed in config
 		ENABLED_COMMANDS = TCUtils.getEnabledCommands();
 
-		// Bind the /tct and /templecraft commands to MACommands.
+		// Bind the /tct command to MACommands.
 		getCommand("tct").setExecutor(new TCCommands(this));
 
 		pm.registerEvents(new MobArenaClasses(this), this);
@@ -211,12 +214,12 @@ public class TempleCraft extends JavaPlugin {
 	/**
 	 * Setting up the language handling
 	 */
-	private void setupTranslations() {			
+	private void setupTranslations() {
 		File configFile = TCUtils.getConfig("config");
 		language = TCUtils.getString(configFile, "settings.language", "en-US");
 		Translation.reload(new File(getDataFolder(), "templecraft-"+language+".csv"));
 
-		if(Translation.getVersion()<1) {
+		if(Translation.getVersion() == 0) {
 			TCUtils.copyFromJarToDisk("templecraft-"+language+".csv", getDataFolder());
 			log.log(Level.INFO, "[TempleCraft] copied new translation file for "+language+" to disk.");
 			Translation.reload(new File(getDataFolder(), "templecraft-"+language+".csv"));
@@ -239,17 +242,6 @@ public class TempleCraft extends JavaPlugin {
 			System.out.println("[TempleCraft] Hooked into " + multiverse.getDescription().getName() + " Version "+ multiverse.getDescription().getVersion());
 		}
 	}
-
-	//TODO Check
-	/*private void setupCatacombs()
-	{
-		Plugin Cataplugin = this.getServer().getPluginManager().getPlugin("Catacombs");
-		if (Cataplugin != null)
-		{
-			catacombs = (Catacombs) Cataplugin;
-			log.info("[TempleCraft] Hooked into " + Cataplugin.getDescription().getName() + " Version "+ Cataplugin.getDescription().getVersion());
-		}
-	}*/
 
 	/**
 	 * Setting up WorldGuard support
@@ -291,7 +283,6 @@ public class TempleCraft extends JavaPlugin {
 	/**
 	 * Setting up Heroes
 	 * 
-	 * TODO Check for changes.. Testing!
 	 */
 	private void setupHeroes() {
 		Plugin heroes = this.getServer().getPluginManager().getPlugin("Heroes");

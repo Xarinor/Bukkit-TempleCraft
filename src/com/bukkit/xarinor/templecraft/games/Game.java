@@ -13,6 +13,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
+//TODO TESTING
 import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -91,13 +92,14 @@ public class Game {
 
 	// Contains Active Mob Spawnpoints and Creature Types
 	public Map<Location,MobSpawnProperties> mobSpawnpointMap	 = new HashMap<Location,MobSpawnProperties>();
-	public Map<Location,MobSpawnProperties> mobSpawnpointConstantMap	 = new HashMap<Location,MobSpawnProperties>();
+//	public Map<Location,MobSpawnProperties> mobSpawnpointConstantMap	 = new HashMap<Location,MobSpawnProperties>();
 	public Map<Integer, Integer> mobGoldMap			= new HashMap<Integer, Integer>();
 	public Map<Location, Integer> checkpointMap		= new HashMap<Location, Integer>();
 	public Map<Location, String[]> chatMap			 = new HashMap<Location, String[]>();
 	public Map<Location, List<ItemStack>> rewardLocMap = new HashMap<Location, List<ItemStack>>();
 	public Map<Location, Integer> lobbyLocMap		  = new HashMap<Location, Integer>();
 	public Map<Location, Integer> startLocMap		  = new HashMap<Location, Integer>();
+	//TODO TESTING
 	public Map<Chunk, Entity[]> tempMobLoc		  = new HashMap<Chunk, Entity[]>();
 	public Map<Player, Integer> playerDeathMap		  = new HashMap<Player, Integer>();
 
@@ -118,7 +120,7 @@ public class Game {
 	public Set<Integer> SpawnTaskIDs   = new HashSet<Integer>();
 	public Map<CustomMob,Integer> AbilityTaskIDs   = new HashMap<CustomMob,Integer>();
 
-	public MobManager customMobManager = new MobManager();
+	public MobManager mobManager = new MobManager();
 
 	public int maxdeaths = -1;
 
@@ -194,10 +196,10 @@ public class Game {
 				AbilityTaskIDs.clear();
 			}
 			mobSpawnpointMap.clear();
-			mobSpawnpointConstantMap.clear();
 			mobSpawnpointSet.clear();
-			customMobManager.clear();
-			tempMobLoc.clear();
+			mobManager.clear();
+			//TODO TESTING
+			//tempMobLoc.clear();
 			isRunning = false;
 			isEnding = true;
 			readySet.clear();
@@ -222,73 +224,24 @@ public class Game {
 	}
 
 	/**
-	 * Add together rewards found by the players
-	 */
-	private void consolidateRewards() {
-		List<ItemStack> tempSet = new ArrayList<ItemStack>();
-		for(ItemStack i: rewards) {
-			if(i == null) {
-				continue;
-			}
-			boolean found = false;
-			for(ItemStack j : tempSet) {
-				if(j.getTypeId() == i.getTypeId()) {
-					j.setAmount(j.getAmount()+i.getAmount());
-					found = true;
-				}
-			}
-			if(!found) {
-				tempSet.add(i);
-			}
-		}
-		rewards.clear();
-		rewards.addAll(tempSet);
-	}
-
-	/**
 	 * Players get their rewards! hopefully.. :)
 	 * 
 	 * @param players
 	 */
 	private void rewardPlayers(Set<Player> players) {
-		consolidateRewards();
+		
+		
 		for(Player p : players) {
 			TCUtils.debugMessage("Try to reward Player " + p.getName());
 			try {
-				StringBuilder msg = new StringBuilder();
-				TemplePlayer tp = TempleManager.templePlayerMap.get(p);
-				List<ItemStack> tempList = new ArrayList<ItemStack>();
-				for(ItemStack item : tp.rewards) {
-					if(item != null) {
-						TCUtils.debugMessage("Add reward" +  item.getTypeId() + ":" + item.getData().getData() + " (" + item.getAmount() + ") to TempList for Player " + p.getName());
-						tempList.add(item);
+				for(ItemStack item : rewards) {
+					if(TCUtils.hasPlayerInventory(p.getName())) {
+						TCUtils.addtoPlayerInventory(p, item);
+					} else {
+						p.getInventory().addItem(item);
 					}
 				}
-
-				int size = tempList.size();
-				if(size == 0) {
-					TCUtils.debugMessage("tempList.size == 0");
-					continue;
-				}
-				for(int i = 0; i<size; i++) {
-					ItemStack item = tempList.get(i);
-					if(item != null) {
-						msg.append(item.getAmount()+" "+TCUtils.getMaterialName(item.getType().name()));
-						if(i<size-2) {
-							msg.append(", ");
-						} else if(i<size-1) {
-							msg.append(" "+Translation.tr("and")+" ");
-						}
-
-						if(TCUtils.hasPlayerInventory(p.getName())) {
-							TCUtils.addtoPlayerInventory(p, item);
-						} else {
-							p.getInventory().addItem(item);
-						}
-						TCUtils.debugMessage("Player " + p.getName() + " gets " + item.getTypeId() + ":" + item.getData().getData() + " (" + item.getAmount() + ") at Location " + p.getLocation().toString());
-					}
-				}
-				TempleManager.tellPlayer(p,Translation.tr("game.treasureReceived", msg.toString()));
+				TempleManager.tellPlayer(p,Translation.tr("game.treasureReceived"));
 			} catch (Exception e) {
 				System.out.print("[TempleCraft] Error during reward distribution to player:" + p.getName());
 				System.out.print("[TempleCraft] " + e.getMessage());
@@ -358,7 +311,7 @@ public class Game {
 			msp.setEntityType(TCEntityHandler.getRandomCreature());
 			msp.setLocation(b.getLocation());
 			mobSpawnpointMap.put(b.getLocation(),msp);
-			mobSpawnpointConstantMap.put(b.getLocation(),msp);
+//			mobSpawnpointConstantMap.put(b.getLocation(),msp);
 			b.setTypeId(0);
 		}
 		
@@ -425,8 +378,6 @@ public class Game {
 	/**
 	 * Handle Templecraft signs
 	 * 
-	 * TODO BUG: Onehit kills to non boss mobs.
-	 * 
 	 * @param sign
 	 */
 	protected void handleSign(Sign sign) {
@@ -441,25 +392,19 @@ public class Game {
 				CustomMobType cmt = CustomMobUtils.getBoss(Lines[1]);
 				Location loc = new Location(b.getWorld(),b.getX()+.5,b.getY(),b.getZ()+.5);
 				mobSpawnpointSet.add(loc);
+
 				MobSpawnProperties msp = new MobSpawnProperties();
-				msp.setEntityType(TCEntityHandler.getRandomCreature());
 				msp.setDMGMulti(cmt.getDmgmulti());
 				msp.setEntityType(cmt.getMobtype());
+				msp.setAbilitys(cmt.getAbilitys());
 				msp.setRange(cmt.getRange());
 				msp.setHealth(cmt.getMaxhealth());
 				msp.setSize(cmt.getSize());
 				msp.setIsbossmob(true);
-				if(!cmt.getAbilities_random().isEmpty()) {
-					msp.setAbilities_random(cmt.getAbilities_random());
-				}
-				if(!cmt.getAbilities_rotation().isEmpty()) {
-					msp.setAbilities_rotation(cmt.getAbilities_rotation());
-				}
-				if(cmt.getAbilities_random().isEmpty() && cmt.getAbilities_rotation().isEmpty() && cmt.getOldabilitys() != null) {
-					msp.setAbilitys(cmt.getOldabilitys());
-				}
+				
+				msp.setLocation(b.getLocation());
 				mobSpawnpointMap.put(b.getLocation(),msp);
-				mobSpawnpointConstantMap.put(b.getLocation(),msp);
+//				mobSpawnpointConstantMap.put(b.getLocation(),msp);
 				b.setTypeId(0);			
 			}
 			// Normal custom boss
@@ -491,8 +436,8 @@ public class Game {
 					return;
 				}
 				int range = 20;
-				int health = 0;
-				int dmgmulti = 0;
+				int health = 20;
+				int dmgmulti = 1;
 				try {
 					String[] split = Lines[2].split(":");
 					if(split[0].contains("-")) {
@@ -500,7 +445,6 @@ public class Game {
 					} else {
 						health = Integer.parseInt(split[0]);
 					}
-
 					if(split.length > 1) {
 						if(split[1].contains("-")) {
 							range = 20;
@@ -508,7 +452,6 @@ public class Game {
 							range = Integer.parseInt(split[1]);
 						}
 					}
-
 					if(split.length > 2) {
 						if(split[2].contains("-")) {
 							dmgmulti = 1;
@@ -519,13 +462,14 @@ public class Game {
 				} catch(Exception e) {
 					health = 0;
 					range = 20;
+					dmgmulti = 1;
 					System.out.println("[TempleCraft] Could not use this line \"" + Lines[2] + "\" for health:range:dmgmultiplicator");
 				}
 				Location loc = new Location(b.getWorld(),b.getX()+.5,b.getY(),b.getZ()+.5);
 				mobSpawnpointSet.add(loc);
 
 				MobSpawnProperties msp = new MobSpawnProperties();
-				msp.setEntityType(TCEntityHandler.getRandomCreature());
+				//msp.setEntityType(TCEntityHandler.getRandomCreature());
 				msp.setAbilitys(Lines[3]);
 				msp.setDMGMulti(dmgmulti);
 				msp.setEntityType(ct);
@@ -535,7 +479,7 @@ public class Game {
 				msp.setIsbossmob(true);
 				msp.setLocation(b.getLocation());
 				mobSpawnpointMap.put(b.getLocation(),msp);
-				mobSpawnpointConstantMap.put(b.getLocation(),msp);
+//				mobSpawnpointConstantMap.put(b.getLocation(),msp);
 				b.setTypeId(0);
 			}
 			return;	
@@ -666,7 +610,6 @@ public class Game {
 			}
 			
 			/* Mob Spawnpoint (range:time:count)  */
-			// TODO BUG: Continuous mob spawn
 			int range = 20;
 			long time = 0;
 			int count = 1;
@@ -699,7 +642,6 @@ public class Game {
 				count = 1;
 			}
 
-			// TODO Onehit?
 			int health;
 			try {
 				health = Integer.parseInt(Lines[2]);
@@ -719,7 +661,7 @@ public class Game {
 			msp.setTime(time * 20); //time is now set to server ticks (1 sec = 20 ticks) -Tim
 			msp.setCount(count);
 			mobSpawnpointMap.put(b.getLocation(),msp);
-			mobSpawnpointConstantMap.put(b.getLocation(),msp);
+//			mobSpawnpointConstantMap.put(b.getLocation(),msp);
 			b.setTypeId(0);	
 		}
 	}
@@ -984,8 +926,6 @@ public class Game {
 	}
 
 	/* CLEANUP METHODS */
-	
-	//TODO Better faster stronger louder -> reliable?
 
 	/**
 	 * Kills all monsters currently on the Temple floor.
@@ -1005,7 +945,6 @@ public class Game {
 	 */
 	public void clearTempBlocks() {
 		// Remove all blocks, then clear the Set.
-		//TODO Sure that is needed?
 		for (Block b : tempBlockSet) {
 			b.setType(Material.AIR);
 		}
@@ -1248,11 +1187,6 @@ public class Game {
 				}
 
 				if(!usingClasses) {
-					//TODO Check / Test
-//					if(TCUtils.hasPlayerInventory(player.getName())) {
-//						TCUtils.restorePlayerInventory(player);
-//					}
-//					TCUtils.keepPlayerInventory(player);
 					TCUtils.restoreHealth(player);
 				}
 
@@ -1296,22 +1230,18 @@ public class Game {
 	 * @param itemList
 	 */
 	public void hitRewardBlock(Player player, List<ItemStack> itemList) {
+		
 		rewards.addAll(itemList);
 
-		List<ItemStack> tempList = new ArrayList<ItemStack>();
-		for(ItemStack item : itemList) {
-			if(item != null) {
-				tempList.add(item);
-			}
-		}
-		int size = tempList.size();
+		int size = itemList.size();
 		StringBuilder msg = new StringBuilder();
 		if(size == 0) {
 			tellAll(Translation.tr("game.emptyTreasureFound", player.getDisplayName()));
 		} else {
 			tellAll(Translation.tr("game.treasureFound", player.getDisplayName()));
 			for(int i = 0; i<size; i++) {
-				ItemStack item = tempList.get(i);
+				ItemStack item = itemList.get(i);
+				
 				if(item != null) {
 					msg.append(item.getAmount()+" "+TCUtils.getMaterialName(item.getType().name()));
 					if(i<size-2) {

@@ -1,4 +1,4 @@
-﻿version=1
+version=1
 enableMessage=[%s] version %s has been enabled.
 diableMessage=[%s] version %s has been disabled.
 notEnabled=TempleCraft is not enabled.
@@ -98,7 +98,7 @@ game.pickAClass=You must pick a class first!
 game.emptyTreasureFound=%s has found an empty treasure block!
 game.treasureFound=%s has found a treasure block!
 game.treasureMessage=You will receive %s if you get out alive!
-game.treasureReceived=You received %s for completing the temple!
+game.treasureReceived=You received all items that where found in the temple!
 game.checkpoint=Checkpoint Reached
 game.tooMuchDeaths=Sorry but you died too much.
 game.hitendblock=You hit the End-Block. The game needs %d Seconds to register it, so be careful ;)

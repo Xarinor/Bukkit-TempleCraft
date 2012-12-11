@@ -98,7 +98,7 @@ public class TCDamageListener implements Listener {
 			if(entity instanceof LivingEntity) {
 				Game game = TCUtils.getGame(entity);
 				if(game != null) {
-					CustomMob cmob = game.customMobManager.getMob(entity);
+					CustomMob cmob = game.mobManager.getMob(entity);
 
 					if(cmob != null && !cmob.isDead()) {
 						if(cmob.getDMGMultiplikator() > 1) {
@@ -119,7 +119,7 @@ public class TCDamageListener implements Listener {
 				game.lastDamager.remove(id);
 				game.lastDamager.put(id, entity);
 
-				CustomMob cmob = game.customMobManager.getMob(entity2);
+				CustomMob cmob = game.mobManager.getMob(entity2);
 
 				if(cmob != null && !cmob.isDead()) {
 					cmob.damage(event.getDamage(), entity);
@@ -136,6 +136,7 @@ public class TCDamageListener implements Listener {
 	 */
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event) {		
+		
 		if (event == null) {return;}
 		if (!TCUtils.isTCWorld(event.getEntity().getWorld())) {
 			return;
@@ -170,15 +171,15 @@ public class TCDamageListener implements Listener {
 					// If a monster died
 					game = TCUtils.getGame(e);
 					lastDamager = game.lastDamager.remove(e.getEntityId()); //-Tim
-					CustomMob cmob = game.customMobManager.getMob(event.getEntity());
+					CustomMob cmob = game.mobManager.getMob(event.getEntity());
 	
 					if(cmob != null && !cmob.isDead()) {
-						if(e.getKiller() == null || !cmob.isDead()){
-							game.mobSpawnpointMap.put(cmob.getSpawnProperties().getLocation(), cmob.getSpawnProperties());
-						}
-						if(game.AbilityTaskIDs.containsKey(cmob)){
+												
+						if (game.AbilityTaskIDs.containsKey(cmob)) {
 							TempleCraft.TCScheduler.cancelTask(game.AbilityTaskIDs.get(cmob));
 						}
+						game.mobSpawnpointMap.put(cmob.getSpawnProperties().getLocation(), cmob.getSpawnProperties());
+						cmob.remove();
 					}
 				} catch (Exception ex) {
 					lastDamager = null;

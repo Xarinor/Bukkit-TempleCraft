@@ -68,6 +68,7 @@ public class TCEntityListener implements Listener {
 		}
 		// Ignore the destruction
 		event.blockList().clear();
+		
 	}
 
 	/**
@@ -129,16 +130,25 @@ public class TCEntityListener implements Listener {
 			if(event.getEntity() instanceof LivingEntity && event.getEntity() != null) {
 				LivingEntity e = (LivingEntity) event.getEntity();
 				if(TCUtils.isTCWorld(loc.getWorld())) {
-					if(event.getSpawnReason().equals(SpawnReason.CUSTOM) ||
-							event.getSpawnReason().equals(SpawnReason.SPAWNER_EGG) ||
-							event.getSpawnReason().equals(SpawnReason.SLIME_SPLIT) ||
-							event.getSpawnReason().equals(SpawnReason.BUILD_IRONGOLEM) ) {
-						Game game = TCUtils.getGameByWorld(loc.getWorld());
-						if(game != null) {
+					Game game = TCUtils.getGameByWorld(loc.getWorld());
+					if(game != null) {
+						
+						if(event.getSpawnReason().equals(SpawnReason.CUSTOM) || event.getSpawnReason().equals(SpawnReason.SPAWNER) ||
+								event.getSpawnReason().equals(SpawnReason.SPAWNER_EGG) || event.getSpawnReason().equals(SpawnReason.SLIME_SPLIT) ||
+								event.getSpawnReason().equals(SpawnReason.BUILD_IRONGOLEM) ) {
+							
+								//For 1.4.5 R0.3!++
+								//e.setRemoveWhenFarAway(false);							
+							
+							//CustomMobEquipment.setChestplate(e, new ItemStack(Material.DIAMOND_CHESTPLATE,1));
+							
 							game.monsterSet.add(e);
+
 							if(game instanceof Arena) {
-								e.setHealth((int) ((Arena)game).getZombieHealth());
+									e.setHealth((int) ((Arena)game).getZombieHealth());
 							}
+						} else {
+							event.setCancelled(true);
 						}
 					} else {
 						event.setCancelled(true);

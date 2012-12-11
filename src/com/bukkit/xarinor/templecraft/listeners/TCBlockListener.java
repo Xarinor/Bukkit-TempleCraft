@@ -92,6 +92,9 @@ public class TCBlockListener implements Listener {
 		}
 
 		if (TempleManager.breakable.contains(b.getTypeId())) {
+			if (TempleManager.dropBlocks == false) {
+					event.getBlock().setTypeId(0);
+			}
 			cancel = false;
 		}
 
@@ -173,12 +176,16 @@ public class TCBlockListener implements Listener {
 
 		// if player places significant block while editing, record it
 		if(TCUtils.isTCEditWorld(p.getWorld())) {
-			for(int i : Temple.coordBlocks) {
-				if(b.getTypeId() == i) {
-					temple.coordLocSet.add(b.getLocation());
+			if(b.getTypeId() == 130) {
+				event.setCancelled(true);
+			} else {
+				for(int i : Temple.coordBlocks) {
+					if(b.getTypeId() == i) {
+						temple.coordLocSet.add(b.getLocation());
+					}
 				}
+				return;
 			}
-			return;
 		}
 
 		Game game = tp.currentGame;

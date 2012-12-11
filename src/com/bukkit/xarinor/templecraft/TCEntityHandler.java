@@ -28,7 +28,6 @@ import com.bukkit.xarinor.templecraft.util.Pair;
 * @author msingleton
 */
 
-//TODO Living Entities!!
 public class TCEntityHandler {
 	
 	/**
@@ -62,7 +61,6 @@ public class TCEntityHandler {
 		} else {
 			if(msp.getCount() == 1 && msp.getTime() == 0) {
 				try {
-					//LivingEntity e = game.world.spawnCreature(loc,msp.getEntityType());
 					Entity e = game.world.spawnEntity(loc,msp.getEntityType());
 
 					if(e == null) {
@@ -74,10 +72,9 @@ public class TCEntityHandler {
 						game.mobGoldMap.put(e.getEntityId(), r.nextInt(TempleManager.mobGoldRan)+TempleManager.mobGoldMin);
 					}
 
-					//TODO Living
 					CustomMob cmob = new CustomMob(e);
 					cmob.setSpawnProperties(msp);
-					//TODO MagmaSlime ok with this? Lagg?
+					//TODO MagmaSlime ok with this? No  Lagg?  No
 					if(e instanceof Slime && msp.getSize() > 0) {
 						Slime slime = (Slime) e;
 						slime.setSize(msp.getSize());
@@ -92,7 +89,7 @@ public class TCEntityHandler {
 						cmob.setHealth(msp.getHealth());
 					}
 					
-					game.customMobManager.AddMob(cmob);
+					game.mobManager.AddMob(cmob);
 					
 					if(!(e instanceof Creature)) {
 						return;
@@ -104,6 +101,7 @@ public class TCEntityHandler {
 					System.out.println("[TempleCraft] Could not spawn "+msp.getEntityType().getName());
 				}
 			} else {
+				@SuppressWarnings("deprecation")
 				int id = TempleCraft.TCScheduler.scheduleAsyncRepeatingTask(TempleCraft.TCPlugin, new SpawnTask(game, loc, msp, TempleCraft.TCPlugin), 0L, msp.getTime());
 				SpawnTask.taskID = id;
 				game.SpawnTaskIDs.add(id);
@@ -113,7 +111,6 @@ public class TCEntityHandler {
 
 	public static void SpawnMobs(Game game, Location loc, EntityType mob, MobSpawnProperties msp, int size, int health, int dmgmulti, String abilitys) {
 		try {
-			//LivingEntity e = game.world.spawnCreature(loc,mob);
 			Entity e = game.world.spawnEntity(loc,mob);
 
 			if(e == null) {
@@ -125,7 +122,6 @@ public class TCEntityHandler {
 				game.mobGoldMap.put(e.getEntityId(), r.nextInt(TempleManager.mobGoldRan)+TempleManager.mobGoldMin);
 			}
 
-			//TODO living
 			CustomMob cmob = new CustomMob(e);
 
 			cmob.setSpawnProperties(msp);
@@ -149,9 +145,10 @@ public class TCEntityHandler {
 				cmob.addAbilitysfromString(abilitys);
 			}
 
-			game.customMobManager.AddMob(cmob);
+			game.mobManager.AddMob(cmob);
 
 			if(!cmob.getAbilitys().isEmpty()) {
+				@SuppressWarnings("deprecation")
 				int id = TempleCraft.TCScheduler.scheduleAsyncRepeatingTask(TempleCraft.TCPlugin, new AbilityTask(game, cmob), 100L, 100L);
 				AbilityTask.taskID = id;
 				game.AbilityTaskIDs.put(cmob,id);
@@ -216,7 +213,7 @@ public class TCEntityHandler {
 			}
 			cmob.setHealth(health);
 			cmob.setDMGMultiplikator(dmgmulti);
-			game.customMobManager.AddMob(cmob);
+			game.mobManager.AddMob(cmob);
 
 			if(!(e instanceof Creature)) {
 				return;

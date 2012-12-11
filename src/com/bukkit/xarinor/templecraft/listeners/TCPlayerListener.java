@@ -183,7 +183,8 @@ public class TCPlayerListener implements Listener {
 				}
 				
 				try {
-					TempleCraft.TCScheduler.scheduleAsyncDelayedTask(TempleCraft.TCPlugin, new EndTask(game, p), TempleManager.hitEndwaitingtime*20);
+					TempleCraft.TCScheduler.runTaskLaterAsynchronously(TempleCraft.TCPlugin, new EndTask(game, p), TempleManager.hitEndwaitingtime*20);
+//					TempleCraft.TCScheduler.scheduleAsyncDelayedTask(TempleCraft.TCPlugin, new EndTask(game, p), TempleManager.hitEndwaitingtime*20);
 				} catch (Exception ex) {
 					System.out.println("Exception: TCScheduler.scheduleAsyncDelayedTask = " + ex.getMessage());
 				}

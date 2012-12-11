@@ -19,7 +19,6 @@ import org.bukkit.util.Vector;
 import org.bukkit.Effect;
 
 import com.bukkit.xarinor.templecraft.TCUtils;
-import com.bukkit.xarinor.templecraft.TempleManager;
 import com.bukkit.xarinor.templecraft.games.Game;
 import com.bukkit.xarinor.templecraft.util.EnumUtils;
 
@@ -33,7 +32,6 @@ import com.bukkit.xarinor.templecraft.util.EnumUtils;
 * @author garbagemule
 */
 
-//TODO Huge adjustments
 public enum CustomMobAbility {
 	ARROW("A") {
 		public void run(Game game, Entity customMob) {
@@ -42,12 +40,11 @@ public enum CustomMobAbility {
 			Arrow a = ((LivingEntity) customMob).launchProjectile(Arrow.class);
 			a.setShooter((LivingEntity) customMob);
 			world.playEffect(loc, Effect.BOW_FIRE, 1);
-			System.out.println("A");
 		}
 	},
 	FIREAURA("FA") {
 		public void run(Game game, Entity customMob) {
-			for (Player p : getNearbyPlayers(game, customMob, 5)) {
+			for (Player p : getNearbyPlayers(game, customMob, 2)) {
 				Location loc = (customMob.getLocation());
 				World world = loc.getWorld();
 				for ( int i=0; i<10; i++ ) {
@@ -55,7 +52,6 @@ public enum CustomMobAbility {
 				}
 				world.playEffect(loc, Effect.BLAZE_SHOOT, 1);
 				p.setFireTicks(60);
-				System.out.println("FA");
 			}
 		}
 	},
@@ -77,7 +73,6 @@ public enum CustomMobAbility {
 				fb.setShooter((LivingEntity) customMob);
 				fb.setDirection(target.getVelocity().add(target.getLocation().toVector().subtract(customMob.getLocation().toVector()).normalize().multiply(Integer.MAX_VALUE)));
 				fb.setBounce(false);
-				System.out.println("FB");
 			}
 		}
 	},
@@ -92,7 +87,6 @@ public enum CustomMobAbility {
 					world.playEffect(loc, Effect.ENDER_SIGNAL, 1);
 				}
 				world.playEffect(loc, Effect.GHAST_SHRIEK, 1);
-				System.out.println("TTP");
 			}
 		}
 	},
@@ -110,7 +104,6 @@ public enum CustomMobAbility {
 						World world = loc.getWorld();
 						world.playEffect(loc, Effect.ZOMBIE_CHEW_IRON_DOOR, 1);
 					}
-					System.out.println("TT");
 				}
 			}
 		}
@@ -120,12 +113,13 @@ public enum CustomMobAbility {
 			Player p = TCUtils.getNearbyRandomPlayer(customMob);
 			if (p != null && !game.deadSet.contains(p)) {
 				int count = 4;
-				System.out.println("LB");
 				while(count > 0) {
+					if (game.deadSet.contains(p)) {
+						return;
+					}
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) { }
-					TempleManager.tellPlayer(p, "Tick -" + count);
 					
 					// Display the time counting down
 					Location loc = (p.getEyeLocation());
@@ -135,8 +129,14 @@ public enum CustomMobAbility {
 					p.setFireTicks(20);
 					count--;
 				}
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) { }
 				// Only visual explosion (-1 does no block damage)
-				p.getWorld().createExplosion(p.getLocation(), -1);
+				if (game.deadSet.contains(p)) {
+					return;
+				}
+				p.getWorld().createExplosion(p.getLocation().getX(),p.getLocation().getY(),p.getLocation().getZ(),2,true,false);
 				boolean spread = false;
 				// Punish further players
 				for (Player nearby : TCUtils.getNearbyPlayers(p,4)) {
@@ -171,7 +171,6 @@ public enum CustomMobAbility {
 					World world = loc.getWorld();
 					world.playEffect(loc, Effect.SMOKE, 1);
 					p.setFireTicks(100);
-					System.out.println("I");
 			}
 		}
 	},
@@ -188,7 +187,6 @@ public enum CustomMobAbility {
 					world.playEffect(loc, Effect.ZOMBIE_CHEW_IRON_DOOR, 1);
 				}
 			}
-			System.out.println("FW");
 		}
 	},
 	VORTEX("V") {
@@ -207,7 +205,6 @@ public enum CustomMobAbility {
 					world.playEffect(loc, Effect.ENDER_SIGNAL, 1);
 	
 					p.setVelocity(v.normalize().multiply(c*0.2).setY(0.8));
-					System.out.println("V");
 				}
 			}
 		}
@@ -239,7 +236,6 @@ public enum CustomMobAbility {
 			while (!entities.isEmpty() && !locations.isEmpty()) {
 				entities.remove(0).teleport(locations.remove(0));
 				world.playEffect(loc, Effect.GHAST_SHRIEK, 1);
-				System.out.println("SP");
 			}
 		}
 	},
@@ -261,7 +257,6 @@ public enum CustomMobAbility {
 					world.playEffect(loc, Effect.ENDER_SIGNAL, 1);
 
 					target.setVelocity(v.normalize().multiply(c*0.2).setY(0.8));
-					System.out.println("PT");
 				}
 			}
 		}
@@ -275,7 +270,6 @@ public enum CustomMobAbility {
 				for(Player player: TCUtils.getNearbyPlayers(p)) {
 						customMob.getLocation().getWorld().strikeLightning(player.getLocation());
 				}
-				System.out.println("CL");
 			}
 		}
 	},
@@ -287,13 +281,25 @@ public enum CustomMobAbility {
 				PotionEffect blindness = new PotionEffect(PotionEffectType.BLINDNESS, 150, 1);
 				ArrayList<PotionEffect> effects = new ArrayList<PotionEffect>(Arrays.asList(confusion, blindness));
 				p.addPotionEffects(effects);
-//				PotionEffect potion = new PotionEffect(PotionEffectType.CONFUSION, 200, 1);
-//				p.addPotionEffect(potion, true);
 				Location loc = (customMob.getLocation());
 				World world = loc.getWorld();
 				world.playEffect(loc, Effect.POTION_BREAK, 1);
-				System.out.println("DT");
 			}
+		}
+	},
+	FLAMING("F") {
+		public void run(Game game, Entity customMob) {
+//			PotionEffect potion = new PotionEffect(PotionEffectType.SPEED 200, 1);
+//			p.addPotionEffect(potion, true);
+			PotionEffect fireprot = new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 600, 1);
+			PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, 450, 1);
+			ArrayList<PotionEffect> effects = new ArrayList<PotionEffect>(Arrays.asList(fireprot, speed));
+			((LivingEntity) customMob).addPotionEffects(effects);
+			customMob.setFireTicks(580);
+			Location loc = (customMob.getLocation());
+			World world = loc.getWorld();
+			world.playEffect(loc, Effect.SMOKE, 1);
+			world.playEffect(loc, Effect.BLAZE_SHOOT, 1);
 		}
 	};
 
@@ -353,6 +359,9 @@ public enum CustomMobAbility {
 		}
 		if(shortname.equalsIgnoreCase(CustomMobAbility.DISORIENTTEARGET.name)) {
 			return CustomMobAbility.DISORIENTTEARGET;
+		}
+		if(shortname.equalsIgnoreCase(CustomMobAbility.FLAMING.name)) {
+			return CustomMobAbility.FLAMING;
 		}
 		System.out.print("[TempleCraft] No Ability with this Shortname (" + shortname + ") found.");
 		return null;

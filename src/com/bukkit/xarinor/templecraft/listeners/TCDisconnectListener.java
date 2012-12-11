@@ -54,9 +54,6 @@ public class TCDisconnectListener implements Listener {
 		if (TempleManager.playerSet.contains(p)) {
 			TempleManager.playerLeave(p);
 		}
-		if (TempleManager.playerSet.contains(p)) {
-			TempleManager.playerLeave(p);
-		}
 		if(TempleManager.locationMap.containsKey(p)) {
 			TempleManager.locationMap.get(p).getChunk().load(true);
 			p.teleport(TempleManager.locationMap.get(p));
