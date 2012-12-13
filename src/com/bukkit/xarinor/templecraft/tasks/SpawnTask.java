@@ -3,11 +3,21 @@ package com.bukkit.xarinor.templecraft.tasks;
 import java.util.Random;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Chicken;
+import org.bukkit.entity.Cow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.IronGolem;
+import org.bukkit.entity.MagmaCube;
+import org.bukkit.entity.Pig;
+import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Wolf;
+import org.bukkit.entity.Zombie;
 //import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Slime;
+import org.bukkit.entity.Skeleton.SkeletonType;
 
 import com.bukkit.xarinor.templecraft.TCUtils;
 import com.bukkit.xarinor.templecraft.TempleCraft;
@@ -32,7 +42,7 @@ public class SpawnTask implements Runnable {
 	public int count;
 	public Game game;
 	public Location loc;
-	public int size;
+	public int mode;
 
 	/**
 	 * Constructor
@@ -50,7 +60,7 @@ public class SpawnTask implements Runnable {
 		this.loc = loc;
 		this.health = msp.getHealth();
 		this.count = msp.getCount();
-		this.size = msp.getSize();
+		this.mode = msp.getMode();
 	}
 
 	public static int taskID;
@@ -83,10 +93,56 @@ public class SpawnTask implements Runnable {
 
 				cmob.setSpawnProperties(msp);
 				
-				if(e instanceof Slime && size > 0) {
+				if((e instanceof Slime || e instanceof MagmaCube) && mode > 0) {
 					Slime slime = (Slime) e;
-					slime.setSize(size);
-					cmob.setSize(size);
+					slime.setSize(mode);
+					cmob.setMode(mode);
+				} if(e instanceof IronGolem) {
+					IronGolem golem = (IronGolem) e;
+					golem.setPlayerCreated(false);
+				} if(e instanceof Skeleton) {
+					Skeleton skeleton = (Skeleton) e;
+					if (msp.getMode() == 1) {
+						skeleton.setSkeletonType(SkeletonType.WITHER);
+					} else {
+						skeleton.setSkeletonType(SkeletonType.NORMAL);
+					}
+				} if (e instanceof Zombie){
+					Zombie zombie = (Zombie) e;
+					if (msp.getMode() == 1) {
+						zombie.setBaby(true);
+					} else if (msp.getMode() == 2) {
+						zombie.setVillager(true);
+					} else if (msp.getMode() == 3) {
+						zombie.setBaby(true);
+						zombie.setVillager(true);
+					}
+				} if(e instanceof Wolf) {
+					Wolf wolf = (Wolf) e;
+					wolf.setAngry(true);
+					if (msp.getMode() == 1) {
+						wolf.setBaby();
+					}
+				} if(e instanceof Cow) {
+					Cow cow = (Cow) e;
+					if (msp.getMode() == 1) {
+						cow.setBaby();
+					}
+				} if(e instanceof Chicken) {
+					Chicken chicken = (Chicken) e;
+					if (msp.getMode() == 1) {
+						chicken.setBaby();
+					}
+				} if(e instanceof Pig) {
+					Pig pig = (Pig) e;
+					if (msp.getMode() == 1) {
+						pig.setBaby();
+					}
+				} if(e instanceof Sheep) {
+					Sheep sheep = (Sheep) e;
+					if (msp.getMode() == 1) {
+						sheep.setBaby();
+					}
 				}
 				
 				if(health > 0) {

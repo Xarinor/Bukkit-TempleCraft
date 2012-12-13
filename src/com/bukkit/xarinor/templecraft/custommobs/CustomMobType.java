@@ -17,7 +17,7 @@ public class CustomMobType {
 	private int dmgmulti = 0;
 	private int count = 1;
 	private int range = 20;
-	private int size = 0;
+	private int mode = -1;
 	private String name = "";
 	private String abilitys;
 
@@ -115,8 +115,8 @@ public class CustomMobType {
 	 * 
 	 * @return
 	 */
-	public int getSize() {
-		return size;
+	public int getMode() {
+		return mode;
 	}
 
 	/**
@@ -124,10 +124,10 @@ public class CustomMobType {
 	 * 
 	 * @param size
 	 */
-	public void setSize(int size) {
-		this.size = size;
+	public void setMode(int i) {
+		this.mode = i;
 	}
-
+	
 	/**
 	 * Get mob name
 	 * 

@@ -2,10 +2,12 @@ package com.bukkit.xarinor.templecraft.games;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Map.Entry;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -62,8 +64,13 @@ public class Spleef extends Game
 		isRunning = true;
 		roundNum++;
 		restorePlayingField();
-		for(Location loc : lobbyLocMap.keySet())
-		{
+		//for(Location loc : lobbyLocMap.keySet()) {
+		//TODO Testing
+		Iterator<Entry<Location, Integer>> entries = lobbyLocMap.entrySet().iterator();
+		while (entries.hasNext()) {
+			Entry<Location, Integer> entry = entries.next();
+			Location loc = entry.getKey();
+			
 			loc.getBlock().setTypeId(0);
 		}
 		deadSet.clear();
@@ -96,8 +103,13 @@ public class Spleef extends Game
 		}
 		else
 		{
-			for(Location loc : lobbyLocMap.keySet())
-			{
+			//for(Location loc : lobbyLocMap.keySet()) {
+			//TODO Testing
+			Iterator<Entry<Location, Integer>> entries = lobbyLocMap.entrySet().iterator();
+			while (entries.hasNext()) {
+				Entry<Location, Integer> entry = entries.next();
+				Location loc = entry.getKey();
+					
 				loc.getBlock().setTypeId(42);
 			}
 		}
@@ -106,8 +118,13 @@ public class Spleef extends Game
 	private void restorePlayingField()
 	{
 		TCUtils.debugMessage("restorePlayingField");
-		for(Location loc : brokenBlockMap.keySet())
-		{
+		//for(Location loc : brokenBlockMap.keySet()) {
+		//TODO Testing
+		Iterator<Entry<Location, String>> entries = brokenBlockMap.entrySet().iterator();
+		while (entries.hasNext()) {
+			Entry<Location, String> entry = entries.next();
+			Location loc = entry.getKey();
+				
 			String[] s = brokenBlockMap.get(loc).split(":");
 			int id;
 			byte data;

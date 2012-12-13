@@ -132,19 +132,18 @@ public enum CustomMobAbility {
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) { }
-				// Only visual explosion (-1 does no block damage)
 				if (game.deadSet.contains(p)) {
 					return;
 				}
-				p.getWorld().createExplosion(p.getLocation().getX(),p.getLocation().getY(),p.getLocation().getZ(),2,true,false);
-				boolean spread = false;
+				// Only visual explosion
+				//TODO 1.4.5 R3.0+
+				//p.getWorld().createExplosion(p.getLocation().getX(),p.getLocation().getY(),p.getLocation().getZ(),1,true,false);
+				p.getWorld().createExplosion(p.getLocation(), -1);
 				// Punish further players
 				for (Player nearby : TCUtils.getNearbyPlayers(p,4)) {
 					if (!game.deadSet.contains(nearby)) {
 						nearby.setFireTicks(40);
-						nearby.damage(6);
-						spread = true;
-						System.out.println("Mid range - "+nearby);
+						nearby.damage(8);
 					}
 				}
 				// Punish near players hard
@@ -152,13 +151,7 @@ public enum CustomMobAbility {
 					if (!game.deadSet.contains(nearby)) {
 						nearby.setFireTicks(120);
 						nearby.damage(16);
-						spread = true;
-						System.out.println("Close range - "+nearby);
 					}
-				}
-				// Little damage when nobody hit
-				if (spread == false) {
-					p.damage(2);
 				}
 			}
 		}

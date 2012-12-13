@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
 //TODO TESTING
@@ -399,7 +400,7 @@ public class Game {
 				msp.setAbilitys(cmt.getAbilitys());
 				msp.setRange(cmt.getRange());
 				msp.setHealth(cmt.getMaxhealth());
-				msp.setSize(cmt.getSize());
+				msp.setMode(cmt.getMode());
 				msp.setIsbossmob(true);
 				
 				msp.setLocation(b.getLocation());
@@ -409,7 +410,7 @@ public class Game {
 			}
 			// Normal custom boss
 			else {
-				int size = -1;
+				int mode = -1;
 				EntityType ct = null;
 				if(Lines[1].contains(":")) {
 					String[] split = Lines[1].split(":");
@@ -420,12 +421,10 @@ public class Game {
 						return;
 					}
 					if(split.length == 2) {
-						if(ct == EntityType.SLIME) {
-							try {
-								size = Integer.parseInt(split[1]);
-							} catch (Exception e) {
-								size = -1;
-							}
+						try {
+							mode = Integer.parseInt(split[1]);
+						} catch (Exception e) {
+							mode = -1;
 						}
 					}
 				} else {
@@ -475,7 +474,7 @@ public class Game {
 				msp.setEntityType(ct);
 				msp.setRange(range);
 				msp.setHealth(health);
-				msp.setSize(size);
+				msp.setMode(mode);
 				msp.setIsbossmob(true);
 				msp.setLocation(b.getLocation());
 				mobSpawnpointMap.put(b.getLocation(),msp);
@@ -584,19 +583,17 @@ public class Game {
 		}
 		// Normal mob spawnpoint
 		else {
-			int size = -1;
+			int mode = -1;
 			EntityType ct = null;
 			// custom properties
 			if(Lines[1].contains(":")) {
 				String[] split = Lines[1].split(":");
 				ct = EntityType.fromName(split[0]);
 				if(split.length == 2) {
-					if(ct == EntityType.SLIME) {
-						try {
-							size = Integer.parseInt(split[1]);
-						} catch (Exception e) {
-							size = -1;
-						}
+					try {
+						mode = Integer.parseInt(split[1]);
+					} catch (Exception e) {
+						mode = -1;
 					}
 				}
 			}
@@ -657,7 +654,7 @@ public class Game {
 			msp.setEntityType(ct);
 			msp.setRange(range);
 			msp.setHealth(health);
-			msp.setSize(size);
+			msp.setMode(mode);
 			msp.setTime(time * 20); //time is now set to server ticks (1 sec = 20 ticks) -Tim
 			msp.setCount(count);
 			mobSpawnpointMap.put(b.getLocation(),msp);
@@ -678,7 +675,13 @@ public class Game {
 		}
 
 		Set<Location> tempSet = new HashSet<Location>();
-		for(Location l : startLocMap.keySet()) {
+		//for(Location l : startLocMap.keySet()) {
+		//TODO Testing
+		Iterator<Entry<Location, Integer>> entries = startLocMap.entrySet().iterator();
+		while (entries.hasNext()) {
+			Entry<Location, Integer> entry = entries.next();
+			Location l = entry.getKey();
+			
 			if(startLocMap.get(l) == team) {
 				tempSet.add(l);
 			}
@@ -1264,7 +1267,13 @@ public class Game {
 		Player p = event.getPlayer();
 		TemplePlayer tp = TempleManager.templePlayerMap.get(p);
 
-		for(Location loc : chatMap.keySet()) {
+		//for(Location loc : chatMap.keySet()) {
+		//TODO Testing
+		Iterator<Entry<Location, String[]>> entries = chatMap.entrySet().iterator();
+		while (entries.hasNext()) {
+			Entry<Location, String[]> entry = entries.next();
+			Location loc = entry.getKey();
+			
 			if(tp.tempSet.contains(loc)) {
 				continue;
 			}
@@ -1297,7 +1306,13 @@ public class Game {
 			return;
 		}
 
-		for(Location loc : checkpointMap.keySet()) {
+		//for(Location loc : checkpointMap.keySet()) {
+		//TODO Testing
+		Iterator<Entry<Location, Integer>> entries1 = checkpointMap.entrySet().iterator();
+		while (entries1.hasNext()) {
+			Entry<Location, Integer> entry = entries1.next();
+			Location loc = entry.getKey();
+			
 			if(tp.currentCheckpoint != loc && TCUtils.distance(loc, p.getLocation()) < checkpointMap.get(loc)) {
 				tp.currentCheckpoint = loc;
 			}

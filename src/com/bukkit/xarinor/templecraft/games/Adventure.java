@@ -156,37 +156,27 @@ public class Adventure extends Game {
 
 //		// TODO
 //		// Huge testing as unexpected .remove() could crash servers.
-//		Iterator<Map.Entry<Location,MobSpawnProperties>> entries = mobSpawnpointMap.entrySet().iterator();
-//		while (entries.hasNext()) {
-//			Map.Entry<Location, MobSpawnProperties> entry = entries.next();
-//			Location loc = entry.getKey();
-//			//MobSpawnProperties value = entry.getValue();
-//			if (loc != null) {
-//				if(p.getLocation().distance(loc) < mobSpawnpointMap.get(loc).getRange()) {
-//					
-//					try {
-//						TCEntityHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc));
-//						mobSpawnpointMap.remove(loc);
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//						mobSpawnpointMap.remove(loc);
-//					}
-//				}
-//			}
-//		}
-//		
-		
+		Iterator<Map.Entry<Location,MobSpawnProperties>> entries = mobSpawnpointMap.entrySet().iterator();
 		Set<Location> tempLocs = new HashSet<Location>();
-		for(Location loc : mobSpawnpointMap.keySet()) {
+		while (entries.hasNext()) {
+			Map.Entry<Location, MobSpawnProperties> entry = entries.next();
+			Location loc = entry.getKey();
 			if (loc != null) {
 				if(p.getLocation().distance(loc) < mobSpawnpointMap.get(loc).getRange()) {
 					tempLocs.add(loc);
 				}
-		    }
-			// Haha got it finally ...  fail-fast iterator -Xari
-			//--------------------------------------------------------			
+			}
 		}
-
+//		Set<Location> tempLocs = new HashSet<Location>();
+//		for(Location loc : mobSpawnpointMap.keySet()) {
+//			if (loc != null) {
+//				if(p.getLocation().distance(loc) < mobSpawnpointMap.get(loc).getRange()) {
+//					tempLocs.add(loc);
+//				}
+//		    }
+//		}
+		
+		// Haha got it finally ...  fail-fast iterator -Xari
 		for(Location loc : tempLocs) {
 			try {
 				TCEntityHandler.SpawnMobs(this, loc, mobSpawnpointMap.get(loc));

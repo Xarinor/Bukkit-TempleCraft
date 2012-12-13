@@ -76,7 +76,7 @@ public class CustomMobUtils {
 				cmt.setMobtype(EntityType.fromName(c.getString(path + s + ".Spawning.MobType", null)));
 				cmt.setDmgmulti(c.getInt(path + s + ".Spawning.DMGMultiplicator", 0));
 				cmt.setMaxhealth(c.getInt(path + s + ".Spawning.MaxHealth", 0));
-				cmt.setSize(c.getInt(path + s + ".Spawning.Size", 0));
+				cmt.setMode(c.getInt(path + s + ".Spawning.Mode", -1));
 				cmt.setCount(c.getInt(path + s + ".Spawning.Count", 1));
 				cmt.setRange(c.getInt(path + s + ".Spawning.SpawnRange", 1));
 				cmt.setAbilitys(c.getString(path + s + ".Spawning.Abilities", null));
@@ -84,7 +84,6 @@ public class CustomMobUtils {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			//result.put(s, c.getString(path + s + "." + type, null));
 		}
 		return result;
 	}

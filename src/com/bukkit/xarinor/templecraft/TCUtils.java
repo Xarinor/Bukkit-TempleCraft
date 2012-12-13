@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
@@ -1534,7 +1536,13 @@ public class TCUtils {
 		}
 
 		// Print Results
-		for(Integer id : foundBlocks.keySet()) {
+		//for(Integer id : foundBlocks.keySet()) {
+		//TODO Testing
+		Iterator<Entry<Integer, Integer>> entries = foundBlocks.entrySet().iterator();
+		while (entries.hasNext()) {
+			Entry<Integer, Integer> entry = entries.next();
+			Integer id= entry.getKey();
+				
 			TempleManager.tellPlayer(player, Translation.tr("foundSigBlocks",foundBlocks.get(id),getMaterialName(Material.getMaterial(id).name())));
 		}
 		TempleManager.tellPlayer(player, Translation.tr("done"));

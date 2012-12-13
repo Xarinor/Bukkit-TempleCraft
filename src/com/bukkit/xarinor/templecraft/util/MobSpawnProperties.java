@@ -22,7 +22,7 @@ public class MobSpawnProperties {
 	protected Location loc;
 	protected EntityType mob;
 	protected int range;
-	protected int size;
+	protected int mode;
 	protected int health;
 	protected int dmgmulti;
 	protected String abilitys;
@@ -39,7 +39,7 @@ public class MobSpawnProperties {
 		game = null;
 		loc = null;
 		mob = null;
-		size = -1;
+		mode = -1;
 		range = 20;
 		health = 0;
 		dmgmulti = 1;
@@ -106,23 +106,23 @@ public class MobSpawnProperties {
 	}
 	
 	/**
-	 * Sets an entities size
+	 * Sets an entities mode
 	 * 
-	 * @param size -entity size
+	 * @param mode -entity mode
 	 */
-	public void setSize(int size) {
-		this.size = size;
+	public void setMode(int i) {
+		this.mode = i;
 	}
 
 	/**
-	 * Gets an entities size
+	 * Gets an entities mode
 	 * 
 	 * @return size -entity size
 	 */
-	public int getSize() {
-		return size;
+	public int getMode() {
+		return mode;
 	}
-
+	
 	/**
 	 * Sets an entities range
 	 * 

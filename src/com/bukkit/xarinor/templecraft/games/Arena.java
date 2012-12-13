@@ -2,7 +2,9 @@ package com.bukkit.xarinor.templecraft.games;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.Timer;
@@ -167,10 +169,14 @@ public class Arena extends Game
 		Map<Double,Location> distanceMap = getDistanceFromSpawnpoints(loc);
 		for(int i = 5;i<=40;i+=5)
 		{
-			for(Double d : distanceMap.keySet())
-			{
-				if(d<i && tempSpawns.size() < 4)
-				{
+			Iterator<Entry<Double, Location>> entries = distanceMap.entrySet().iterator();
+			while (entries.hasNext()) {
+				Entry<Double, Location> entry = entries.next();
+				Double d = entry.getKey();
+				//TODO Testing
+//			for(Double d : distanceMap.keySet())
+//			{
+				if(d<i && tempSpawns.size() < 4) {
 					tempSpawns.add(distanceMap.get(d));
 				}
 			}

@@ -25,7 +25,7 @@ public class CustomMob{
 	private int health = 0;
 	private int maxhealth = 0;
 	private int dmgmulti = 0;
-	private int size = 0;
+	private int mode = -1;
 	private List<Pair<CustomMobAbility,Integer>> abilities_random = new ArrayList<Pair<CustomMobAbility,Integer>>();
 	private List<Pair<CustomMobAbility,Integer>> abilities_rotation = new ArrayList<Pair<CustomMobAbility,Integer>>();
 	private MobSpawnProperties spawnProperties = null;
@@ -118,23 +118,23 @@ public class CustomMob{
 	}
 
 	/**
-	 * Sets the size of this CustomMob
+	 * Sets the mode of this CustomMob
 	 * 
-	 * @param size
+	 * @param mode
 	 */
-	public void setSize(int size) {
-		this.size = size;
+	public void setMode(int i) {
+		this.mode = i;
 	}
 
 	/**
-	 * Gets the size of this CustomMob
+	 * Gets the mode of this CustomMob
 	 * 
 	 * @param size
 	 */
-	public int getSize() {
-		return size;
+	public int getMode() {
+		return mode;
 	}
-
+	
 	/**
 	 * Damages this CustomMob
 	 * 

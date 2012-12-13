@@ -140,7 +140,7 @@ public class TCEntityListener implements Listener {
 								//For 1.4.5 R0.3!++
 								//e.setRemoveWhenFarAway(false);							
 							
-							//CustomMobEquipment.setChestplate(e, new ItemStack(Material.DIAMOND_CHESTPLATE,1));
+								//CustomMobEquipment.setChestplate(e, new ItemStack(Material.LEATHER_CHESTPLATE,1));
 							
 							game.monsterSet.add(e);
 
