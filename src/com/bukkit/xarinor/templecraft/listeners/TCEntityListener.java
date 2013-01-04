@@ -59,7 +59,7 @@ public class TCEntityListener implements Listener {
 			return;
 		}
 		if (e.getType().equals(EntityType.PRIMED_TNT)) {
-			if(TempleManager.dropBlocks) {
+			if(TempleManager.dropDestroyedBlocks) {
 				return;
 			} else {
 				event.setYield(0);
@@ -136,12 +136,9 @@ public class TCEntityListener implements Listener {
 						if(event.getSpawnReason().equals(SpawnReason.CUSTOM) || event.getSpawnReason().equals(SpawnReason.SPAWNER) ||
 								event.getSpawnReason().equals(SpawnReason.SPAWNER_EGG) || event.getSpawnReason().equals(SpawnReason.SLIME_SPLIT) ||
 								event.getSpawnReason().equals(SpawnReason.BUILD_IRONGOLEM) ) {
-							
-								//For 1.4.5 R0.3!++
-								//e.setRemoveWhenFarAway(false);							
-							
-								//CustomMobEquipment.setChestplate(e, new ItemStack(Material.LEATHER_CHESTPLATE,1));
-							
+
+								e.setRemoveWhenFarAway(false);
+
 							game.monsterSet.add(e);
 
 							if(game instanceof Arena) {

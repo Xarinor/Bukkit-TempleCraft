@@ -13,7 +13,7 @@ import com.bukkit.xarinor.templecraft.TCUtils;
 import com.bukkit.xarinor.templecraft.Temple;
 import com.bukkit.xarinor.templecraft.TempleManager;
 import com.bukkit.xarinor.templecraft.TemplePlayer;
-import com.bukkit.xarinor.templecraft.util.MobArenaClasses;
+import com.bukkit.xarinor.templecraft.util.Classes;
 import com.bukkit.xarinor.templecraft.util.Translation;
 
 //TODO JavaDoc
@@ -34,7 +34,7 @@ public class PVP extends Game
 	public void playerJoin(Player p)
 	{	
 		super.playerJoin(p);
-		MobArenaClasses.clearInventory(p);
+		Classes.clearInventory(p);
 	}
 
 	public void startGame()

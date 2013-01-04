@@ -11,7 +11,9 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -24,7 +26,8 @@ import com.bukkit.xarinor.templecraft.Temple;
 import com.bukkit.xarinor.templecraft.TempleCraft;
 import com.bukkit.xarinor.templecraft.TempleManager;
 import com.bukkit.xarinor.templecraft.TemplePlayer;
-import com.bukkit.xarinor.templecraft.util.MobArenaClasses;
+import com.bukkit.xarinor.templecraft.custommobs.CustomMob;
+import com.bukkit.xarinor.templecraft.util.Classes;
 import com.bukkit.xarinor.templecraft.util.MobSpawnProperties;
 import com.bukkit.xarinor.templecraft.util.Translation;
 //import com.bukkit.xarinor.templecraft.custommobs.CustomMob;
@@ -97,9 +100,9 @@ public class Adventure extends Game {
 		}
 
 		if(Lines[1].toLowerCase().equals("classes")) {
-			if(MobArenaClasses.enabled) {
+			if(Classes.enabled) {
 				usingClasses = true;
-				MobArenaClasses.generateClassSigns(sign);
+				Classes.generateClassSigns(sign);
 			}
 		}
 		super.handleSign(sign);
@@ -167,14 +170,6 @@ public class Adventure extends Game {
 				}
 			}
 		}
-//		Set<Location> tempLocs = new HashSet<Location>();
-//		for(Location loc : mobSpawnpointMap.keySet()) {
-//			if (loc != null) {
-//				if(p.getLocation().distance(loc) < mobSpawnpointMap.get(loc).getRange()) {
-//					tempLocs.add(loc);
-//				}
-//		    }
-//		}
 		
 		// Haha got it finally ...  fail-fast iterator -Xari
 		for(Location loc : tempLocs) {
@@ -196,10 +191,10 @@ public class Adventure extends Game {
 	 */
 	public void onEntityKilledByEntity(LivingEntity killed, Entity killer)
 	{
-
 		super.onEntityKilledByEntity(killed, killer);
+		
 		TCUtils.sendDeathMessage(this, killed, killer);
-
+		
 		if(killer instanceof Player) {
 			if(mobGoldMap != null && mobGoldMap.containsKey(killed.getEntityId())) {
 				for(Player p : playerSet) {
@@ -208,6 +203,18 @@ public class Adventure extends Game {
 					if(TempleCraft.economy != null) {
 						TempleCraft.economy.depositPlayer(p.getName(), gold);
 					}
+				}
+			}
+		}
+		if (!(killed instanceof Player)) {
+			CustomMob cmob = mobManager.getMob(killed);
+			// First implementation of Boss-Redstone impulse for testing.
+			if (cmob != null && cmob.getSpawnProperties().isIsbossmob()){
+				Block spawnBlock = world.getBlockAt(cmob.getSpawnProperties().getLocation());
+				Block impulseBlock = spawnBlock.getRelative(0, -2, 0);
+				Block baseBlock = spawnBlock.getRelative(0, -3, 0);
+				if (impulseBlock.getType().equals(Material.AIR) && !baseBlock.getType().equals(Material.AIR)) {
+					impulseBlock.setType(Material.REDSTONE_TORCH_ON);
 				}
 			}
 		}

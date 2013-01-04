@@ -43,8 +43,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import net.minecraft.server.RegionFile;
-//import net.minecraft.server.v1_4_5.RegionFile;
+import net.minecraft.server.v1_4_6.RegionFile;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -77,12 +76,10 @@ public class WorldManager {
 		TempleCraft.TCPlugin.log.info("[TempleCraft] Try to init WorldManager!");
 		TCUtils.debugMessage("Try to init WorldManager.");
 		try {
-			//Field a = net.minecraft.server.v1_4_5.RegionFileCache.class.getDeclaredField("a");
-			Field a = net.minecraft.server.RegionFileCache.class.getDeclaredField("a");
+			Field a = net.minecraft.server.v1_4_6.RegionFileCache.class.getDeclaredField("a");
 			a.setAccessible(true);
 			regionfiles = (HashMap) a.get(null);
-			//rafField = net.minecraft.server.v1_4_5.RegionFile.class.getDeclaredField("c");
-			rafField = net.minecraft.server.RegionFile.class.getDeclaredField("c");
+			rafField = net.minecraft.server.v1_4_6.RegionFile.class.getDeclaredField("c");
 			rafField.setAccessible(true);
 			TempleCraft.TCPlugin.log.info("[TempleCraft] Successfully bound variable to region file cache.");
 			TempleCraft.TCPlugin.log.info("[TempleCraft] File references to unloaded worlds will be cleared!");
@@ -168,7 +165,6 @@ public class WorldManager {
 			if (Bukkit.getServer().getPluginManager().isPluginEnabled("Spout")) {
 				TempleCraft.TCPlugin.log.info("[TempleCraft] try to remove spout reference for '" + worldname + "'!");
 				//Close the friggin' meta streams!
-				// Haha sure thing! I like it -Xari
 				SimpleChunkDataManager manager = (SimpleChunkDataManager) SpoutManager.getChunkDataManager();
 				Field chunkstore = SimpleChunkDataManager.class.getDeclaredField("chunkStore");
 				chunkstore.setAccessible(true);

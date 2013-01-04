@@ -19,9 +19,10 @@ import org.bukkit.entity.Player;
 
 import com.bukkit.xarinor.templecraft.custommobs.CustomMobType;
 import com.bukkit.xarinor.templecraft.custommobs.CustomMobUtils;
+import com.bukkit.xarinor.templecraft.custommobs.EntityEffectHandler;
 import com.bukkit.xarinor.templecraft.games.Game;
 import com.bukkit.xarinor.templecraft.scoreboards.ScoreBoardManager;
-import com.bukkit.xarinor.templecraft.util.MobArenaClasses;
+import com.bukkit.xarinor.templecraft.util.Classes;
 import com.bukkit.xarinor.templecraft.util.Translation;
 
 /**
@@ -41,7 +42,7 @@ public class TempleManager {
 	public static ScoreBoardManager SBManager;
 	public static boolean isEnabled = true;
 	public static boolean checkUpdates;
-	public static boolean dropBlocks;
+	public static boolean dropDestroyedBlocks;
 	public static boolean constantWorldNames;
 	public static boolean manageInventory;
 	public static boolean allowunsafeEnchantments;
@@ -54,18 +55,25 @@ public class TempleManager {
 
 	// Configuration
 	public static File config = null;
-
-	// A Map of which temples are being edited in which World
 	public static Map<String,World> templeEditMap = new HashMap<String,World>();
 	public static Map<Player,TemplePlayer> templePlayerMap = new HashMap<Player,TemplePlayer>();
 	public static Set<Temple> templeSet = new HashSet<Temple>();
 	public static Set<Game> gameSet = new HashSet<Game>();
 	public static Set<Player> playerSet = new HashSet<Player>();
 	public static Set<CustomMobType> BossTypeSet = new HashSet<CustomMobType>();
+	//Place-/Breakable Materials
 	public static Set<Integer> breakable = new HashSet<Integer>();	
-	public static Set<Integer> placeable = new HashSet<Integer>();	
+	public static Set<Integer> placeable = new HashSet<Integer>();
 	public static String breakableMats;
 	public static String placeableMats;
+	//Item Pickup/Dropping
+	public static boolean playerItemDrop;
+	public static boolean playerItemPickup;
+	public static Set<Integer> dropException = new HashSet<Integer>();
+	public static Set<Integer> pickUpException = new HashSet <Integer>();
+	public static String itemDropExceptions;
+	public static String itemPickupExceptions;
+	//GoldDrops
 	public static String goldPerMob;
 
 	// Adventure is the basic mode. race, spleef and pvp are not 100% supported.
@@ -102,13 +110,17 @@ public class TempleManager {
 			// Configuration
 			hitEndwaitingtime		= TCUtils.getInt(config, "settings.hitendwaitingtime", 5);
 			repairDelay				= TCUtils.getInt(config, "settings.repairdelay", 5);
-			maxEditWorlds			= TCUtils.getInt(config, "settings.maxeditworlds", 2);
+			maxEditWorlds			= TCUtils.getInt(config, "settings.maxeditworlds", 1);
 			maxTemplesPerPerson		= TCUtils.getInt(config, "settings.maxtemplesperperson", 1);
 			rejoinCost				= TCUtils.getInt(config, "settings.rejoincost", 0);
 			breakableMats			= TCUtils.getString(config, "settings.breakablemats", "46,82");
 			placeableMats			= TCUtils.getString(config, "settings.placeablemats", "31,37,38,39,40");
-			goldPerMob				= TCUtils.getString(config, "settings.goldpermob", "5-10");
-			dropBlocks				= TCUtils.getBoolean(config, "settings.dropblocks", false);
+			playerItemDrop			= TCUtils.getBoolean(config, "settings.playerdropitems", false);
+			playerItemPickup		= TCUtils.getBoolean(config, "settings.playerpickupitems", true);
+			itemDropExceptions		= TCUtils.getString(config, "settings.itemdropexceptions", "50,55,69,70,72,75,76,77,82,93,94,331,387");
+			itemPickupExceptions	= TCUtils.getString(config, "settings.itempickupexceptions", "");
+			goldPerMob				= TCUtils.getString(config, "settings.goldpermob", "0");
+			dropDestroyedBlocks		= TCUtils.getBoolean(config, "settings.dropdestroyedblocks", false);
 			constantWorldNames		= TCUtils.getBoolean(config, "settings.constantworldnames", false);
 			manageInventory			= TCUtils.getBoolean(config, "settings.manageinventory", true);
 			allowunsafeEnchantments	= TCUtils.getBoolean(config, "settings.allowunsafeenchantments", false);
@@ -267,6 +279,7 @@ public class TempleManager {
 			return;
 		}
 		p.setFireTicks(0);
+		EntityEffectHandler.removeAllPotionEffects(p);
 		tp.currentTemple = null;
 		tp.currentGame = null;
 		tp.currentCheckpoint = null;
@@ -276,7 +289,7 @@ public class TempleManager {
 			game.playerSet.remove(p);
 		}
 		playerSet.remove(p);
-		MobArenaClasses.classMap.remove(p);
+		Classes.classMap.remove(p);
 
 		if(TCUtils.hasPlayerInventory(p.getName())) {
 			TCUtils.restorePlayerInventory(p);
@@ -330,6 +343,7 @@ public class TempleManager {
 	/**
 	 * Load terrain generators
 	 * Handles breakable and placeable blocks
+	 * Handles player's item drops and pickup
 	 */
 	private static void loadMisc() {
 		// Handles Chunk Generator Folder
@@ -366,6 +380,22 @@ public class TempleManager {
 			s = s.trim();
 			if(!s.isEmpty()) {
 				placeable.add(Integer.parseInt(s));
+			}
+		}
+		
+		//Handles what is droppable by players
+		for(String s : itemDropExceptions.split(",")) {
+			s = s.trim();
+			if(!s.isEmpty()) {
+				dropException.add(Integer.parseInt(s));
+			}
+		}
+		
+		//Handles what is droppable by players
+		for(String s : itemPickupExceptions.split(",")) {
+			s = s.trim();
+			if(!s.isEmpty()) {
+				dropException.add(Integer.parseInt(s));
 			}
 		}
 	}

@@ -92,7 +92,7 @@ public class TCBlockListener implements Listener {
 		}
 
 		if (TempleManager.breakable.contains(b.getTypeId())) {
-			if (TempleManager.dropBlocks == false) {
+			if (TempleManager.dropDestroyedBlocks == false) {
 					event.getBlock().setTypeId(0);
 			}
 			cancel = false;
@@ -145,7 +145,7 @@ public class TCBlockListener implements Listener {
 			return;
 		}
 
-		if(TempleManager.dropBlocks && !cancel) {
+		if(TempleManager.dropDestroyedBlocks && !cancel) {
 			return;
 		}
 

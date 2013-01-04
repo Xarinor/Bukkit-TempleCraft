@@ -140,7 +140,7 @@ public class MobSpawnProperties {
 	public int getRange() {
 		return range;
 	}
-
+	
 	/**
 	 * Sets an entities health
 	 * 
@@ -247,41 +247,5 @@ public class MobSpawnProperties {
 	 */
 	public void setIsbossmob(boolean isbossmob) {
 		this.isbossmob = isbossmob;
-	}
-	
-	/**
-	 * Gets abilities_random
-	 * 
-	 * @return
-	 */
-	public List<Pair<CustomMobAbility,Integer>> getAbilities_random() {
-		return abilities_random;
-	}
-
-	/**
-	 * Sets abilities_random
-	 * 
-	 * @param abilities_random
-	 */
-	public void setAbilities_random(List<Pair<CustomMobAbility,Integer>> abilities_random) {
-		this.abilities_random = abilities_random;
-	}
-
-	/**
-	 * Gets abilities_rotation
-	 * 
-	 * @return
-	 */
-	public List<Pair<CustomMobAbility,Integer>> getAbilities_rotation() {
-		return abilities_rotation;
-	}
-
-	/**
-	 * Sets abilities_rotation
-	 * 
-	 * @param abilities_rotation
-	 */
-	public void setAbilities_rotation(List<Pair<CustomMobAbility,Integer>> abilities_rotation) {
-		this.abilities_rotation = abilities_rotation;
 	}
 }

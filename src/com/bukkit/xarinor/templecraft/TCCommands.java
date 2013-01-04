@@ -108,7 +108,7 @@ public class TCCommands implements CommandExecutor {
 			// If player
 			} else {
 			Player p = (Player) sender;
-			if(TCPermissionHandler.hasPermission(p, "templecraft.clean")) {
+			if(TCPermissionHandler.hasPermission(p, "templecraft.reload")) {
 				p.sendMessage("[" + plugin.getDescription().getName() + "] Templecraft reloaded");
 			}
 		}

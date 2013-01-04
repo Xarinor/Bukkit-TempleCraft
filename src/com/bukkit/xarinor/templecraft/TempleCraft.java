@@ -31,7 +31,7 @@ import com.bukkit.xarinor.templecraft.listeners.TCEntityListener;
 import com.bukkit.xarinor.templecraft.listeners.TCPlayerListener;
 import com.bukkit.xarinor.templecraft.listeners.TCTeleportListener;
 import com.bukkit.xarinor.templecraft.listeners.TCWorldListener;
-import com.bukkit.xarinor.templecraft.util.MobArenaClasses;
+import com.bukkit.xarinor.templecraft.util.Classes;
 import com.bukkit.xarinor.templecraft.util.Translation;
 import com.bukkit.xarinor.templecraft.util.WorldManager;
 import com.herocraftonline.heroes.Heroes;
@@ -133,7 +133,7 @@ public class TempleCraft extends JavaPlugin {
 		// Bind the /tct command to MACommands.
 		getCommand("tct").setExecutor(new TCCommands(this));
 
-		pm.registerEvents(new MobArenaClasses(this), this);
+		pm.registerEvents(new Classes(this), this);
 		pm.registerEvents(new TCBlockListener(), this);
 		// TODO Test
 		//pm.registerEvents(new TCChunkListener(), this);
