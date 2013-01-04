@@ -14,8 +14,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -407,7 +409,41 @@ public class TCPlayerListener implements Listener {
 			game.tempBlockSet.add(liquid);
 		}
 	}
-
+	
+	/**
+	 * Dropping Items on the ground
+	 * 
+	 * @param event - Item Drop Event
+	 */
+	@EventHandler
+	public void onPlayerDropItem (PlayerDropItemEvent event) {
+		Player p = event.getPlayer();
+		if (!TempleManager.playerSet.contains(p)) {
+			return;
+		}
+		int i = event.getItemDrop().getItemStack().getTypeId();
+		if ((TempleManager.playerItemDrop == false && !TempleManager.dropException.contains(i)) || (TempleManager.playerItemDrop == true && TempleManager.dropException.contains(i))) {
+			event.setCancelled(true);
+		}
+	}
+	
+	/**
+	 * Picking Up Items from the ground
+	 * 
+	 * @param event - Item Pickup Event
+	 */
+	@EventHandler
+	public void onPlayerPickUpItem (PlayerPickupItemEvent event) {
+		Player p = event.getPlayer();
+		if (!TempleManager.playerSet.contains(p)) {
+			return;
+		}
+		int i = event.getItem().getItemStack().getTypeId();
+		if ((TempleManager.playerItemPickup == false && !TempleManager.pickUpException.contains(i)) || (TempleManager.playerItemPickup == true && TempleManager.pickUpException.contains(i))) {
+			event.setCancelled(true);
+		}		
+	}
+	
 	/**
 	 * Taming the beast
 	 * 

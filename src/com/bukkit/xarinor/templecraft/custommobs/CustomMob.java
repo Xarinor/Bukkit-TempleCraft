@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 
 import com.bukkit.xarinor.templecraft.TCUtils;
 import com.bukkit.xarinor.templecraft.util.MobSpawnProperties;
@@ -80,8 +81,8 @@ public class CustomMob{
 	 * @param health -Health amount
 	 */
 	public void setHealth(int health) {
-		this.health = health;
-		this.maxhealth = health;
+			this.health = health;
+			this.maxhealth = health;
 	}
 
 	/**
@@ -146,8 +147,10 @@ public class CustomMob{
 			health -= value;
 			if (health <= 0) {
 				this.dead = true;
-				//entity.damage(entity.getMaxHealth());	
-				//livingEntity.damage(livingEntity.getMaxHealth());				
+				if (entity instanceof LivingEntity) {
+					LivingEntity livingEntity = (LivingEntity)entity;
+					livingEntity.damage(livingEntity.getMaxHealth());
+				}
 			}
 		}
 	}

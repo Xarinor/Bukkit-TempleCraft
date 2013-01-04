@@ -41,6 +41,8 @@ import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Ghast;
 import org.bukkit.entity.MagmaCube;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Bat;
 
@@ -1354,6 +1356,7 @@ public class TCUtils {
 	public static void sendDeathMessage(Game game, Entity entity, Entity entity2) {
 
 		String msg = "";
+		
 		String killed = getDisplayName(entity);
 		String killer = getDisplayName(entity2); 	
 
@@ -1361,7 +1364,6 @@ public class TCUtils {
 			String s = entity.getLastDamageCause().getCause().name().toLowerCase();
 			killer = s.substring(0,1).toUpperCase().concat(s.substring(1, s.length()));
 		}
-
 		for(Player p: game.playerSet) {
 			msg = Translation.tr("killMessage", killer, killed);
 
@@ -1381,7 +1383,7 @@ public class TCUtils {
 	 * Get the display name of a entity
 	 * For entities with strange, buggy or missing names there is a small name-fix
 	 * 
-	 * TODO Boss Names?
+	 * TODO Boss Names? !
 	 * 
 	 * @param entity
 	 * @return
@@ -1405,21 +1407,23 @@ public class TCUtils {
 		if(entity instanceof EnderDragon) {
 			return "Ender Dragon";
 		}
-		if(entity instanceof Ghast)
-		{
+		if(entity instanceof Ghast) {
 			return "Ghast";
 		}
-		if(entity instanceof MagmaCube)
-		{
+		if(entity instanceof MagmaCube) {
 			return "Magma Cube";
 		}
-		if(entity instanceof Slime)
-		{
+		if(entity instanceof Slime) {
 			return "Slime";
 		}
-		if(entity instanceof Bat)
-		{
+		if(entity instanceof Bat) {
 			return "Bat";
+		}
+		if(entity instanceof Skeleton) {
+			Skeleton e = (Skeleton)entity;
+			if (e.getSkeletonType() == SkeletonType.WITHER) {
+				return "Wither Skeleton";
+			}
 		}
 		return "";
 	}
@@ -1658,11 +1662,8 @@ public class TCUtils {
 	 * @param entity The entity whose target to get
 	 * @return The target player, or null
 	 * 
-	 * TODO living!!
-	 * public static Entity getTarget(Entity entity) ?
 	 * 
 	 */
-	//public static LivingEntity getTarget(LivingEntity entity) {
 	public static Entity getTarget(Entity entity) {
 		if (entity instanceof Creature) {
 			//LivingEntity target = null;

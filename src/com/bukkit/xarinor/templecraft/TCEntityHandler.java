@@ -1,33 +1,33 @@
 package com.bukkit.xarinor.templecraft;
 
 
-import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Chicken;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.IronGolem;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.MagmaCube;
 import org.bukkit.entity.Pig;
+import org.bukkit.entity.PigZombie;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Zombie;
-//import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Wolf;
+import org.bukkit.inventory.ItemStack;
 
 import com.bukkit.xarinor.templecraft.custommobs.CustomMob;
-import com.bukkit.xarinor.templecraft.custommobs.CustomMobAbility;
 import com.bukkit.xarinor.templecraft.games.Game;
 import com.bukkit.xarinor.templecraft.tasks.AbilityTask;
 import com.bukkit.xarinor.templecraft.tasks.SpawnTask;
 import com.bukkit.xarinor.templecraft.util.MobSpawnProperties;
-import com.bukkit.xarinor.templecraft.util.Pair;
 /**
 * TCEntityHandler.java
 * This work is dedicated to the public domain.
@@ -94,9 +94,13 @@ public class TCEntityHandler {
 						Skeleton skeleton = (Skeleton) e;
 						if (msp.getMode() == 1) {
 							skeleton.setSkeletonType(SkeletonType.WITHER);
+							((Skeleton) e).getEquipment().setItemInHand(new ItemStack(Material.STONE_SWORD,1));
 						} else {
 							skeleton.setSkeletonType(SkeletonType.NORMAL);
+							((Skeleton) e).getEquipment().setItemInHand(new ItemStack(Material.BOW,1));
 						}
+					} if(e instanceof PigZombie) {
+						((PigZombie) e).getEquipment().setItemInHand(new ItemStack(Material.GOLD_SWORD,1));
 					} if (e instanceof Zombie){
 						Zombie zombie = (Zombie) e;
 						if (msp.getMode() == 1) {
@@ -134,11 +138,12 @@ public class TCEntityHandler {
 							sheep.setBaby();
 						}
 					}
-
-					if(msp.getHealth() > 0) {
-						cmob.setHealth(msp.getHealth());
+					int health = msp.getHealth();
+					if(health <= 0 && e instanceof LivingEntity) {
+						LivingEntity livingEntity = (LivingEntity)e;
+						health = livingEntity.getMaxHealth();
 					}
-					
+					cmob.setHealth(health);
 					game.mobManager.AddMob(cmob);
 					
 					if(!(e instanceof Creature)) {
@@ -187,9 +192,13 @@ public class TCEntityHandler {
 				Skeleton skeleton = (Skeleton) e;
 				if (msp.getMode() == 1) {
 					skeleton.setSkeletonType(SkeletonType.WITHER);
+					((Skeleton) e).getEquipment().setItemInHand(new ItemStack(Material.STONE_SWORD,1));
 				} else {
 					skeleton.setSkeletonType(SkeletonType.NORMAL);
+					((Skeleton) e).getEquipment().setItemInHand(new ItemStack(Material.BOW,1));
 				}
+			} if(e instanceof PigZombie) {
+				((PigZombie) e).getEquipment().setItemInHand(new ItemStack(Material.GOLD_SWORD,1));
 			} if (e instanceof Zombie){
 				Zombie zombie = (Zombie) e;
 				if (msp.getMode() == 1) {
@@ -228,8 +237,9 @@ public class TCEntityHandler {
 				}
 			}
 
-			if(health <= 0) {
-				health = cmob.getMaxHealth();
+			if(health <= 0 && e instanceof LivingEntity) {
+				LivingEntity livingEntity = (LivingEntity)e;
+				health = livingEntity.getMaxHealth();
 			}
 			cmob.setHealth(health);
 			cmob.setDMGMultiplikator(dmgmulti);

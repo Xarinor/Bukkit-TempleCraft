@@ -98,7 +98,7 @@ public class TCCommands implements CommandExecutor {
 			return true;
 		}
 		// reload
-		if (args[0].equalsIgnoreCase("reload")) {
+		if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
 			plugin.getServer().getPluginManager().disablePlugin(plugin);
 			plugin.getServer().getPluginManager().enablePlugin(plugin);
 			plugin.reloadConfig();
@@ -108,7 +108,7 @@ public class TCCommands implements CommandExecutor {
 			// If player
 			} else {
 			Player p = (Player) sender;
-			if(TCPermissionHandler.hasPermission(p, "templecraft.clean")) {
+			if(TCPermissionHandler.hasPermission(p, "templecraft.reload")) {
 				p.sendMessage("[" + plugin.getDescription().getName() + "] Templecraft reloaded");
 			}
 		}

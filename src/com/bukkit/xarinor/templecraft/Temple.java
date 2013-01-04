@@ -128,7 +128,6 @@ public class Temple {
 		if(world != null && TempleManager.constantWorldNames) {
 			return null;
 		}
-		//TODO Try harder?
 		if(world != null && !TCUtils.deleteTempWorld(world)) {
 			return null;
 		}
@@ -170,41 +169,42 @@ public class Temple {
 			}
 		}
 
+		
 		// if the tcf file doesn't exist
 		if(TCRestore.loadTemple(worldName, this) || !tcffile.exists()) {
 			try {
+				//Create Wolrd files
+				result = TempleManager.server.createWorld(wc);
+				
+				// Code to prevent the dublicated World error causing the world to not load.				
+				File uid = new File(worldName+"/uid.dat");
+				if (uid.exists()) {
+						uid.delete();
+				}
+				
+				// Reload Created world without the lock
 				result = TempleManager.server.createWorld(wc);
 				
 				if(TempleCraft.MVWM != null) {
 					TempleCraft.MVWM.addWorld(result.getName(), result.getEnvironment(), Long.toString(result.getSeed()), result.getWorldType(), false, null, true);
 				}
-				//TODO Check if default Cat works
-				/*if(TempleCraft.catacombs != null)
-				{
-					TempleCraft.catacombs.loadWorld(result.getName());
-				}*/
 				System.out.println("[TempleCraft] World \""+worldName+"\" Loaded!");
 			} catch (Exception e) {
 				System.out.println("[TempleCraft] World \""+worldName+"\" could not be loaded!");
 				e.printStackTrace();
 			}
 		} else if(type.equals("Edit") || type.equals("Convert")) {
-			//TODO Check
-			/*File file = new File("plugins/TempleCraft/SavedTemples/"+templeName);
+			// I re-enabled this because of the generator being lost over more then 1 use of the temple.
+			File file = new File("plugins/TempleCraft/SavedTemples/"+templeName);
 			file.mkdir();
 			TCUtils.copyFromJarToDisk("Flat1.jar", file);
 			ChunkGeneratorFile = new File("plugins/TempleCraft/SavedTemples/"+templeName+"/Flat1.jar");
 			ChunkGenerator cg = TCRestore.getChunkGenerator(ChunkGeneratorFile);
-			wc.generator(cg);*/
+			wc.generator(cg);
 			result = TempleManager.server.createWorld(wc);
 			if(TempleCraft.MVWM != null) {
 				TempleCraft.MVWM.addWorld(result.getName(), result.getEnvironment(), Long.toString(result.getSeed()), result.getWorldType(), false, null, true);
 			}
-			//TODO Check
-			/*if(TempleCraft.catacombs != null)
-			{
-				TempleCraft.catacombs.loadWorld(result.getName());
-			}*/
 			TCRestore.loadTemple(new Location(result,0,0,0), this);
 		} else {
 			return null;

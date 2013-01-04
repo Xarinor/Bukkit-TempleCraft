@@ -43,7 +43,8 @@ import com.bukkit.xarinor.templecraft.custommobs.CustomMob;
 import com.bukkit.xarinor.templecraft.custommobs.CustomMobType;
 import com.bukkit.xarinor.templecraft.custommobs.CustomMobUtils;
 import com.bukkit.xarinor.templecraft.custommobs.MobManager;
-import com.bukkit.xarinor.templecraft.util.MobArenaClasses;
+import com.bukkit.xarinor.templecraft.custommobs.EntityEffectHandler;
+import com.bukkit.xarinor.templecraft.util.Classes;
 import com.bukkit.xarinor.templecraft.util.MobSpawnProperties;
 import com.bukkit.xarinor.templecraft.util.Pair;
 import com.bukkit.xarinor.templecraft.util.Translation;
@@ -93,7 +94,6 @@ public class Game {
 
 	// Contains Active Mob Spawnpoints and Creature Types
 	public Map<Location,MobSpawnProperties> mobSpawnpointMap	 = new HashMap<Location,MobSpawnProperties>();
-//	public Map<Location,MobSpawnProperties> mobSpawnpointConstantMap	 = new HashMap<Location,MobSpawnProperties>();
 	public Map<Integer, Integer> mobGoldMap			= new HashMap<Integer, Integer>();
 	public Map<Location, Integer> checkpointMap		= new HashMap<Location, Integer>();
 	public Map<Location, String[]> chatMap			 = new HashMap<Location, String[]>();
@@ -156,6 +156,7 @@ public class Game {
 	/**
 	 * Starts the game.
 	 */
+	@SuppressWarnings("deprecation")
 	public void startGame() {		
 		isRunning = true;
 		startTime = System.currentTimeMillis();
@@ -831,7 +832,7 @@ public class Game {
 		TemplePlayer tp = TempleManager.templePlayerMap.get(player);
 
 		deadSet.add(player);
-		MobArenaClasses.classMap.remove(player);
+		Classes.classMap.remove(player);
 		tp.tempSet.clear();
 		tp.roundDeaths++;
 
@@ -848,10 +849,17 @@ public class Game {
 		player.setFoodLevel(20);
 		player.setTotalExperience(0);
 		player.setFireTicks(0);
+		EntityEffectHandler.removeAllPotionEffects(player);
 
 		if(maxdeaths > -1 && tp.roundDeaths > maxdeaths) {
 			TempleManager.playerLeave(player);
 		}
+		
+		// Since 1.4.6 there is a fundamental change that caused trouble
+		// If someone sees another easyer way on fixing it please get in contact with me
+		// -Xari
+		lobbyLoc.getChunk().load(true);
+		player.teleport(lobbyLoc);
 	}
 
 	/**
@@ -1141,7 +1149,7 @@ public class Game {
 		}
 
 		TemplePlayer tp = TempleManager.templePlayerMap.get(player);
-		if(!usingClasses || MobArenaClasses.classMap.containsKey(player)) {
+		if(!usingClasses || Classes.classMap.containsKey(player)) {
 			if(!isRunning) {
 				tellPlayer(player, Translation.tr("game.ready"));
 				tp.team = team;

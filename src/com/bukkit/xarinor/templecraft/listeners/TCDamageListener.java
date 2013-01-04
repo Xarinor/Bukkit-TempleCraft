@@ -15,6 +15,7 @@ import com.bukkit.xarinor.templecraft.TempleCraft;
 import com.bukkit.xarinor.templecraft.TempleManager;
 import com.bukkit.xarinor.templecraft.TemplePlayer;
 import com.bukkit.xarinor.templecraft.custommobs.CustomMob;
+import com.bukkit.xarinor.templecraft.custommobs.EntityEffectHandler;
 import com.bukkit.xarinor.templecraft.games.Arena;
 import com.bukkit.xarinor.templecraft.games.Game;
 
@@ -44,14 +45,6 @@ public class TCDamageListener implements Listener {
 	 */
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
-		if (TCUtils.isTCEditWorld(event.getEntity().getWorld())) {
-			if(event.getEntity() instanceof Player) {
-				Player p = (Player)event.getEntity();
-				event.setCancelled(true);
-				p.setFireTicks(0);
-				return;
-			}
-		}
 
 		if (!TCUtils.isTCWorld(event.getEntity().getWorld())) {
 			return;
@@ -63,6 +56,7 @@ public class TCDamageListener implements Listener {
 			// If the player is dead or the game isn't running, the player can't take damage
 			if(game != null && (game.deadSet.contains(p) || !game.isRunning)) {
 				p.setFireTicks(0);
+				EntityEffectHandler.removeAllPotionEffects(p);
 				event.setCancelled(true);
 				return;
 			}

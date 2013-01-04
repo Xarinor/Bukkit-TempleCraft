@@ -1,5 +1,5 @@
 name: TempleCraft
-version: 0.46.7
+version: 0.46.11
 author: Xarinor
 authors: [Bootscreen,Mike Singleton,Timirvin]
 main: com.bukkit.xarinor.templecraft.TempleCraft
@@ -122,6 +122,12 @@ permissions:
 # Other Commands
     templecraft.checkupdates:
         description: Allows Checking for Updates.
+        default: op
+    templecraft.reload:
+        description: Reloads Templecraft
+        default: op
+    templecraft.clean:
+        description: Try to remove unused worlds.
         default: op
     templecraft.placesigns:
         description: Allows placing signs for TempleCraft purposes.

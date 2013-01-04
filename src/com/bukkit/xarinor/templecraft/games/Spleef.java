@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 
 import com.bukkit.xarinor.templecraft.TCUtils;
 import com.bukkit.xarinor.templecraft.Temple;
-import com.bukkit.xarinor.templecraft.util.MobArenaClasses;
+import com.bukkit.xarinor.templecraft.util.Classes;
 
 //TODO JavaDoc
 public class Spleef extends Game
@@ -36,7 +36,7 @@ public class Spleef extends Game
 	public void playerJoin(Player p)
 	{	
 		super.playerJoin(p);
-		MobArenaClasses.clearInventory(p);
+		Classes.clearInventory(p);
 		TCUtils.debugMessage("Player " + p.getName() + " joined Temple " + temple.templeName + ", Game " + gameName + "(" + gameType + ").");
 	}
 
