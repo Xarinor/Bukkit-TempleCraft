@@ -1,0 +1,121 @@
+version=1
+enableMessage=[%s] La version %s est activee.
+diableMessage=[%s] La version %s est désactivée.
+notEnabled=TempleCraft n'est pas active.
+permissionsFound=%s a été trouve et sera utilise
+permissionsUnavailable=Aucun système de permission trouver, mode OP utilise
+comandDisabled=Vous ne pouvez pas utiliser cette commande dans un temple
+
+joinFail=Tous les temples sont utilises ou ont été desactives, essayez plus tard.
+mustBeEditing=Vous devez editer un temple pour utiliser cette commande.
+mustBeOwner=Seul le proprietaire de ce temple peut utiliser cette commande.
+mustLeaveTemple=Quitter ce temple avant de vouloir en editer un autre.
+
+nameFail=Vous pouvez nommer un temple seulement avec des chiffres ou des lettres.
+saveFail=Vous n'editez pas de temple.
+noTemplesAvailable=Aucun temple disponible.
+noGamesAvailable=Aucune partie disponible.
+gameInProgress=%s: [RED]en cours
+gameInLobby=%s: [GREEN]Dans le Lobby
+
+editTempleFail=Impossible d'editer le templs pour le moment.
+newTemple=Tentative de creation du temple %s...
+templeSave=Sauvegarde du temple... 
+templeSaved=Temple Sauvegarder
+preparingTemple=Preparation de %s... 
+templeList=[GREEN]Liste des temples:
+templeAE= Le temple %s existe déjà
+templeDNE=Le temple %s n'existe pas
+templesEmpty=Il n'y a personne dans un temple.
+templeFull=Le temple %s est a pleine capacite
+templeListSetup=[WHITE]%s: [GREEN]Configurer
+templeListNotSetup=[WHITE]%s: [RED]Non Configurer
+templeNowSetup=%s est [DARK_GREEN]maintenant configurer
+templeNoLongerSetup=%s n'est [DARK_RED]plus configurer
+templeNotSetup=%s n'est [DARK_RED]pas encore configurer
+templeInUse=Le temple %s est en cours d'utilisation.
+convertingTemple=Conversion de %s...
+convertingComplete=Temples convertis
+templeDeleted=Le temple %s est effacer
+templeRenamed=Le temple %s a été renommer: %s
+templeMaxPlayersSet=Le temple %s a maintenant un maximum de %d joueurs
+maxTemplesOwned=Vous avez déjà le maximum de temples permis.
+invalidInteger=Argument invalide pour ce nombre entier.
+incorrectArguments=Nombre incorrect d'arguments.
+
+newGame=Creation d'une nouvelle partie... 
+newGameFail=Impossible de créer une partie pour l'instant.
+gameDNE=Il n'existe aucune partie ayant comme nom %s
+modeDNE=Le mode %s n'existe pas
+
+checkForUpdatesFail=La connexion a TempleCraft a echouee.
+upToDate=Votre version de templecraft est a jours!
+notUpToDate=Il y a une nouvelle version de TempleCraft de disponible!
+
+killMessage=%s [RED]a tue [WHITE]%s
+
+worldConverted=Monde converti en temple nomme: %s
+
+playerNotFound=Joueur non trouver.
+playerAdded=%s a été ajoute a %s.
+playerAlreadyAdded=%s a déjà acces a ce temple.
+playerRemoved=%s a été retiré de %s.
+playerAlreadyRemoved=%s n'a pas acces a %s.
+cantEdit=Vous n'avez pas la permission d'editer ce temple.
+
+adventure.rejoin1=Cout pour continuer a jouer: [GOLD]%d %s.
+"adventure.rejoin2=Ou taper ""/tct leave"" et recommencer du debut!"
+adventure.rejoinFail1=Vous n'avez pas assez de %s pour rejoindre la partie.
+"adventure.rejoinFail2=Tapez ""/tct leave"" pour quitter le temple."
+
+game.created=La partie %s a été créer
+game.start=Que la partie commence!
+game.finished=%s terminer en %s
+game.finishTime=Vous avez terminer en %s secondes!
+game.ready=Vous etes maintenant prêt a commencer!
+game.readyToLeave=Vous etes prêt a quitter la partie!
+game.team=Vous avez demande de rejoindre l'equipe %s.
+game.alreadyPlaying=Vous jouez déjà dans un autre temple!
+game.alreadyPlayingSame=Vous jouez deja!
+game.inProgress=Partie %s en cours.
+game.allInProgress=Toutes les parties sont en cours ou pleine.
+game.isFull=La partie %s est pleine.
+game.everyoneReady=Tout le monde est prêt dans %s.
+game.join=Vous avez joint %s. Have fun!
+game.plist=[GRAY]Joue dans %s: [WHITE]%s 
+game.rlist=[GRAY]N'est pas prêt dans %s: [WHITE]%s 
+game.forceStartFail=Aucun joueur prêt, ne peut forcer le demarrage.
+game.forcedStart=Demarrage forcer de la partie.
+game.forcedEnd=Demarrage forcer terminer.
+game.transaction=[GOLD]%d %s [WHITE]a été retirer de votre compte.
+game.pickAClass=Vous devez choisir une classe premierement!
+game.emptyTreasureFound=%s a trouver un tresor vide!
+game.treasureFound=%s a trouvé un tresor!
+game.treasureMessage=Voux recevrez %s si vous sortez d'ici vivant!
+game.treasureReceived=Voux avez recu %s pour avoir completer ce temple!
+game.checkpoint=Checkpoint franchi!
+and=et
+game.message=Message
+
+race.personalHighscore=Vous avez battu votre record!
+race.overallHighscore=Vous avez battu le record!
+race.seconds=secondes
+
+blockListener.cantBreakSB=Vous n'avez pas la permission de detruire le TCScoreBoards.
+blockListener.cantBreakSBB=Ce bloc est proteger par %s
+blockListener.cantPlaceEntrance=Vous n'avez pas la permission de placer des entrer de temple.
+
+playerListener.entranceFound=Vous avez decouvert une entree de temple!! Rester ici pour entrer!
+playerListener.denyHelmet=Vous ne pouvez pas enlever votre casque.
+enteringTemple=Entrera dans le temple dans %d... 
+
+"teleportListener.deny=Ne peut quitter le temple! Pour quitter, tapez ""/tct leave"""
+
+classes.selectClass=Frappez la pancarte pour choisir votre classe.
+classes.classChosen=Vous avez choisi %s comme classe!
+
+findingSigBlocks=Finding Significant Blocks from %s to %s... 
+foundSigBlocks=Vous avez trouver %d %s
+done=Terminer.
+
+pvp.win=%s [WHITE]a gagne!!
