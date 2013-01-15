@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 
 
 import com.bukkit.xarinor.templecraft.custommobs.CustomMobType;
-import com.bukkit.xarinor.templecraft.custommobs.CustomMobUtils;
+import com.bukkit.xarinor.templecraft.custommobs.TCEntityUtils;
 import com.bukkit.xarinor.templecraft.custommobs.EntityEffectHandler;
 import com.bukkit.xarinor.templecraft.games.Game;
 import com.bukkit.xarinor.templecraft.scoreboards.ScoreBoardManager;
@@ -132,7 +132,7 @@ public class TempleManager {
 			loadCustomTemples();
 			SBManager = new ScoreBoardManager();
 			
-			CustomMobUtils.loadBosses();
+			TCEntityUtils.loadBosses();
 		}
 	}
 

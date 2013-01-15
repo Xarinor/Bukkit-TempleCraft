@@ -64,7 +64,7 @@ import com.bukkit.xarinor.templecraft.TempleCraft;
 * @author bergerkiller
 */
 @SuppressWarnings("rawtypes")
-public class WorldManager {
+public class WorldManagerUnusedForSafeguard {
 	private static HashMap regionfiles;
 	private static Field rafField;
 	

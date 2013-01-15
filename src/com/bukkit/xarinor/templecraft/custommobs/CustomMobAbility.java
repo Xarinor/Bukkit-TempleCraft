@@ -136,9 +136,8 @@ public enum CustomMobAbility {
 					return;
 				}
 				// Only visual explosion
-				//TODO 1.4.5 R3.0+
-				//p.getWorld().createExplosion(p.getLocation().getX(),p.getLocation().getY(),p.getLocation().getZ(),1,true,false);
-				p.getWorld().createExplosion(p.getLocation(), -1);
+				p.getWorld().createExplosion(p.getLocation().getX(),p.getLocation().getY(),p.getLocation().getZ(),2,false,false);
+				//p.getWorld().createExplosion(p.getLocation(), -1);
 				// Punish further players
 				for (Player nearby : TCUtils.getNearbyPlayers(p,4)) {
 					if (!game.deadSet.contains(nearby)) {

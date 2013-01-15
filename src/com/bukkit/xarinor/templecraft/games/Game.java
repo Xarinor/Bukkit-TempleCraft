@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
-//TODO TESTING
 import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -41,7 +40,7 @@ import com.bukkit.xarinor.templecraft.TempleManager;
 import com.bukkit.xarinor.templecraft.TemplePlayer;
 import com.bukkit.xarinor.templecraft.custommobs.CustomMob;
 import com.bukkit.xarinor.templecraft.custommobs.CustomMobType;
-import com.bukkit.xarinor.templecraft.custommobs.CustomMobUtils;
+import com.bukkit.xarinor.templecraft.custommobs.TCEntityUtils;
 import com.bukkit.xarinor.templecraft.custommobs.MobManager;
 import com.bukkit.xarinor.templecraft.custommobs.EntityEffectHandler;
 import com.bukkit.xarinor.templecraft.util.Classes;
@@ -324,6 +323,7 @@ public class Game {
 				Block rb2 = b.getRelative(0,1,0);
 				if(rb2.getType().equals(Material.WOOL)) {
 					startLocMap.put(rb.getLocation(), (int)rb2.getData());
+					rb2.setTypeId(0);
 				} else {
 					startLocMap.put(rb.getLocation(), -1);
 				}
@@ -389,9 +389,9 @@ public class Game {
 
 		if(Lines[0].equals("[TCB]")) {
 			// Predefined custom boss
-			if(CustomMobUtils.bossTypeExists(Lines[1]))
+			if(TCEntityUtils.bossTypeExists(Lines[1]))
 			{
-				CustomMobType cmt = CustomMobUtils.getBoss(Lines[1]);
+				CustomMobType cmt = TCEntityUtils.getBoss(Lines[1]);
 				Location loc = new Location(b.getWorld(),b.getX()+.5,b.getY(),b.getZ()+.5);
 				mobSpawnpointSet.add(loc);
 
@@ -1138,6 +1138,7 @@ public class Game {
 	 * @param player
 	 * @param team
 	 */
+	@SuppressWarnings("deprecation")
 	public void hitStartBlock(Player player, int team) {
 		if(isRunning && !deadSet.contains(player)) {
 			return;
@@ -1154,6 +1155,7 @@ public class Game {
 				tellPlayer(player, Translation.tr("game.ready"));
 				tp.team = team;
 				if(tp.team != -1) {
+					//TODO TEST
 					player.getInventory().setHelmet(new ItemStack(Material.WOOL,1,(short)0,(byte)team));
 					tellPlayer(player, Translation.tr("game.team", TCUtils.getWoolColor(team)));
 				}
@@ -1243,7 +1245,7 @@ public class Game {
 	public void hitRewardBlock(Player player, List<ItemStack> itemList) {
 		
 		rewards.addAll(itemList);
-
+		
 		int size = itemList.size();
 		StringBuilder msg = new StringBuilder();
 		if(size == 0) {
@@ -1254,7 +1256,11 @@ public class Game {
 				ItemStack item = itemList.get(i);
 				
 				if(item != null) {
-					msg.append(item.getAmount()+" "+TCUtils.getMaterialName(item.getType().name()));
+					if (item.getItemMeta().getDisplayName() == null) {
+						msg.append("§f"+item.getAmount()+" "+TCUtils.getMaterialName(item.getType().name()));
+					} else {
+						msg.append("§f"+item.getAmount()+" "+item.getItemMeta().getDisplayName());
+					}
 					if(i<size-2) {
 						msg.append(", ");
 					} else if(i<size-1) {
@@ -1265,7 +1271,7 @@ public class Game {
 			tellAll(Translation.tr("game.treasureMessage", msg.toString()));
 		}
 	}
-
+	
 	/**
 	 * Player moving
 	 * 

@@ -33,7 +33,7 @@ import com.bukkit.xarinor.templecraft.listeners.TCTeleportListener;
 import com.bukkit.xarinor.templecraft.listeners.TCWorldListener;
 import com.bukkit.xarinor.templecraft.util.Classes;
 import com.bukkit.xarinor.templecraft.util.Translation;
-import com.bukkit.xarinor.templecraft.util.WorldManager;
+//import com.bukkit.xarinor.templecraft.util.WorldManager;
 import com.herocraftonline.heroes.Heroes;
 import com.herocraftonline.heroes.characters.CharacterManager;
 import com.onarandombox.MultiverseCore.MultiverseCore;
@@ -146,7 +146,7 @@ public class TempleCraft extends JavaPlugin {
 		pm.registerEvents(new TCTeleportListener(), this);
 		pm.registerEvents(new TCWorldListener(), this);
 
-		WorldManager.init();
+//		WorldManager.init();
 
 		System.out.println(Translation.tr("enableMessage", pdfFile.getName(), pdfFile.getVersion()));
 
@@ -208,7 +208,7 @@ public class TempleCraft extends JavaPlugin {
 		TCUtils.deleteTempWorlds();
 		TCUtils.cleanConfigFiles();
 
-		WorldManager.deinit();
+//		WorldManager.deinit();
 	}
 
 	/**

@@ -12,19 +12,17 @@ import org.bukkit.entity.EntityType;
 import com.bukkit.xarinor.templecraft.TCUtils;
 
 /**
-* CustomMobUtils.java
+* TCEntityUtils.java
 * This work is dedicated to the public domain.
-* 
-* TODO !
 * 
 * @author Xarinor
 * @author bootscreen
 * @author msingleton
 */
-public class CustomMobUtils {
-	protected static File configFile				= null;
-	public static Set<CustomMobType> custommobs	= new HashSet<CustomMobType>();
-	public static Set<String> custommobnames		= new HashSet<String>();
+public class TCEntityUtils {
+	protected static File configFile = null;
+	public static Set<CustomMobType> custommobs = new HashSet<CustomMobType>();
+	public static Set<String> custommobnames = new HashSet<String>();
 
 	/**
 	 * load bosses from boss config file

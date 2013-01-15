@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 import com.bukkit.xarinor.templecraft.TCUtils;
 import com.bukkit.xarinor.templecraft.util.MobSpawnProperties;
-import com.bukkit.xarinor.templecraft.util.Pair;
 
 /**
 * CustomMob.java
@@ -21,14 +21,13 @@ import com.bukkit.xarinor.templecraft.util.Pair;
 public class CustomMob{
 
 	private Entity entity;
+	private EntityType entitytype = null;
 	private List<CustomMobAbility> abilitys = new ArrayList<CustomMobAbility>();
 	private boolean dead = false;
 	private int health = 0;
 	private int maxhealth = 0;
 	private int dmgmulti = 0;
 	private int mode = -1;
-	private List<Pair<CustomMobAbility,Integer>> abilities_random = new ArrayList<Pair<CustomMobAbility,Integer>>();
-	private List<Pair<CustomMobAbility,Integer>> abilities_rotation = new ArrayList<Pair<CustomMobAbility,Integer>>();
 	private MobSpawnProperties spawnProperties = null;
 
 	/**
@@ -118,6 +117,24 @@ public class CustomMob{
 		return dmgmulti;
 	}
 
+	/**
+	 * Get the base mob type
+	 * 
+	 * @return
+	 */
+	public EntityType getEntityType() {
+		return entitytype;
+	}
+
+	/**
+	 * Set base mob type
+	 * 
+	 * @param mobtype
+	 */
+	public void setEntityType(EntityType entitytype) {
+		this.entitytype = entitytype;
+	}
+	
 	/**
 	 * Sets the mode of this CustomMob
 	 * 
@@ -215,42 +232,6 @@ public class CustomMob{
 	 */
 	public Entity getTarget() {
 		return TCUtils.getTarget(this.entity);
-	}
-
-	/**
-	 * Gets the ability-rotation
-	 * 
-	 * @return
-	 */
-	public List<Pair<CustomMobAbility,Integer>> getAbilities_rotation() {
-		return abilities_rotation;
-	}
-
-	/**
-	 * Sets the ability-rotation
-	 * 
-	 * @param abilities_rotation
-	 */
-	public void setAbilities_rotation(List<Pair<CustomMobAbility,Integer>> abilities_rotation) {
-		this.abilities_rotation = abilities_rotation;
-	}
-
-	/**
-	 * get random
-	 * 
-	 * @return
-	 */
-	public List<Pair<CustomMobAbility,Integer>> getAbilities_random() {
-		return abilities_random;
-	}
-
-	/**
-	 * set random
-	 * 
-	 * @param abilities_random
-	 */
-	public void setAbilities_random(List<Pair<CustomMobAbility,Integer>> abilities_random) {
-		this.abilities_random = abilities_random;
 	}
 
 	/**
