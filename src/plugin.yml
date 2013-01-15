@@ -1,5 +1,9 @@
 name: TempleCraft
+<<<<<<< HEAD
 version: 0.46.12
+=======
+version: 0.46.11
+>>>>>>> 8ddab893ade00484cf1b3765328aaebb39e4f323
 author: Xarinor
 authors: [Bootscreen,Mike Singleton,Timirvin]
 main: com.bukkit.xarinor.templecraft.TempleCraft

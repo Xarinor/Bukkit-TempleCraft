@@ -18,7 +18,11 @@ import org.bukkit.entity.Player;
 
 
 import com.bukkit.xarinor.templecraft.custommobs.CustomMobType;
+<<<<<<< HEAD
 import com.bukkit.xarinor.templecraft.custommobs.TCEntityUtils;
+=======
+import com.bukkit.xarinor.templecraft.custommobs.CustomMobUtils;
+>>>>>>> 8ddab893ade00484cf1b3765328aaebb39e4f323
 import com.bukkit.xarinor.templecraft.custommobs.EntityEffectHandler;
 import com.bukkit.xarinor.templecraft.games.Game;
 import com.bukkit.xarinor.templecraft.scoreboards.ScoreBoardManager;

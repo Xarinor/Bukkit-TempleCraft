@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.entity.Entity;
+<<<<<<< HEAD
 import org.bukkit.entity.EntityType;
+=======
+>>>>>>> 8ddab893ade00484cf1b3765328aaebb39e4f323
 import org.bukkit.entity.LivingEntity;
 
 import com.bukkit.xarinor.templecraft.TCUtils;
